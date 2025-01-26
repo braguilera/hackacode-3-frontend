@@ -1,0 +1,18 @@
+{"projects" : [
+    {
+        "name": "Administrador de torneos",
+        "body": "App para gestionar torneos con MVC y scrum."
+    },
+    {
+        "name": "Gestor de Reclamos",
+        "body": "Sistema para registrar y gestionar reclamos."
+    }
+],
+
+"works" : [
+    {
+        "name": "Desarrollador Full-Stack",
+        "body": "Tabajando en Quadrant desde diciembre de 2024."
+    }
+]
+}

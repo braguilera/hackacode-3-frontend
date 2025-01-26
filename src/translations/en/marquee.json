@@ -1,0 +1,19 @@
+{
+    "projects": [
+      {
+        "name": "Tournament Manager",
+        "body": "App to manage tournaments using MVC and Scrum."
+      },
+      {
+        "name": "Claims Manager",
+        "body": "System to register and manage claims."
+      }
+    ],
+    "works": [
+      {
+        "name": "Full-Stack Developer",
+        "body": "Working at Quadrant since December 2024."
+      }
+    ]
+  }
+  

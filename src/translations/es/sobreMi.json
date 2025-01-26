@@ -1,0 +1,25 @@
+{
+    "mainHeading1": "Impulsando soluciones innovadoras y creando",
+    "mainHeading2": "Impacto",
+    "mainHeading3": "en cada proyecto.",
+    "introduction": {
+        "greeting": "Hola, soy",
+        "name": "Enzo Marco",
+        "title": "Ingeniero de Software",
+        "description1": "Estudiante universitario con el objetivo de adentrarme en el mundo laboral, ocupando puestos relacionados con el back-end. Me apasiona crear aplicaciones funcionales que resuelvan problemas del día a día, mientras desarrollo mis habilidades técnicas y personales.",
+        "description2": "Actualmente estoy buscando oportunidades que me permitan crecer y aprender en equipos dinámicos y desafiantes."
+    },
+    "downloadCV": "Descargar CV",
+    "education": [
+        {
+            "title": "Ingeniería informática",
+            "institution": "Universidad Argentina de la Empresa (UADE)",
+            "duration": "2023 - Actualidad"
+        },
+        {
+            "title": "Diplomatura en Desarrollo Web",
+            "institution": "Universidad Argentina de la Empresa (UADE)",
+            "duration": "2022 - 2023"
+        }
+    ]
+} 

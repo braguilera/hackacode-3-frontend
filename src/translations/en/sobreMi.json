@@ -1,0 +1,25 @@
+{
+    "mainHeading1": "Driving innovative solutions and creating",
+    "mainHeading2": "Impact",
+    "mainHeading3": "in every project.",
+    "introduction": {
+        "greeting": "Hi, I'm",
+        "name": "Enzo Marco",
+        "title": "Software Engineer",
+        "description1": "University student aiming to enter the workforce in back-end related positions. I am passionate about creating functional applications that solve everyday problems while developing my technical and personal skills.",
+        "description2": "I am currently seeking opportunities to grow and learn in dynamic and challenging teams."
+    },
+    "downloadCV": "Download CV",
+    "education": [
+        {
+            "title": "Computer Engineering",
+            "institution": "Argentine University of Enterprise (UADE)",
+            "duration": "2023 - Present"
+        },
+        {
+            "title": "Diploma in Web Development",
+            "institution": "Argentine University of Enterprise (UADE)",
+            "duration": "2022 - 2023"
+        }
+    ]
+}

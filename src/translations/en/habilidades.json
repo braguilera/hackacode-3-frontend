@@ -1,0 +1,34 @@
+{
+    "mainTitle": "Technical Skills",
+    "mainSubtitle": "Passionate developer focused on creating robust and scalable solutions. My experience ranges from backend system development to creating intuitive user experiences.",
+    "modalTitle":"Projects with ",
+    "noProjects":"No projects available at the moment.",
+    "skills": [
+      { "name": "JAVA", "icon": "java", "description": "Backend Development" },
+      { "name": "Spring Boot", "icon": "springBoot", "description": "API Development" },
+      { "name": "Angular", "icon": "angular", "description": "Modern UI Development" },
+      { "name": "Postgre SQL", "icon": "postgre", "description": "Data Management" },
+      { "name": "GitHub", "icon": "github", "description": "Version Control" },
+      { "name": "Docker", "icon": "docker", "description": "Containerization" },
+      { "name": "English", "icon": "ingles", "description": "Professional" },
+      { "name": "Hibernate", "icon": "hibernate", "description": "O/R Mapping" },
+      { "name": "Postman", "icon": "postman", "description": "API Testing" }
+    ],
+    "projects": [
+      {
+        "id": 1,
+        "title": "Tournament Manager",
+        "description": "Led the development of an application within a team of 4 people, employing scrum as a framework and opting for the MVC design model for our manager.",
+        "date": "April 2024 - July 2024",
+        "skills": ["JAVA", "Spring Boot", "Postgre SQL", "React"]
+      },
+      {
+        "id": 2,
+        "title": "Administrative Claims Management System",
+        "description": "Together with a teammate, we developed a system for a consortium to generate claims and store related information.",
+        "date": "August 2024 - Present",
+        "skills": ["JAVA", "Spring Boot", "Postgre SQL"]
+      }
+    ]
+  }
+  

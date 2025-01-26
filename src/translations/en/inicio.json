@@ -1,0 +1,25 @@
+{
+    "header": {
+        "role1": "Software Engineer",
+        "role2": "Backend Developer",
+        "tagline": "Turning ideas into robust and scalable solutions"
+    },
+    "buttons": {
+        "downloadCv": "Download CV",
+        "aboutMe": "About Me",
+        "projects": "Experience",
+        "skills": "Skills"
+    },
+    "aboutMe": {
+        "title": "About Me",
+        "description": "A passionate developer creating amazing experiences."
+    },
+    "projects": {
+        "title": "Experience",
+        "description": "Discover how I've applied my skills to real-world projects."
+    },
+    "skills": {
+        "title": "Skills",
+        "description": "Explore the tools and technologies I excel at."
+    }
+}

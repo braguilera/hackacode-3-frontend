@@ -1,0 +1,33 @@
+{
+  "mainTitle": "Habilidades Técnicas",
+  "mainSubtitle": "Desarrollador apasionado por crear soluciones robustas y escalables. Mi experiencia abarca desde el desarrollo de sistemas backend hasta la creación de experiencias de usuario intuitivas.",
+  "modalTitle":"Proyectos con ",
+  "noProjects":"No hay proyectos por el momento.",
+  "skills": [
+    { "name": "JAVA", "icon": "java", "description": "Desarrollo Backend" },
+    { "name": "Spring Boot", "icon": "springBoot", "description": "Desarrollo de APIs" },
+    { "name": "Angular", "icon": "angular", "description": "Desarrollo de UI Moderno" },
+    { "name": "Postgre SQL", "icon": "postgre", "description": "Gestión de Datos" },
+    { "name": "GitHub", "icon": "github", "description": "Control de Versiones" },
+    { "name": "Docker", "icon": "docker", "description": "Containerización" },
+    { "name": "Inglés", "icon": "ingles", "description": "Profesional" },
+    { "name": "Hibernate", "icon": "hibernate", "description": "Mapeo O/R" },
+    { "name": "Postman", "icon": "postman", "description": "Testing de APIs" }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "title": "Administrador de torneos",
+      "description": "Dirigí el desarrollo de una aplicación dentro de un equipo de 4 personas, empleamos scrum como marco de trabajo y optamos por el modelo de diseño MVC para nuestra gestor.",
+      "date": "Abril 2024 - Julio 2024",
+      "skills": ["JAVA", "Spring Boot", "Postgre SQL", "React"]
+    },
+    {
+      "id": 2,
+      "title": "Sistema de Gestión de Reclamos Administrativos",
+      "description": "En conjunto con un compañero, desarrollamos un sistema para un consorcio que permita generar reclamos y almacenar información relacionada.",
+      "date": "Agosto 2024 - Actualidad",
+      "skills": ["JAVA", "Spring Boot", "Postgre SQL"]
+    }
+  ]
+}

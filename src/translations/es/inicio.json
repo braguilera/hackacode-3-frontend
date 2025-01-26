@@ -1,0 +1,25 @@
+{
+    "header": {
+        "role1": "Ingeniero en Informática",
+        "role2": "Desarrollador Backend",
+        "tagline": "Transformando ideas en soluciones robustas y escalables"
+    },
+    "buttons": {
+        "downloadCv": "Descargar CV",
+        "aboutMe": "Sobre mí",
+        "projects": "Experiencia",
+        "skills": "Conocimientos"
+    },
+    "aboutMe": {
+        "title": "Sobre mí",
+        "description": "Desarrollador apasionado en la creación de experiencias increíbles."
+    },
+    "projects": {
+        "title": "Experiencia",
+        "description": "Descubre cómo he aplicado mis habilidades en proyectos reales."
+    },
+    "skills": {
+        "title": "Conocimientos",
+        "description": "Explora las herramientas y tecnologías que domino."
+    }
+}

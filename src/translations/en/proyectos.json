@@ -1,0 +1,51 @@
+{
+  "experience": {
+    "title": "Experience",
+    "description": "In this section, you will find my work experience and featured projects, reflecting my technical skills and ability to bring value to teams.",
+    "work": {
+      "title": "Work",
+      "items": [
+        {
+          "position": "Full-Stack Developer",
+          "company": "Quadrant",
+          "description": "",
+          "date": "December 2024 - Present"
+        }
+      ]
+    },
+    "projects": {
+      "title": "Projects",
+      "items": [
+        {
+          "title": "Tournament Manager",
+          "description": "Led the development of an application within a team of 4 people, using Scrum as the work framework and opting for the MVC design model for our manager.",
+          "date": "April 2024 - July 2024",
+          "repositoryLink": {
+            "href": "#",
+            "title": "Repository"
+          },
+          "technologies": [
+            { "name": "Java", "type": "Backend", "icon":"java" },
+            { "name": "Spring Boot", "type": "Framework", "icon":"springBoot" },
+            { "name": "Postgre SQL", "type": "Database","icon":"postgre" },
+            { "name": "React", "type": "Frontend",  "icon":"react" }
+          ]
+        },
+        {
+          "title": "Administrative Claims Management System",
+          "description": "Together with a colleague, we developed a system for a consortium that allows generating claims and storing related information.",
+          "date": "August 2024 - Present",
+          "repositoryLink": {
+            "href": "#",
+            "title": "Repository"
+          },
+          "technologies": [
+            { "name": "Java", "type": "Backend", "icon":"java" },
+            { "name": "Spring Boot", "type": "Framework", "icon":"springBoot" },
+            { "name": "Postgre SQL", "type": "Database", "icon":"postgre" }
+          ]
+        }
+      ]
+    }
+  }
+}

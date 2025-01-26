@@ -1,0 +1,51 @@
+{
+  "experience": {
+    "title": "Experiencia",
+    "description": "En esta sección encontrarás mi experiencia laboral y proyectos destacados, que reflejan mis habilidades técnicas y capacidad para aportar valor a los equipos.",
+    "work": {
+      "title": "Laboral",
+      "items": [
+        {
+          "position": "Desarrollador Full-Stack",
+          "company": "Quadrant",
+          "description": "",
+          "date": "Diciembre 2024 - Actualidad"
+        }
+      ]
+    },
+    "projects": {
+      "title": "Proyectos",
+      "items": [
+        {
+          "title": "Administrador de torneos",
+          "description": "Dirigí el desarrollo de una aplicación dentro de un equipo de 4 personas, empleamos scrum como marco de trabajo y optamos por el modelo de diseño MVC para nuestra gestor.",
+          "date": "Abril 2024 - Julio 2024",
+          "repositoryLink": {
+            "href": "#",
+            "title": "Repositorio"
+          },
+          "technologies": [
+            { "name": "Java", "type": "Backend", "icon":"java" },
+            { "name": "Spring Boot", "type": "Framework", "icon":"springBoot" },
+            { "name": "Postgre SQL", "type": "Database","icon":"postgre" },
+            { "name": "React", "type": "Frontend",  "icon":"react" }
+          ]
+        },
+        {
+          "title": "Sistema de Gestión de Reclamos Administrativos",
+          "description": "En conjunto con un compañero, desarrollamos un sistema para un consorcio que permita generar reclamos y almacenar información relacionada.",
+          "date": "Agosto 2024 - Actualidad",
+          "repositoryLink": {
+            "href": "#",
+            "title": "Repositorio"
+          },
+          "technologies": [
+            { "name": "Java", "type": "Backend", "icon":"java" },
+            { "name": "Spring Boot", "type": "Framework", "icon":"springBoot" },
+            { "name": "Postgre SQL", "type": "Database", "icon":"postgre" }
+          ]
+        }
+      ]
+    }
+  }
+}
