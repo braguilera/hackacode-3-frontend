@@ -15,7 +15,7 @@ const Provider = ({children}) => {
     }, [darkMode]);
 
     return (
-        <Contexto.Provider value={[darkMode, setDarkMode, logeado, setLogeado]}>
+        <Contexto.Provider value={{darkMode, setDarkMode, logeado, setLogeado}}>
             {children}
         </Contexto.Provider>
     )

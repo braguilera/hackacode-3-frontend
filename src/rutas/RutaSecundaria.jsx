@@ -9,7 +9,7 @@ import Servicios from '../components/Servicios'
 
 const RutaSecundaria = () => {
   return (
-    <main>
+    <main className='flex h-screen bg-light-background'>
       <Nav/>
 
       <Routes>

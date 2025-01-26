@@ -3,14 +3,12 @@ import Contexto from '../contexto/Contexto'
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-    const [setLogeado] = useContext(Contexto);
+    const {setLogeado} = useContext(Contexto);
     const navegacion = useNavigate();
 
     const manejarLogeo = () => {
       setLogeado(true);
-
       navegacion('/dashboard');
-      alert("si")
     };
 
   return (

@@ -47,6 +47,20 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        light: {
+          background: "rgb(244, 244, 252)", // Fondo principal claro
+          accent: "rgb(59, 130, 246)", // Azul principal
+          muted: "rgb(210, 225, 255)", // Azul suave
+          border: "rgb(224, 224, 230)", // Bordes claros
+          text: "rgb(45, 45, 56)", // Texto oscuro
+        },
+        dark: {
+          background: "rgb(30, 30, 40)", // Fondo oscuro
+          accent: "rgb(59, 130, 246)", // Azul principal
+          muted: "rgb(85, 105, 135)", // Azul oscuro
+          border: "rgb(60, 60, 70)", // Bordes oscuros
+          text: "rgb(220, 220, 230)", // Texto claro
+        },
       },
       borderRadius: {
         lg: `var(--radius)`,
