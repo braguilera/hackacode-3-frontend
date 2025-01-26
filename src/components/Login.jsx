@@ -12,9 +12,13 @@ const Login = () => {
     };
 
   return (
-    <div>
-        <button onClick={manejarLogeo}>Iniciar sesion</button>
-    </div>
+    <main className='flex justify-center items-center bg-light-background w-full h-screen'>
+        <button onClick={manejarLogeo}
+        className='bg-slate-400 p-4 rounded-full '
+        >
+          Iniciar sesion
+        </button>
+    </main>
   )
 }
 
