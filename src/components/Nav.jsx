@@ -14,7 +14,7 @@ const Nav = () => {
   return (
 
     <>
-    <main className='bg-white flex flex-col justify-between py-10 w-52 text-2xl box-border'>
+    <main className='bg-white flex flex-col justify-between py-10 w-52 text-2xl box-border shadow-xl'>
 
         <section className='flex flex-col px-2 box-border'>
           <header className='flex justify-center py-6'>

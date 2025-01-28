@@ -1,0 +1,27 @@
+{
+    "pacientes": [
+      {
+        "id": 1,
+        "nombre": "Carlos",
+        "apellido": "Rodríguez",
+        "dni": "44556677",
+        "fecha_nac": "1990-12-01",
+        "email": "carlos.rodriguez@email.com",
+        "telefono": "111222333",
+        "direccion": "Calle Nueva 456",
+        "tieneObraSocial": true
+      },
+      {
+        "id": 2,
+        "nombre": "Ana",
+        "apellido": "Fernández",
+        "dni": "99887766",
+        "fecha_nac": "1985-03-23",
+        "email": "ana.fernandez@email.com",
+        "telefono": "444555666",
+        "direccion": "Pasaje Central 789",
+        "tieneObraSocial": false
+      }
+    ]
+  }
+  

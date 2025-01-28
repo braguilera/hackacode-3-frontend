@@ -1,0 +1,15 @@
+{
+    "consultas": [
+      {
+        "codigo": 1,
+        "paciente": 1,
+        "medico": 1,
+        "fecha": "2025-09-10",
+        "hora": "10:00",
+        "servicio": { "codigo": 1, "nombre": "Consulta Cardiología", "precio": 100.00 },
+        "pago": { "codigoPago": 1, "estado": "Pagado", "monto": 100.00, "fechaInicio": "2025-09-01", "fechaVencimiento": "2025-09-15", "recargo": 0.00, "nroPago": 1234 },
+        "estado": "Completado"
+      }
+    ]
+  }
+  

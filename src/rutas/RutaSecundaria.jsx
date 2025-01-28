@@ -1,11 +1,11 @@
 import React from 'react'
 import Nav from '../components/Nav'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import Dashborad from '../components/Dashboard'
-import Consultas from '../components/Consultas'
-import Pacientes from '../components/Pacientes'
-import Medicos from '../components/Medicos'
-import Servicios from '../components/Servicios'
+import Dashborad from '../pages/Dashboard'
+import Consultas from '../pages/Consultas'
+import Pacientes from '../pages/Pacientes'
+import Medicos from '../pages/Medicos'
+import Servicios from '../pages/Servicios'
 
 const RutaSecundaria = () => {
   return (
