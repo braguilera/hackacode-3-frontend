@@ -1,27 +1,169 @@
 {
-    "pacientes": [
-      {
-        "id": 1,
-        "nombre": "Carlos",
-        "apellido": "Rodríguez",
-        "dni": "44556677",
-        "fecha_nac": "1990-12-01",
-        "email": "carlos.rodriguez@email.com",
-        "telefono": "111222333",
-        "direccion": "Calle Nueva 456",
-        "tieneObraSocial": true
-      },
-      {
-        "id": 2,
-        "nombre": "Ana",
-        "apellido": "Fernández",
-        "dni": "99887766",
-        "fecha_nac": "1985-03-23",
-        "email": "ana.fernandez@email.com",
-        "telefono": "444555666",
-        "direccion": "Pasaje Central 789",
-        "tieneObraSocial": false
-      }
-    ]
-  }
-  
+  "pacientes": [
+    {
+      "id": 1,
+      "nombre": "Carlos",
+      "apellido": "Rodríguez",
+      "dni": "44556677",
+      "fecha_nac": "1990-12-01",
+      "email": "carlos.rodriguez@email.com",
+      "telefono": "111222333",
+      "direccion": "Calle Nueva 456",
+      "tieneObraSocial": true
+    },
+    {
+      "id": 2,
+      "nombre": "Ana",
+      "apellido": "Fernández",
+      "dni": "99887766",
+      "fecha_nac": "1985-03-23",
+      "email": "ana.fernandez@email.com",
+      "telefono": "444555666",
+      "direccion": "Pasaje Central 789",
+      "tieneObraSocial": false
+    },
+    {
+      "id": 3,
+      "nombre": "Pedro",
+      "apellido": "Gómez",
+      "dni": "11223344",
+      "fecha_nac": "1978-06-15",
+      "email": "pedro.gomez@email.com",
+      "telefono": "123456789",
+      "direccion": "Calle del Sol 123",
+      "tieneObraSocial": true
+    },
+    {
+      "id": 4,
+      "nombre": "Laura",
+      "apellido": "Méndez",
+      "dni": "22334455",
+      "fecha_nac": "1992-04-20",
+      "email": "laura.mendez@email.com",
+      "telefono": "987654321",
+      "direccion": "Avenida Libertad 789",
+      "tieneObraSocial": false
+    },
+    {
+      "id": 5,
+      "nombre": "Javier",
+      "apellido": "Sosa",
+      "dni": "33445566",
+      "fecha_nac": "1980-10-10",
+      "email": "javier.sosa@email.com",
+      "telefono": "112233445",
+      "direccion": "Calle Esperanza 567",
+      "tieneObraSocial": true
+    },
+    {
+      "id": 6,
+      "nombre": "Marta",
+      "apellido": "Pérez",
+      "dni": "44556677",
+      "fecha_nac": "1975-07-30",
+      "email": "marta.perez@email.com",
+      "telefono": "998877665",
+      "direccion": "Pasaje Los Andes 432",
+      "tieneObraSocial": true
+    },
+    {
+      "id": 7,
+      "nombre": "Ricardo",
+      "apellido": "Lopez",
+      "dni": "55667788",
+      "fecha_nac": "1988-12-05",
+      "email": "ricardo.lopez@email.com",
+      "telefono": "887766554",
+      "direccion": "Boulevard Central 99",
+      "tieneObraSocial": false
+    },
+    {
+      "id": 8,
+      "nombre": "Verónica",
+      "apellido": "Ramírez",
+      "dni": "66778899",
+      "fecha_nac": "1996-02-25",
+      "email": "veronica.ramirez@email.com",
+      "telefono": "776655443",
+      "direccion": "Calle de los Naranjos 11",
+      "tieneObraSocial": true
+    },
+    {
+      "id": 9,
+      "nombre": "Hugo",
+      "apellido": "Fernández",
+      "dni": "77889900",
+      "fecha_nac": "1982-11-11",
+      "email": "hugo.fernandez@email.com",
+      "telefono": "665544332",
+      "direccion": "Avenida del Río 34",
+      "tieneObraSocial": false
+    },
+    {
+      "id": 10,
+      "nombre": "Sofía",
+      "apellido": "Navarro",
+      "dni": "88990011",
+      "fecha_nac": "1991-05-09",
+      "email": "sofia.navarro@email.com",
+      "telefono": "554433221",
+      "direccion": "Plaza Mayor 56",
+      "tieneObraSocial": true
+    },
+    {
+      "id": 11,
+      "nombre": "Lucía",
+      "apellido": "Gutiérrez",
+      "dni": "99001122",
+      "fecha_nac": "1987-08-14",
+      "email": "lucia.gutierrez@email.com",
+      "telefono": "443322110",
+      "direccion": "Avenida San Martín 78",
+      "tieneObraSocial": false
+    },
+    {
+      "id": 12,
+      "nombre": "Fernando",
+      "apellido": "Castro",
+      "dni": "11002233",
+      "fecha_nac": "1979-02-28",
+      "email": "fernando.castro@email.com",
+      "telefono": "332211009",
+      "direccion": "Calle Olmos 90",
+      "tieneObraSocial": true
+    },
+    {
+      "id": 13,
+      "nombre": "Paula",
+      "apellido": "Molina",
+      "dni": "22003344",
+      "fecha_nac": "1993-11-05",
+      "email": "paula.molina@email.com",
+      "telefono": "221100998",
+      "direccion": "Calle Belgrano 101",
+      "tieneObraSocial": true
+    },
+    {
+      "id": 14,
+      "nombre": "Gonzalo",
+      "apellido": "Ortega",
+      "dni": "33004455",
+      "fecha_nac": "1984-06-17",
+      "email": "gonzalo.ortega@email.com",
+      "telefono": "110099887",
+      "direccion": "Calle Moreno 34",
+      "tieneObraSocial": false
+    },
+    {
+      "id": 15,
+      "nombre": "Elena",
+      "apellido": "Ruiz",
+      "dni": "44005566",
+      "fecha_nac": "1998-09-21",
+      "email": "elena.ruiz@email.com",
+      "telefono": "009988776",
+      "direccion": "Calle Rivadavia 56",
+      "tieneObraSocial": true
+    }
+  ]
+}
