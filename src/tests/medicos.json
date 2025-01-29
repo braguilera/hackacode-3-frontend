@@ -49,6 +49,153 @@
             "diaSemana": "Miércoles"
           }
         ]
+      },      {
+        "id": 3,
+        "nombre": "Juan",
+        "apellido": "Pérez",
+        "dni": "12345678",
+        "fecha_nac": "1980-05-14",
+        "email": "juan.perez@hospital.com",
+        "telefono": "123456789",
+        "direccion": "Calle Falsa 123",
+        "especialidades": [
+          { "codigo": 1, "nombre": "Neurología" }
+        ],
+        "turnos": [
+          { "codigo": 1, "fecha": "2025-09-10", "hora": "10:00" }
+        ],
+        "sueldo": 5000.00,
+        "disponibilidad": [
+          {
+            "cubreTurno": "Mañana",
+            "horaInicio": "08:00",
+            "horaFin": "12:00",
+            "diaSemana": "Lunes"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "nombre": "María",
+        "apellido": "Gómez",
+        "dni": "87654321",
+        "fecha_nac": "1975-07-20",
+        "email": "maria.gomez@hospital.com",
+        "telefono": "987654321",
+        "direccion": "Avenida Siempre Viva 742",
+        "especialidades": [
+          { "codigo": 2, "nombre": "Dermatología" }
+        ],
+        "turnos": [
+          { "codigo": 2, "fecha": "2025-09-12", "hora": "14:00" }
+        ],
+        "sueldo": 5200.00,
+        "disponibilidad": [
+          {
+            "cubreTurno": "Tarde",
+            "horaInicio": "14:00",
+            "horaFin": "18:00",
+            "diaSemana": "Miércoles"
+          }
+        ]
+      },      {
+        "id": 5,
+        "nombre": "Juan",
+        "apellido": "Pérez",
+        "dni": "12345678",
+        "fecha_nac": "1980-05-14",
+        "email": "juan.perez@hospital.com",
+        "telefono": "123456789",
+        "direccion": "Calle Falsa 123",
+        "especialidades": [
+          { "codigo": 1, "nombre": "Oftalmología" }
+        ],
+        "turnos": [
+          { "codigo": 1, "fecha": "2025-09-10", "hora": "10:00" }
+        ],
+        "sueldo": 5000.00,
+        "disponibilidad": [
+          {
+            "cubreTurno": "Mañana",
+            "horaInicio": "08:00",
+            "horaFin": "12:00",
+            "diaSemana": "Lunes"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "nombre": "María",
+        "apellido": "Gómez",
+        "dni": "87654321",
+        "fecha_nac": "1975-07-20",
+        "email": "maria.gomez@hospital.com",
+        "telefono": "987654321",
+        "direccion": "Avenida Siempre Viva 742",
+        "especialidades": [
+          { "codigo": 2, "nombre": "Pediatría" }
+        ],
+        "turnos": [
+          { "codigo": 2, "fecha": "2025-09-12", "hora": "14:00" }
+        ],
+        "sueldo": 5200.00,
+        "disponibilidad": [
+          {
+            "cubreTurno": "Tarde",
+            "horaInicio": "14:00",
+            "horaFin": "18:00",
+            "diaSemana": "Miércoles"
+          }
+        ]
+      },      {
+        "id": 7,
+        "nombre": "Juan",
+        "apellido": "Pérez",
+        "dni": "12345678",
+        "fecha_nac": "1980-05-14",
+        "email": "juan.perez@hospital.com",
+        "telefono": "123456789",
+        "direccion": "Calle Falsa 123",
+        "especialidades": [
+          { "codigo": 1, "nombre": "Oftalmología" }
+        ],
+        "turnos": [
+          { "codigo": 1, "fecha": "2025-09-10", "hora": "10:00" }
+        ],
+        "sueldo": 5000.00,
+        "disponibilidad": [
+          {
+            "cubreTurno": "Mañana",
+            "horaInicio": "08:00",
+            "horaFin": "12:00",
+            "diaSemana": "Lunes"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "nombre": "María",
+        "apellido": "Gómez",
+        "dni": "87654321",
+        "fecha_nac": "1975-07-20",
+        "email": "maria.gomez@hospital.com",
+        "telefono": "987654321",
+        "direccion": "Avenida Siempre Viva 742",
+        "especialidades": [
+          { "codigo": 2, "nombre": "Neurología" }
+        ],
+        "turnos": [
+          { "codigo": 2, "fecha": "2025-09-12", "hora": "14:00" }
+        ],
+        "sueldo": 5200.00,
+        "disponibilidad": [
+          {
+            "cubreTurno": "Tarde",
+            "horaInicio": "14:00",
+            "horaFin": "18:00",
+            "diaSemana": "Miércoles"
+          }
+        ]
       }
     ]
   }

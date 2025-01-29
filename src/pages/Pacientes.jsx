@@ -3,7 +3,7 @@ import React from 'react'
 
 const Pacientes = () => {
   return (
-    <div>
+    <div className='w-full'>
       Pacientes
     </div>
   )
