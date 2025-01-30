@@ -7,7 +7,7 @@ const Pacientes = () => {
   const {pacientes} = dataPacientes;
 
   return (
-    <div className='w-full'>
+    <div className='w-full flex flex-col justify-center items-center'>
       
       <TablePacientes pacientes={pacientes}></TablePacientes>
     </div>

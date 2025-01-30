@@ -12,8 +12,8 @@ const PacientesTable = ({ pacientes }) => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="p-4">
-      <motion.table className="w-full text-left rounded-lg overflow-hidden shadow-sm">
+    <div className="p-4 bg-white rounded-3xl h-2/3 flex flex-col justify-between ">
+      <motion.table className=" text-left rounded-lg overflow-hidden shadow-sm min-w-6xl">
         <thead className="bg-gray-100">
           <tr>
             <th className="p-3">Nombre</th>
