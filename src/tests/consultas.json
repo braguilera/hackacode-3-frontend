@@ -1,15 +1,64 @@
 {
-    "consultas": [
-      {
-        "codigo": 1,
-        "paciente": 1,
-        "medico": 1,
-        "fecha": "2025-09-10",
-        "hora": "10:00",
-        "servicio": { "codigo": 1, "nombre": "Consulta Cardiología", "precio": 100.00 },
-        "pago": { "codigoPago": 1, "estado": "Pagado", "monto": 100.00, "fechaInicio": "2025-09-01", "fechaVencimiento": "2025-09-15", "recargo": 0.00, "nroPago": 1234 },
-        "estado": "Completado"
-      }
-    ]
-  }
-  
+  "consultas": [
+    {
+      "codigo": 1,
+      "paciente": 1,
+      "medico": 1,
+      "fecha": "2025-09-10",
+      "hora": "10:00",
+      "servicio": { "codigo": 1, "nombre": "Consulta Cardiología", "precio": 100.00 },
+      "pago": { "codigoPago": 1, "estado": "Pagado", "monto": 100.00, "fechaInicio": "2025-09-01", "fechaVencimiento": "2025-09-15", "recargo": 0.00, "nroPago": 1234 },
+      "estado": "Completado"
+    },
+    {
+      "codigo": 2,
+      "paciente": 2,
+      "medico": 3,
+      "fecha": "2025-09-12",
+      "hora": "14:30",
+      "servicio": { "codigo": 2, "nombre": "Consulta Pediatría", "precio": 120.00 },
+      "pago": { "codigoPago": 2, "estado": "Pendiente", "monto": 120.00, "fechaInicio": "2025-09-05", "fechaVencimiento": "2025-09-20", "recargo": 5.00, "nroPago": 2345 },
+      "estado": "Pendiente"
+    },
+    {
+      "codigo": 3,
+      "paciente": 5,
+      "medico": 2,
+      "fecha": "2025-09-15",
+      "hora": "09:00",
+      "servicio": { "codigo": 3, "nombre": "Consulta Neurología", "precio": 150.00 },
+      "pago": { "codigoPago": 3, "estado": "Pagado", "monto": 150.00, "fechaInicio": "2025-09-08", "fechaVencimiento": "2025-09-18", "recargo": 0.00, "nroPago": 3456 },
+      "estado": "Completado"
+    },
+    {
+      "codigo": 4,
+      "paciente": 8,
+      "medico": 4,
+      "fecha": "2025-09-18",
+      "hora": "11:15",
+      "servicio": { "codigo": 4, "nombre": "Consulta Dermatología", "precio": 90.00 },
+      "pago": { "codigoPago": 4, "estado": "Pagado", "monto": 90.00, "fechaInicio": "2025-09-10", "fechaVencimiento": "2025-09-25", "recargo": 0.00, "nroPago": 4567 },
+      "estado": "Completado"
+    },
+    {
+      "codigo": 5,
+      "paciente": 10,
+      "medico": 5,
+      "fecha": "2025-09-20",
+      "hora": "16:00",
+      "servicio": { "codigo": 5, "nombre": "Consulta Oftalmología", "precio": 110.00 },
+      "pago": { "codigoPago": 5, "estado": "Pendiente", "monto": 110.00, "fechaInicio": "2025-09-12", "fechaVencimiento": "2025-09-27", "recargo": 10.00, "nroPago": 5678 },
+      "estado": "Pendiente"
+    },
+    {
+      "codigo": 6,
+      "paciente": 1,
+      "medico": 3,
+      "fecha": "2025-09-12",
+      "hora": "14:30",
+      "servicio": { "codigo": 2, "nombre": "Consulta Pediatría", "precio": 120.00 },
+      "pago": { "codigoPago": 2, "estado": "Pendiente", "monto": 120.00, "fechaInicio": "2025-09-05", "fechaVencimiento": "2025-09-20", "recargo": 5.00, "nroPago": 2345 },
+      "estado": "Pendiente"
+    }
+  ]
+}

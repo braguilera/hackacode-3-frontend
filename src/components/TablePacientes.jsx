@@ -1,20 +1,54 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Check, X } from 'lucide-react';
+import PacienteDetails from './PacienteDetails';
 
-const PacientesTable = ({ pacientes }) => {
+const PacientesTable = ({ pacientes, consultas }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [filterDNI, setFilterDNI] = useState('');
+  const [selectedPaciente, setSelectedPaciente] = useState(null);
   const itemsPerPage = 10;
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = pacientes.slice(indexOfFirstItem, indexOfLastItem);
+  const filteredPacientes = pacientes.filter(paciente => paciente.dni.includes(filterDNI));
+  const currentItems = filteredPacientes.slice(indexOfFirstItem, indexOfLastItem);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const handleRowClick = (paciente) => {
+    setSelectedPaciente(paciente);
+  };
+
+  const closeModal = () => {
+    setSelectedPaciente(null);
+  };
+
+  const colors = {
+    bgLight: 'bg-blue-100', // Fondo claro para el avatar
+    textDark: 'text-blue-800', // Color de texto oscuro para el avatar
+    badge: 'bg-blue-200 text-blue-800', // Estilo para el badge de especialidad
+    hoverBg: 'hover:bg-blue-50', // Fondo al pasar el ratón
+    border: 'border-blue-200', // Color del borde
+    icon: 'text-blue-500', // Color de los iconos
+    button: {
+      primary: 'bg-blue-500 text-white hover:bg-blue-600', // Estilo para botones primarios
+      secondary: 'bg-gray-200 text-gray-700 hover:bg-gray-300', // Estilo para botones secundarios
+    },
+  };
   return (
-    <div className="p-4 bg-white rounded-3xl h-2/3 flex flex-col justify-between ">
-      <motion.table className=" text-left rounded-lg overflow-hidden shadow-sm min-w-6xl">
-        <thead className="bg-gray-100">
+    <div className="p-4 bg-white rounded-3xl flex flex-col justify-between">
+      <header className='flex w-full justify-between'>
+        <h1 className='font-semibold text-slate-500 text-2xl my-4'>Tienes <span className='font-extrabold text-slate-600'>{filteredPacientes.length}</span> pacientes en total</h1>
+        <input
+          className='bg-slate-100 w-1/3 h-auto border-2 border-slate-300 px-2 rounded-xl self-center'
+          placeholder="Filtrar por DNI"
+          value={filterDNI}
+          onChange={(e) => setFilterDNI(e.target.value)}
+        />
+      </header>
+      <motion.table className="text-left rounded-lg overflow-hidden min-w-6xl">
+        <thead className="bg-blue-500 text-white">
           <tr>
             <th className="p-3">Nombre</th>
             <th className="p-3">Apellido</th>
@@ -33,7 +67,10 @@ const PacientesTable = ({ pacientes }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, delay: index * 0.05 }}
-              className="hover:bg-gray-50"
+              whileTap={{ scale: 0.99 }}
+              whileHover={{ scale: 1.01 }}
+              className={`${(index % 2 !== 0) && 'bg-blue-50'} select-none cursor-pointer hover:shadow-sm`}
+              onClick={() => handleRowClick(paciente)}
             >
               <td className="p-3">{paciente.nombre}</td>
               <td className="p-3">{paciente.apellido}</td>
@@ -42,14 +79,20 @@ const PacientesTable = ({ pacientes }) => {
               <td className="p-3">{paciente.email}</td>
               <td className="p-3">{paciente.telefono}</td>
               <td className="p-3">{paciente.direccion}</td>
-              <td className="p-3">{paciente.tieneObraSocial ? 'Sí' : 'No'}</td>
+              <td className="p-3 flex justify-center">
+                {paciente.tieneObraSocial ? (
+                  <Check className="text-green-500" />
+                ) : (
+                  <X className="text-red-500" />
+                )}
+              </td>
             </motion.tr>
           ))}
         </tbody>
       </motion.table>
 
       <div className="flex justify-center mt-4">
-        {Array.from({ length: Math.ceil(pacientes.length / itemsPerPage) }, (_, i) => (
+        {Array.from({ length: Math.ceil(filteredPacientes.length / itemsPerPage) }, (_, i) => (
           <button
             key={i + 1}
             onClick={() => paginate(i + 1)}
@@ -59,6 +102,16 @@ const PacientesTable = ({ pacientes }) => {
           </button>
         ))}
       </div>
+
+      {selectedPaciente && (
+        <PacienteDetails
+          isOpen={!!selectedPaciente}
+          onClose={closeModal}
+          paciente={selectedPaciente}
+          consultas={consultas}
+          colors={colors}
+        />
+      )}
     </div>
   );
 };
