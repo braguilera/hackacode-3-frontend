@@ -1,0 +1,50 @@
+{
+    "paquetes": [
+      {
+        "id": 1,
+        "nombre": "Paquete Preventivo",
+        "servicios": [
+          { "id": 1, "nombre": "Consulta General", "precio": 80.00 },
+          { "id": 7, "nombre": "Análisis de Sangre", "precio": 50.00 }
+        ],
+        "precio": 120.00
+      },
+      {
+        "id": 2,
+        "nombre": "Paquete Cardiovascular",
+        "servicios": [
+          { "id": 2, "nombre": "Consulta Cardiología", "precio": 120.00 },
+          { "id": 8, "nombre": "Radiografía", "precio": 90.00 }
+        ],
+        "precio": 200.00
+      },
+      {
+        "id": 3,
+        "nombre": "Paquete Infantil",
+        "servicios": [
+          { "id": 3, "nombre": "Consulta Pediatría", "precio": 100.00 },
+          { "id": 7, "nombre": "Análisis de Sangre", "precio": 50.00 }
+        ],
+        "precio": 140.00
+      },
+      {
+        "id": 4,
+        "nombre": "Paquete Dermatológico",
+        "servicios": [
+          { "id": 5, "nombre": "Consulta Dermatología", "precio": 90.00 },
+          { "id": 9, "nombre": "Ecografía", "precio": 130.00 }
+        ],
+        "precio": 210.00
+      },
+      {
+        "id": 5,
+        "nombre": "Paquete Cirugía Completa",
+        "servicios": [
+          { "id": 10, "nombre": "Cirugía Menor", "precio": 500.00 },
+          { "id": 11, "nombre": "Cirugía Mayor", "precio": 3000.00 }
+        ],
+        "precio": 3400.00
+      }
+    ]
+  }
+  

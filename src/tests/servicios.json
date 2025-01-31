@@ -1,0 +1,17 @@
+{
+    "servicios": [
+        { "id": 1, "nombre": "Consulta General", "precio": 80.00, "descripcion": "Consulta médica general con evaluación inicial y diagnóstico." },
+        { "id": 2, "nombre": "Consulta Cardiología", "precio": 120.00, "descripcion": "Evaluación especializada del sistema cardiovascular." },
+        { "id": 3, "nombre": "Consulta Pediatría", "precio": 100.00, "descripcion": "Atención médica para niños y adolescentes." },
+        { "id": 4, "nombre": "Consulta Neurología", "precio": 150.00, "descripcion": "Diagnóstico y tratamiento de enfermedades neurológicas." },
+        { "id": 5, "nombre": "Consulta Dermatología", "precio": 90.00, "descripcion": "Evaluación de enfermedades de la piel, cabello y uñas." },
+        { "id": 6, "nombre": "Consulta Oftalmología", "precio": 110.00, "descripcion": "Examen ocular completo y diagnóstico de problemas visuales." },
+        { "id": 7, "nombre": "Análisis de Sangre", "precio": 50.00, "descripcion": "Pruebas de laboratorio para evaluación de salud general." },
+        { "id": 8, "nombre": "Radiografía", "precio": 90.00, "descripcion": "Imágenes médicas para diagnóstico de fracturas y enfermedades." },
+        { "id": 9, "nombre": "Ecografía", "precio": 130.00, "descripcion": "Estudio por ultrasonido para diagnóstico de órganos internos." },
+        { "id": 10, "nombre": "Cirugía Menor", "precio": 500.00, "descripcion": "Procedimientos quirúrgicos ambulatorios de baja complejidad." },
+        { "id": 11, "nombre": "Cirugía Mayor", "precio": 3000.00, "descripcion": "Intervenciones quirúrgicas complejas con hospitalización." },
+        { "id": 12, "nombre": "Fisioterapia", "precio": 70.00, "descripcion": "Tratamiento de rehabilitación para movilidad y dolor." },
+        { "id": 13, "nombre": "Terapia Respiratoria", "precio": 90.00, "descripcion": "Tratamiento para enfermedades pulmonares y respiratorias." }
+    ]
+}
