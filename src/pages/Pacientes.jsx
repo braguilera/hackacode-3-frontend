@@ -9,7 +9,7 @@ const Pacientes = () => {
   const {consultas} = dataConsultas;
 
   return (
-    <div className='w-full flex flex-col justify-center items-center'>
+    <div className='w-full flex flex-col justify-center items-center box-border mx-10'>
       
       <TablePacientes pacientes={pacientes} consultas={consultas}></TablePacientes>
     </div>

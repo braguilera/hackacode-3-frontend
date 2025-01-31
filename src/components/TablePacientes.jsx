@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, X } from 'lucide-react';
+import { CircleCheck , X } from 'lucide-react';
 import PacienteDetails from './PacienteDetails';
 
 const PacientesTable = ({ pacientes, consultas }) => {
@@ -11,7 +11,7 @@ const PacientesTable = ({ pacientes, consultas }) => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const filteredPacientes = pacientes.filter(paciente => paciente.dni.includes(filterDNI));
+  const filteredPacientes = pacientes.filter(paciente => paciente.dni.startsWith(filterDNI));
   const currentItems = filteredPacientes.slice(indexOfFirstItem, indexOfLastItem);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -36,10 +36,13 @@ const PacientesTable = ({ pacientes, consultas }) => {
       secondary: 'bg-gray-200 text-gray-700 hover:bg-gray-300',
     },
   };
+
   return (
-    <div className="p-4 max-w-7xl bg-white rounded-3xl flex flex-col justify-between">
-      <header className='flex w-full justify-between'>
-        <h1 className='font-semibold text-slate-500 text-2xl my-4'>Tienes <span className='font-extrabold text-slate-600'>{filteredPacientes.length}</span> pacientes en total</h1>
+    <div className="p-4 w-full h-[87%] bg-white py-10 rounded-3xl flex flex-col justify-between">
+      <main className='w-full flex flex-col'>
+
+      <header className='flex w-full justify-between mb-4'>
+        <h1 className='font-semibold text-slate-500 text-2xl '>Tienes <span className='font-extrabold text-slate-600'>{filteredPacientes.length}</span> pacientes en total</h1>
         <input
           className='bg-slate-100 w-1/3 h-auto border-2 border-slate-300 px-2 rounded-xl self-center'
           placeholder="Filtrar por DNI"
@@ -47,11 +50,10 @@ const PacientesTable = ({ pacientes, consultas }) => {
           onChange={(e) => setFilterDNI(e.target.value)}
         />
       </header>
-      <motion.table className="text-left rounded-lg overflow-hidden min-w-6xl">
-        <thead className="bg-blue-50 text-slate-600">
+      <motion.table className="text-left rounded-lg overflow-hidden">
+        <thead className="bg-blue-50 text-slate-500">
           <tr>
-            <th className="p-3">Nombre</th>
-            <th className="p-3">Apellido</th>
+            <th className="p-3">Nombre Completo</th>
             <th className="p-3">DNI</th>
             <th className="p-3">Fecha de Nacimiento</th>
             <th className="p-3">Email</th>
@@ -70,24 +72,25 @@ const PacientesTable = ({ pacientes, consultas }) => {
               className={`${(index % 2 !== 0) ? 'bg-gray-50' : 'bg-white'} select-none cursor-pointer hover:bg-slate-200 transition-all duration-200`}
               onClick={() => handleRowClick(paciente)}
             >
-              <td className="p-3">{paciente.nombre}</td>
-              <td className="p-3">{paciente.apellido}</td>
+              <td className="p-3">{paciente.nombre} {paciente.apellido}</td>
               <td className="p-3">{paciente.dni}</td>
               <td className="p-3">{paciente.fecha_nac}</td>
               <td className="p-3">{paciente.email}</td>
               <td className="p-3">{paciente.telefono}</td>
               <td className="p-3">{paciente.direccion}</td>
-              <td className="p-3 flex justify-center">
+              <td className="p-3 flex justify-left">
                 {paciente.tieneObraSocial ? (
-                  <Check className="text-green-500" />
+                  <span className='bg-green-200 flex py-1 gap-1 px-2 rounded-sm font-semibold text-green-600'><CircleCheck  className="text-green-600" />Sí</span>
+                  
                 ) : (
-                  <X className="text-red-500" />
+                  <span className='bg-gray-200 py-1 px-2 rounded-sm font-semibold text-gray-600'>No</span>
                 )}
               </td>
             </motion.tr>
           ))}
         </tbody>
       </motion.table>
+      </main>
 
       <div className="flex justify-center mt-4">
         {Array.from({ length: Math.ceil(filteredPacientes.length / itemsPerPage) }, (_, i) => (
