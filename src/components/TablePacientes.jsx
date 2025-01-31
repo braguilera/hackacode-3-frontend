@@ -25,19 +25,19 @@ const PacientesTable = ({ pacientes, consultas }) => {
   };
 
   const colors = {
-    bgLight: 'bg-blue-100', // Fondo claro para el avatar
-    textDark: 'text-blue-800', // Color de texto oscuro para el avatar
-    badge: 'bg-blue-200 text-blue-800', // Estilo para el badge de especialidad
-    hoverBg: 'hover:bg-blue-50', // Fondo al pasar el ratón
-    border: 'border-blue-200', // Color del borde
-    icon: 'text-blue-500', // Color de los iconos
+    bgLight: 'bg-blue-100',
+    textDark: 'text-blue-800',
+    badge: 'bg-blue-200 text-blue-800',
+    hoverBg: 'hover:bg-blue-50',
+    border: 'border-blue-200',
+    icon: 'text-blue-500',
     button: {
-      primary: 'bg-blue-500 text-white hover:bg-blue-600', // Estilo para botones primarios
-      secondary: 'bg-gray-200 text-gray-700 hover:bg-gray-300', // Estilo para botones secundarios
+      primary: 'bg-blue-500 text-white hover:bg-blue-600',
+      secondary: 'bg-gray-200 text-gray-700 hover:bg-gray-300',
     },
   };
   return (
-    <div className="p-4 bg-white rounded-3xl flex flex-col justify-between">
+    <div className="p-4 max-w-7xl bg-white rounded-3xl flex flex-col justify-between">
       <header className='flex w-full justify-between'>
         <h1 className='font-semibold text-slate-500 text-2xl my-4'>Tienes <span className='font-extrabold text-slate-600'>{filteredPacientes.length}</span> pacientes en total</h1>
         <input
@@ -48,7 +48,7 @@ const PacientesTable = ({ pacientes, consultas }) => {
         />
       </header>
       <motion.table className="text-left rounded-lg overflow-hidden min-w-6xl">
-        <thead className="bg-blue-500 text-white">
+        <thead className="bg-blue-50 text-slate-600">
           <tr>
             <th className="p-3">Nombre</th>
             <th className="p-3">Apellido</th>
@@ -66,10 +66,8 @@ const PacientesTable = ({ pacientes, consultas }) => {
               key={paciente.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2, delay: index * 0.05 }}
-              whileTap={{ scale: 0.99 }}
-              whileHover={{ scale: 1.01 }}
-              className={`${(index % 2 !== 0) && 'bg-blue-50'} select-none cursor-pointer hover:shadow-sm`}
+              transition={{ duration: 0.2, delay: index * 0.05 }} 
+              className={`${(index % 2 !== 0) ? 'bg-gray-50' : 'bg-white'} select-none cursor-pointer hover:bg-slate-200 transition-all duration-200`}
               onClick={() => handleRowClick(paciente)}
             >
               <td className="p-3">{paciente.nombre}</td>
@@ -115,5 +113,4 @@ const PacientesTable = ({ pacientes, consultas }) => {
     </div>
   );
 };
-
 export default PacientesTable;
