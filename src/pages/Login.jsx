@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Contexto from '../contexto/Contexto';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, LogIn, Stethoscope, Users, ClipboardList, Activity } from 'lucide-react'; // Iconos de Lucide
+import clinicaSoft from '../assets/iconos/clinicaSoftLogo.svg'
 
 const Login = () => {
   const { setLogeado } = useContext(Contexto);
@@ -14,22 +15,22 @@ const Login = () => {
 
   const slides = [
     {
-      icon: <Stethoscope className="w-16 h-16 text-blue-100" />,
+      icon: <Stethoscope className="w-56 h-56 text-blue-100" />,
       title: "Gestión de Consultas",
       description: "Consulta y gestiona todas las consultas médicas de tus pacientes de manera eficiente.",
     },
     {
-      icon: <Users className="w-16 h-16 text-blue-100" />,
+      icon: <Users className="w-56 h-56 text-blue-100" />,
       title: "Administración de Pacientes",
       description: "Mantén un registro detallado de tus pacientes y su historial médico.",
     },
     {
-      icon: <ClipboardList className="w-16 h-16 text-blue-100" />,
+      icon: <ClipboardList className="w-56 h-56 text-blue-100" />,
       title: "Servicios Médicos",
       description: "Gestiona los servicios médicos ofrecidos por tu institución.",
     },
     {
-      icon: <Activity className="w-16 h-16 text-blue-100" />,
+      icon: <Activity className="w-56 h-56 text-blue-100" />,
       title: "Dashboard de Datos",
       description: "Visualiza métricas clave en tiempo real para una toma de decisiones informada.",
     },
@@ -38,7 +39,7 @@ const Login = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000); // Cambia de slide cada 5 segundos
+    }, 5000); 
     return () => clearInterval(interval);
   }, [slides.length]);
 
@@ -47,7 +48,7 @@ const Login = () => {
     setTimeout(() => {
       setLogeado(true);
       navegacion('/dashboard');
-    }, 500); // Duración de la animación de salida
+    }, 500); 
   };
 
   const goToSlide = (index) => {
@@ -55,6 +56,7 @@ const Login = () => {
   };
 
   return (
+    <section className='overflow-hidden'>
     <AnimatePresence>
       {!isExiting && (
         <motion.main
@@ -62,21 +64,25 @@ const Login = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.5 }}
-          className='flex justify-center items-center bg-gradient-to-r from-blue-50 to-blue-100 w-full h-screen'
+          className='flex justify-center items-center bg-gradient-to-r from-blue-50 to-blue-100 w-full h-screen '
         >
-          {/* Contenedor principal */}
-          <div className='flex bg-white rounded-xl shadow-lg w-4/5 max-w-6xl overflow-hidden'>
-            {/* Sección izquierda: Carrusel */}
+          {/* Principal Container */}
+          <div className='flex w-full h-full bg-white  shadow-lg  overflow-hidden'>
+            {/* Carrousel */}
             <div className='w-1/2 p-8 bg-gradient-to-r from-blue-500 to-blue-600 text-white flex flex-col justify-center items-center'>
+              <header className='flex items-center absolute top-4 left-0'>
+                <img src={clinicaSoft} alt='Logo de ClinicaSoft' className='w-20'/>
+                <h1 className='text-3xl font-bold text-blue-300'>ClinicaSoft</h1>
+              </header>
               <motion.div
                 key={currentSlide}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 1.0 }}
                 className='text-center'
               >
-                <div className='mb-6'>{slides[currentSlide].icon}</div>
+                <div className='mb-6 flex justify-center'>{slides[currentSlide].icon}</div>
                 <h2 className='text-2xl font-bold mb-4'>{slides[currentSlide].title}</h2>
                 <p className='text-gray-100'>{slides[currentSlide].description}</p>
               </motion.div>
@@ -95,13 +101,13 @@ const Login = () => {
               </div>
             </div>
 
-            {/* Sección derecha: Formulario de inicio de sesión */}
-            <div className='w-1/2 p-8 flex flex-col justify-center'>
-              <h1 className='text-3xl font-bold text-blue-500 mb-4'>Bienvenido al Sistema Hospitalario</h1>
+            {/* Form */}
+            <div className='w-1/2 p-8 flex flex-col justify-center items-center '>
+              <h1 className='text-3xl font-bold text-blue-500 mb-4'>¡Bienvenido/a!</h1>
               <p className='text-gray-600 mb-8'>
                 Accede a tu cuenta para gestionar consultas, pacientes, servicios y más.
               </p>
-              <div className='space-y-4'>
+              <div className='space-y-4 w-1/2'>
                 <div className='flex items-center border border-gray-200 rounded-lg p-3'>
                   <User className='text-gray-400 mr-2' />
                   <input
@@ -135,6 +141,7 @@ const Login = () => {
         </motion.main>
       )}
     </AnimatePresence>
+    </section>
   );
 };
 
