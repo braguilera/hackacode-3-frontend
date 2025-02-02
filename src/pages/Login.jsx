@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Contexto from '../contexto/Contexto';
 import { useNavigate } from 'react-router-dom';
-import { User, Lock, LogIn, Stethoscope, Users, ClipboardList, Activity } from 'lucide-react'; // Iconos de Lucide
+import { User, Lock, LogIn, Stethoscope, Users, ClipboardList, Activity } from 'lucide-react'; 
 import clinicaSoft from '../assets/iconos/clinicaSoftLogo.svg';
 
 const Login = () => {
@@ -12,7 +12,7 @@ const Login = () => {
   const [contraseña, setContraseña] = useState('');
   const [isExiting, setIsExiting] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const intervalRef = useRef(null); // Referencia para el intervalo
+  const intervalRef = useRef(null); 
 
   const slides = [
     {
@@ -37,14 +37,12 @@ const Login = () => {
     },
   ];
 
-  // Función para iniciar el intervalo del carrusel
   const startInterval = () => {
     intervalRef.current = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000); // Cambia de slide cada 5 segundos
+    }, 5000); 
   };
 
-  // Función para detener el intervalo del carrusel
   const stopInterval = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -52,8 +50,8 @@ const Login = () => {
   };
 
   useEffect(() => {
-    startInterval(); // Iniciar el intervalo al montar el componente
-    return () => stopInterval(); // Detener el intervalo al desmontar el componente
+    startInterval();
+    return () => stopInterval(); 
   }, [slides.length]);
 
   const manejarLogeo = () => {
@@ -61,17 +59,25 @@ const Login = () => {
     setTimeout(() => {
       setLogeado(true);
       navegacion('/dashboard');
-    }, 500); // Duración de la animación de salida
+    }, 500); 
   };
 
   const goToSlide = (index) => {
-    stopInterval(); // Detener el intervalo actual
-    setCurrentSlide(index); // Cambiar al slide seleccionado
-    startInterval(); // Reiniciar el intervalo
+    stopInterval();
+    setCurrentSlide(index);
+    startInterval(); 
   };
 
   return (
-    <section className='overflow-hidden'>
+    <section className='flex'>
+
+    <aside className=' absolute top-0 flex justify-center items-center bg-white w-full h-screen z-10'>
+      <div className='flex justify-center bg-gradient-to-r from-blue-500 to-blue-600 w-full h-screen'></div>
+      <div></div>
+      <div className='w-full flex'></div>
+      <div></div>
+    </aside>
+
       <AnimatePresence>
         {!isExiting && (
           <motion.main
@@ -79,59 +85,58 @@ const Login = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{ duration: 0.5 }}
-            className='flex justify-center items-center bg-gradient-to-r from-blue-50 to-blue-100 w-full h-screen'
+            className='flex justify-center items-center bg-gradient-to-r from-blue-50 to-blue-100 w-full h-screen z-20'
           >
-            {/* Contenedor principal */}
+            {/* Principal container */}
             <div className='flex w-full h-full bg-white shadow-lg overflow-hidden'>
-              {/* Carrusel */}
-              <div className='w-1/2 p-8 bg-gradient-to-r from-blue-500 to-blue-600 text-white flex flex-col justify-center items-center relative'>
+
+              {/* Carruosel section*/}
+              <section className='w-1/2 p-8 bg-gradient-to-r from-blue-500 to-blue-600 text-white flex flex-col justify-center items-center relative'>
                 <header className='flex items-center absolute top-4 left-4'>
                   <img src={clinicaSoft} alt='Logo de ClinicaSoft' className='w-20' />
                   <h1 className='text-3xl font-bold text-blue-300'>ClinicaSoft</h1>
                 </header>
 
-                {/* Contenedor del carrusel con animación */}
                 <AnimatePresence mode='wait'>
-                  <motion.div
+                  <motion.main
                     key={currentSlide}
-                    initial={{ opacity: 0, x: 20 }} // Entra desde la derecha
-                    animate={{ opacity: 1, x: 0 }} // Se queda en el centro
-                    exit={{ opacity: 0, x: -20 }} // Sale hacia la izquierda
-                    transition={{ duration: 0.7 }}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.5 }}
                     className='text-center'
                   >
-                    <div className='mb-6 flex justify-center'>
+                    <article className='mb-6 flex justify-center'>
                       <div className='p-6 bg-blue-400 rounded-full'>
                         {slides[currentSlide].icon}
                       </div>
-                    </div>
+                    </article>
                     <h2 className='text-2xl font-bold mb-4'>{slides[currentSlide].title}</h2>
                     <p className='text-gray-100'>{slides[currentSlide].description}</p>
-                  </motion.div>
+                  </motion.main>
                 </AnimatePresence>
 
-                {/* Puntos de navegación */}
-                <div className='flex space-x-2 mt-6'>
+                <footer className='flex space-x-2 mt-6'>
                   {slides.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => goToSlide(index)}
-                      className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      className={`w-3 h-3 rounded-full transition-all duration-800 ${
                         currentSlide === index ? 'bg-slate-100' : 'bg-blue-300 scale-75'
                       }`}
                     />
                   ))}
-                </div>
-              </div>
+                </footer>
+              </section>
 
-              {/* Formulario de inicio de sesión */}
-              <div className='w-1/2 p-8 flex flex-col justify-center items-center'>
+              {/* Form section */}
+              <section className='w-1/2 p-8 flex flex-col justify-center items-center'>
                 <h1 className='text-3xl font-bold text-blue-500 mb-4'>¡Bienvenido/a!</h1>
                 <p className='text-gray-600 mb-8'>
                   Accede a tu cuenta para gestionar consultas, pacientes, servicios y más.
                 </p>
-                <div className='space-y-4 w-1/2'>
-                  <div className='flex items-center border border-gray-200 rounded-lg p-3'>
+                <main className='space-y-4 w-1/2'>
+                  <article className='flex items-center border border-gray-200 rounded-lg p-3'>
                     <User className='text-gray-400 mr-2' />
                     <input
                       type='text'
@@ -140,8 +145,8 @@ const Login = () => {
                       onChange={(e) => setUsuario(e.target.value)}
                       className='w-full focus:outline-none'
                     />
-                  </div>
-                  <div className='flex items-center border border-gray-200 rounded-lg p-3'>
+                  </article>
+                  <article className='flex items-center border border-gray-200 rounded-lg p-3'>
                     <Lock className='text-gray-400 mr-2' />
                     <input
                       type='password'
@@ -150,7 +155,7 @@ const Login = () => {
                       onChange={(e) => setContraseña(e.target.value)}
                       className='w-full focus:outline-none'
                     />
-                  </div>
+                  </article>
                   <button
                     onClick={manejarLogeo}
                     className='w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center justify-center'
@@ -158,8 +163,8 @@ const Login = () => {
                     <LogIn className='mr-2' />
                     Iniciar Sesión
                   </button>
-                </div>
-              </div>
+                </main>
+              </section>
             </div>
           </motion.main>
         )}
