@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CircleCheck, X } from 'lucide-react';
+import { CircleCheck, X, Trash2, Edit3 } from 'lucide-react';
 import PacienteDetails from './PacienteDetails';
 
-const PacientesTable = ({ pacientes, consultas }) => {
+const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filterDNI, setFilterDNI] = useState('');
   const [selectedPaciente, setSelectedPaciente] = useState(null);
@@ -38,7 +38,7 @@ const PacientesTable = ({ pacientes, consultas }) => {
   };
 
   return (
-    <div className="p-4 w-full h-[87%] bg-white rounded-3xl shadow-sm flex flex-col justify-between">
+    <div className="p-4 w-full h-[90%] bg-white rounded-3xl shadow-sm flex flex-col justify-between">
       <main className="w-full flex flex-col">
         <header className="flex w-full justify-between mb-6">
           <h1 className="font-semibold text-slate-600 text-2xl">
@@ -62,6 +62,7 @@ const PacientesTable = ({ pacientes, consultas }) => {
               <th className="p-4 font-semibold">Teléfono</th>
               <th className="p-4 font-semibold">Dirección</th>
               <th className="p-4 font-semibold">Obra Social</th>
+              <th className="p-4"></th>
             </tr>
           </thead>
           <tbody>
@@ -71,7 +72,7 @@ const PacientesTable = ({ pacientes, consultas }) => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2, delay: index * 0.05 }}
-                className={`${index % 2 !== 0 ? 'bg-gray-50' : 'bg-white'} cursor-pointer hover:bg-blue-50 transition-colors duration-200`}
+                className={`${index % 2 !== 0 ? 'bg-gray-50' : 'bg-white'} cursor-pointer hover:bg-blue-50 transition-colors duration-200 group`}
                 onClick={() => handleRowClick(paciente)}
               >
                 <td className="p-4">{paciente.nombre} {paciente.apellido}</td>
@@ -82,7 +83,7 @@ const PacientesTable = ({ pacientes, consultas }) => {
                 <td className="p-4">{paciente.direccion}</td>
                 <td className="p-4">
                   {paciente.tieneObraSocial ? (
-                    <span className="bg-green-100 flex items-center gap-1 py-1 px-3 rounded-full text-sm font-semibold text-green-700">
+                    <span className="bg-green-100 flex items-center gap-1 py-1 px-4 rounded-full text-sm font-semibold text-green-700">
                       <CircleCheck size={16} className="text-green-600" /> Sí
                     </span>
                   ) : (
@@ -90,6 +91,25 @@ const PacientesTable = ({ pacientes, consultas }) => {
                       <X size={16} className="text-gray-500" /> No
                     </span>
                   )}
+                </td>
+                {/* Botones de editar y borrar */}
+                <td className="p-4">
+                  <aside className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600 shadow-sm"
+                      onClick={(e) => { e.stopPropagation(); onEdit(paciente); }}
+                    >
+                      <Edit3 size={16} />
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      className="p-1.5 rounded-full hover:bg-red-50 text-gray-600 hover:text-red-500 shadow-sm"
+                      onClick={(e) => { e.stopPropagation(); onDelete(paciente); }}
+                    >
+                      <Trash2 size={16} />
+                    </motion.button>
+                  </aside>
                 </td>
               </motion.tr>
             ))}
@@ -104,8 +124,8 @@ const PacientesTable = ({ pacientes, consultas }) => {
             onClick={() => paginate(i + 1)}
             className={`mx-1 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
               currentPage === i + 1
-                ? 'bg-blue-500 text-white hover:bg-blue-600'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'text-gray-600 border border-gray-600 cursor-default'
+                : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
             {i + 1}
