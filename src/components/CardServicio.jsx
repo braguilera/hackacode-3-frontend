@@ -47,14 +47,14 @@ const CardServicio = ({ dataServicio, onEdit, onDelete }) => {
             <aside className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <motion.button
                     whileHover={{ scale: 1.1 }}
-                    className="p-1.5 rounded-full bg-white hover:bg-gray-50 text-gray-600 shadow-sm border"
+                    className="p-1.5 rounded-full bg-white hover:bg-gray-50 text-gray-600 shadow-sm"
                     onClick={(e) => { e.stopPropagation(); onEdit(); }}
                 >
                     <Edit3 size={16} />
                 </motion.button>
                 <motion.button
                     whileHover={{ scale: 1.1 }}
-                    className="p-1.5 rounded-full bg-white hover:bg-red-50 text-gray-600 hover:text-red-500 shadow-sm border"
+                    className="p-1.5 rounded-full bg-white hover:bg-red-50 text-gray-600 hover:text-red-500 shadow-sm"
                     onClick={(e) => { e.stopPropagation(); onDelete(); }}
                 >
                     <Trash2 size={16} />
