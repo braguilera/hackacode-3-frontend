@@ -2,8 +2,6 @@ import React from 'react'
 import CardMedico from '../components/CardMedico'
 import data from '../tests/medicos.json'
 
-
-
 const Medicos = () => {
   const {medicos} = data;
 
