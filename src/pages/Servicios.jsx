@@ -24,9 +24,9 @@ const Servicios = () => {
           <span className='text-gray-400 font-normal ml-2 text-lg'>({servicios.length} disponibles)</span>
         </h2>
         
-        <article className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pr-4 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 scroll'>
-          <button className='border-gray-200 border-2 border-dashed rounded-xl flex justify-center items-center'>
-            <Plus size={68} className='text-gray-300 '></Plus>
+        <article className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pr-4 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50'>
+          <button className='border-gray-300 border-2 border-dashed rounded-xl flex justify-center items-center p-6 group hover:bg-blue-50 hover:border-blue-400 transition-all duration-300'>
+            <Plus size={48} className='text-gray-400 group-hover:text-blue-500 transition-all duration-300' />
           </button>
           {servicios.map((servicio) => (
             <CardServicio
@@ -47,6 +47,9 @@ const Servicios = () => {
         </h2>
         
         <article className='flex flex-col gap-4 pr-2 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-orange-200 scrollbar-track-gray-50'>
+          <button className='border-gray-300 border-2 border-dashed rounded-xl flex justify-center items-center p-6 group  hover:bg-orange-50 hover:border-orange-400 transition-all duration-300'>
+            <Plus size={48} className='text-gray-400 group-hover:text-orange-500 transition-all duration-300' />
+          </button>
           {paquetes.map((paquete) => (
             <CardPaquete
               key={paquete.id}
