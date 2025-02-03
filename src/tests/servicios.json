@@ -12,6 +12,19 @@
         { "id": 10, "nombre": "Cirugía Menor", "precio": 500.00, "descripcion": "Procedimientos quirúrgicos ambulatorios de baja complejidad." },
         { "id": 11, "nombre": "Cirugía Mayor", "precio": 3000.00, "descripcion": "Intervenciones quirúrgicas complejas con hospitalización." },
         { "id": 12, "nombre": "Fisioterapia", "precio": 70.00, "descripcion": "Tratamiento de rehabilitación para movilidad y dolor." },
-        { "id": 13, "nombre": "Terapia Respiratoria", "precio": 90.00, "descripcion": "Tratamiento para enfermedades pulmonares y respiratorias." }
+        { "id": 13, "nombre": "Terapia Respiratoria", "precio": 90.00, "descripcion": "Tratamiento para enfermedades pulmonares y respiratorias." },
+        { "id": 14, "nombre": "Consulta General", "precio": 80.00, "descripcion": "Consulta médica general con evaluación inicial y diagnóstico." },
+        { "id": 15, "nombre": "Consulta Cardiología", "precio": 120.00, "descripcion": "Evaluación especializada del sistema cardiovascular." },
+        { "id": 16, "nombre": "Consulta Pediatría", "precio": 100.00, "descripcion": "Atención médica para niños y adolescentes." },
+        { "id": 17, "nombre": "Consulta Neurología", "precio": 150.00, "descripcion": "Diagnóstico y tratamiento de enfermedades neurológicas." },
+        { "id": 18, "nombre": "Consulta Dermatología", "precio": 90.00, "descripcion": "Evaluación de enfermedades de la piel, cabello y uñas." },
+        { "id": 19, "nombre": "Consulta Oftalmología", "precio": 110.00, "descripcion": "Examen ocular completo y diagnóstico de problemas visuales." },
+        { "id": 20, "nombre": "Análisis de Sangre", "precio": 50.00, "descripcion": "Pruebas de laboratorio para evaluación de salud general." },
+        { "id": 21, "nombre": "Radiografía", "precio": 90.00, "descripcion": "Imágenes médicas para diagnóstico de fracturas y enfermedades." },
+        { "id": 22, "nombre": "Ecografía", "precio": 130.00, "descripcion": "Estudio por ultrasonido para diagnóstico de órganos internos." },
+        { "id": 23, "nombre": "Cirugía Menor", "precio": 500.00, "descripcion": "Procedimientos quirúrgicos ambulatorios de baja complejidad." },
+        { "id": 24, "nombre": "Cirugía Mayor", "precio": 3000.00, "descripcion": "Intervenciones quirúrgicas complejas con hospitalización." },
+        { "id": 25, "nombre": "Fisioterapia", "precio": 70.00, "descripcion": "Tratamiento de rehabilitación para movilidad y dolor." },
+        { "id": 26, "nombre": "Terapia Respiratoria", "precio": 90.00, "descripcion": "Tratamiento para enfermedades pulmonares y respiratorias." }
     ]
 }
