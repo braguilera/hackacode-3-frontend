@@ -3,7 +3,11 @@ const { fontFamily } = require("tailwindcss/defaultTheme");
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
-  content: ["app/**/*.{ts,tsx}", "components/**/*.{ts,tsx}", "./src/**/*.{js,jsx,ts,tsx}",],
+  content: [
+    "app/**/*.{ts,tsx}",
+    "components/**/*.{ts,tsx}",
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
   theme: {
     container: {
       center: true,
@@ -112,12 +116,38 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "shimmer-slide":
-        "shimmer-slide var(--speed) ease-in-out infinite alternate",
+          "shimmer-slide var(--speed) ease-in-out infinite alternate",
         "spin-around": "spin-around calc(var(--speed) * 2) infinite linear",
         marquee: "marquee var(--duration) linear infinite",
         "marquee-vertical": "marquee-vertical var(--duration) linear infinite",
       },
+      scrollbar: (theme) => ({
+        thin: {
+          width: '8px',
+          track: theme('colors.gray.100'),
+          thumb: theme('colors.gray.300'),
+          '&:hover': {
+            thumb: theme('colors.gray.400')
+          }
+        },
+        primary: {
+          width: '8px',
+          track: theme('colors.blue.50'),
+          thumb: theme('colors.blue.200'),
+          '&:hover': {
+            thumb: theme('colors.blue.300')
+          }
+        },
+        secondary: {
+          width: '8px',
+          track: theme('colors.orange.50'),
+          thumb: theme('colors.orange.200'),
+          '&:hover': {
+            thumb: theme('colors.orange.300')
+          }
+        }
+      }),
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require('tailwind-scrollbar')],
 };
