@@ -14,7 +14,6 @@ const SlideOverModal = ({
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.3 }}
@@ -23,7 +22,7 @@ const SlideOverModal = ({
             onClick={onClose}
           />
 
-          {/* Slide-over panel */}
+          {/* Panel */}
           <motion.div
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
@@ -48,7 +47,7 @@ const SlideOverModal = ({
               </div>
             </header>
 
-            {/* Content with scroll */}
+            {/* Content */}
             <div className="flex-1 overflow-y-auto">
               <div className="p-6">
                 {children}

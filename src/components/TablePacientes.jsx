@@ -92,7 +92,7 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
                     </span>
                   )}
                 </td>
-                {/* Botones de editar y borrar */}
+                {/* Edit and Delete */}
                 <td className="p-4">
                   <aside className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                     <motion.button
@@ -117,6 +117,7 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
         </motion.table>
       </main>
 
+      {/* Pagination */}
       <div className="flex justify-center mt-6">
         {Array.from({ length: Math.ceil(filteredPacientes.length / itemsPerPage) }, (_, i) => (
           <button
@@ -133,6 +134,7 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
         ))}
       </div>
 
+      {/* Modal */}
       {selectedPaciente && (
         <PacienteDetails
           isOpen={!!selectedPaciente}

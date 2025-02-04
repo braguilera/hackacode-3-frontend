@@ -38,7 +38,7 @@ const PacienteDetails = ({ isOpen, onClose, paciente, consultas, colors }) => {
             </div>
         </div>
 
-        {/* Información personal */}
+        {/* Personal Information */}
         <div className="space-y-1 border-t border-b py-4">
             <DetailRow 
             icon={Mail} 
@@ -72,7 +72,7 @@ const PacienteDetails = ({ isOpen, onClose, paciente, consultas, colors }) => {
             />
         </div>
 
-        {/* Consultas */}
+        {/* Medical Consultations */}
         <div className="mt-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
                 Consultas
@@ -88,7 +88,7 @@ const PacienteDetails = ({ isOpen, onClose, paciente, consultas, colors }) => {
             ))}
         </div>
     </SlideOverModal>
-  );
+);
 };
 
 export default PacienteDetails;

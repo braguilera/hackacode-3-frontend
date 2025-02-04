@@ -14,14 +14,12 @@ const Consultas = () => {
   const [showTimeSlots, setShowTimeSlots] = useState(false);
   const [startDate, endDate] = dateRange;
 
-// Función para generar los turnos con fechas específicas
 const generateTimeSlots = (medico, start, end) => {
   if (!medico || !start || !end) return [];
   
   const dates = [];
   const currentDate = new Date(start);
   
-  // Generar todas las fechas en el rango
   while (currentDate <= end) {
     dates.push(new Date(currentDate));
     currentDate.setDate(currentDate.getDate() + 1);
@@ -52,7 +50,7 @@ const generateTimeSlots = (medico, start, end) => {
               minute: '2-digit'
             })
           );
-          currentTime = new Date(currentTime.getTime() + 30 * 60000); // +30 minutos
+          currentTime = new Date(currentTime.getTime() + 30 * 60000); 
         }
         
         return {
@@ -64,7 +62,7 @@ const generateTimeSlots = (medico, start, end) => {
   });
 };
 
-// Actualizar el uso de la función
+
 const timeSlots = selectedMedico 
   ? generateTimeSlots(selectedMedico, startDate, endDate)
   : [];
@@ -75,7 +73,7 @@ const timeSlots = selectedMedico
       animate={{ opacity: 1 }}
       className="w-5/6 h-1/2 self-center p-6 bg-white rounded-3xl shadow-sm max-w-4xl mx-auto"
     >
-      {/* Selector de Médico */}
+      {/* Medic Selector */}
       <div className="mb-8">
         <Listbox value={selectedMedico} onChange={setSelectedMedico}>
           {({ open }) => (
@@ -110,7 +108,7 @@ const timeSlots = selectedMedico
         </Listbox>
       </div>
 
-      {/* Tipo de Consulta */}
+      {/* Consultation Type */}
       {selectedMedico && (
         <motion.div
           initial={{ y: -10, opacity: 0 }}
@@ -133,7 +131,7 @@ const timeSlots = selectedMedico
         </motion.div>
       )}
 
-      {/* Selector de Fechas */}
+      {/* Date Selector */}
       {consultType && (
         <motion.div
           initial={{ y: -10, opacity: 0 }}
@@ -155,7 +153,7 @@ const timeSlots = selectedMedico
           />
           </div>
 
-          {/* Botón para ver turnos */}
+          {/* Button see turns */}
           {startDate && endDate && (
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -171,7 +169,7 @@ const timeSlots = selectedMedico
 
 
 
-      {/* Modal de Turnos */}
+      {/* Turns Modal */}
       {showTimeSlots && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
           <motion.div
@@ -197,7 +195,7 @@ const timeSlots = selectedMedico
               </button>
             </div>
 
-            {/* Listado de Turnos */}
+            {/* Turns List */}
             <div className="max-h-96 overflow-auto">
               {timeSlots.map((slot, index) => (
                 <div key={index} className="border-b last:border-0 py-4">
@@ -230,7 +228,7 @@ const timeSlots = selectedMedico
   );
 };
 
-// Componente para mostrar la opción del médico
+// Medic options
 const MedicoOption = ({ dataMedico }) => {
   const especialidad = dataMedico.especialidades[0].nombre;
   const colors = especialidadColors[especialidad] || {
@@ -258,7 +256,7 @@ const MedicoOption = ({ dataMedico }) => {
   );
 };
 
-// Colores para especialidades
+// speciality colors
 const especialidadColors = {
   'Cardiología': { 
     bgLight: 'bg-red-100',

@@ -40,7 +40,7 @@ const DoctorDetails = ({ isOpen, onClose, doctor, colors }) => {
         </div>
       </div>
 
-      {/* Información personal */}
+      {/* Personal Information */}
       <div className="space-y-1 border-t border-b py-4">
         <DetailRow 
           icon={Mail} 
@@ -69,7 +69,7 @@ const DoctorDetails = ({ isOpen, onClose, doctor, colors }) => {
         />
       </div>
 
-      {/* Disponibilidad */}
+      {/* Disponibility */}
       <div className="mt-6">
         <h3 className="text-lg font-medium text-gray-900 mb-4">
           Disponibilidad
@@ -87,7 +87,7 @@ const DoctorDetails = ({ isOpen, onClose, doctor, colors }) => {
         ))}
       </div>
 
-      {/* Próximos turnos */}
+      {/* Next turns */}
       <div className="mt-6">
         <h3 className="text-lg font-medium text-gray-900 mb-4">
           Próximos turnos

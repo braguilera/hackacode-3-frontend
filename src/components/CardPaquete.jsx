@@ -17,7 +17,7 @@ const CardPaquete = ({ dataPaquete, onEdit, onDelete }) => {
                 </aside>
                 <h3 className="text-lg font-semibold text-gray-800">{dataPaquete.nombre}</h3>
 
-                {/* Botones de editar y borrar */}
+                {/* Edit and Delete */}
                 <aside className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                     <motion.button
                         whileHover={{ scale: 1.1 }}

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, Stethoscope, Users, User, ClipboardList, LogOut } from 'lucide-react'; // Iconos de Lucide
+import { Home, Stethoscope, Users, User, ClipboardList, LogOut } from 'lucide-react';
 import Contexto from '../contexto/Contexto';
 
 const Nav = () => {
@@ -14,14 +14,12 @@ const Nav = () => {
 
   return (
     <main className='bg-white flex flex-col justify-between py-6 w-64 text-lg box-border shadow-xl h-screen'>
-      {/* Sección superior con enlaces */}
       <section className='flex flex-col px-4 box-border'>
-        {/* Logo */}
         <header className='flex justify-center py-6 mb-4'>
           <span className='text-2xl font-bold text-blue-500'>Logo</span>
         </header>
 
-        {/* Enlaces de navegación */}
+        {/* Links Navigate */}
         <NavLink
           to="dashboard"
           className={({ isActive }) =>
@@ -83,7 +81,7 @@ const Nav = () => {
         </NavLink>
       </section>
 
-      {/* Footer con botón de cerrar sesión */}
+      {/* Logout */}
       <footer className='px-4 py-6 border-t border-gray-100'>
         <button
           onClick={logout}

@@ -57,7 +57,7 @@ const CardMedico = ({ dataMedico, onEdit, onDelete }) => {
         transition={{ duration: 0.2 }}
         className="w-full bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden relative group cursor-pointer select-none"
     >
-      {/* Botones de editar y borrar */}
+      {/* Edit and Delete */}
       <aside className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
         <motion.button
             whileHover={{ scale: 1.1 }}
@@ -77,7 +77,6 @@ const CardMedico = ({ dataMedico, onEdit, onDelete }) => {
         </motion.button>
       </aside>
 
-      {/* Cabecera */}
         <header className="p-4 flex items-start gap-4">
             <motion.div
             className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-semibold shadow-sm ${colors.bgLight}`}
@@ -95,7 +94,6 @@ const CardMedico = ({ dataMedico, onEdit, onDelete }) => {
             </div>
         </header>
 
-      {/* Estadísticas */}
         <div className="grid grid-cols-2 divide-x border-t">
                 <div className="p-4 flex items-center gap-2">
                     <User size={18} className="text-gray-400" />
@@ -116,6 +114,8 @@ const CardMedico = ({ dataMedico, onEdit, onDelete }) => {
                 </div>
         </div>
     </motion.article>
+
+    {/* Modal */}    
     <DoctorDetails
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}

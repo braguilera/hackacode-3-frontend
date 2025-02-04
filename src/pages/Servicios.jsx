@@ -9,7 +9,6 @@ const Servicios = () => {
   const { servicios } = dataServicios;
   const { paquetes } = dataPaquetes;
 
-  // Funciones de ejemplo
   const editService = () => alert("editado");
   const deleteService = () => alert("eliminado");
   const editPaquete = () => alert("editado");
@@ -17,7 +16,8 @@ const Servicios = () => {
 
   return (
     <main className='w-full h-full flex gap-6 p-6 bg-gray-50'>
-      {/* Contenedor Principal - Servicios */}
+
+      {/* Principal Container - Services */}
       <section className='flex-1 flex flex-col h-full'>
         <h2 className='text-2xl font-bold text-gray-800 mb-4 px-2'>
           Servicios Médicos
@@ -39,7 +39,7 @@ const Servicios = () => {
         </article>
       </section>
 
-      {/* Contenedor Lateral - Paquetes */}
+      {/* Secundary Container - Packages */}
       <section className='w-96 min-w-96 flex flex-col h-full border-l border-gray-200 pl-6'>
         <h2 className='text-2xl font-bold text-gray-800 mb-4 px-2'>
           Paquetes

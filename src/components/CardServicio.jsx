@@ -2,7 +2,6 @@ import React from 'react';
 import { Trash2, Edit3, DollarSign } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-// Paleta de colores por categoría
 const categoryColors = {
     'general': { bg: 'bg-blue-100', text: 'text-blue-800' },
     'especialidad': { bg: 'bg-green-100', text: 'text-green-800' },
@@ -23,7 +22,6 @@ const CardServicio = ({ dataServicio, onEdit, onDelete }) => {
     const category = categoryColors.getCategory(dataServicio.nombre);
     const colors = categoryColors[category];
     
-    // Limpiar el título para especialidades
     const cleanTitle = dataServicio.nombre
         .replace('Consulta ', '')
         .replace('Especializada ', '');
@@ -36,14 +34,14 @@ const CardServicio = ({ dataServicio, onEdit, onDelete }) => {
             transition={{ duration: 0.2 }}
             className={`w-full flex flex-col h-40 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden relative group cursor-pointer select-none`}
         >
-            {/* Badge de categoría solo para especialidades */}
+            {/* Specialities */}
             {category !== 'general' && (
                 <div className={`absolute top-3 left-3 ${colors.bg} ${colors.text} px-3 py-1 rounded-full text-xs font-medium`}>
                     {category === 'especialidad' ? 'ESPECIALIDAD' : category.toUpperCase()}
                 </div>
             )}
 
-            {/* Botones de editar y borrar */}
+            {/* Edit and Delete */}
             <aside className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <motion.button
                     whileHover={{ scale: 1.1 }}
@@ -61,7 +59,7 @@ const CardServicio = ({ dataServicio, onEdit, onDelete }) => {
                 </motion.button>
             </aside>
 
-            {/* Contenido principal */}
+            {/* Principal Container */}
             <article className="pt-10 px-4 pb-2 flex flex-col justify-between h-full">
                 <header>
                     <h2 className="text-lg font-semibold text-gray-800 mb-1">
