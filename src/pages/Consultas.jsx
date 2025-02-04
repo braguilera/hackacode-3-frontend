@@ -14,35 +14,66 @@ const Consultas = () => {
   const [showTimeSlots, setShowTimeSlots] = useState(false);
   const [startDate, endDate] = dateRange;
 
-  // Generar horarios basados en disponibilidad
-  const generateTimeSlots = (medico) => {
-    if (!medico) return [];
-    
-    return medico.disponibilidad.map(disp => {
-      const start = new Date(`2000-01-01T${disp.horaInicio}`);
-      const end = new Date(`2000-01-01T${disp.horaFin}`);
-      const hours = [];
-      
-      while (start < end) {
-        hours.push(start.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }));
-        start.setMinutes(start.getMinutes() + 30);
-      }
-      
-      return {
-        day: disp.diaSemana,
-        date: disp.diaSemana, // En realidad debería calcularse según el rango de fechas
-        hours: hours
-      };
-    });
-  };
+// Función para generar los turnos con fechas específicas
+const generateTimeSlots = (medico, start, end) => {
+  if (!medico || !start || !end) return [];
+  
+  const dates = [];
+  const currentDate = new Date(start);
+  
+  // Generar todas las fechas en el rango
+  while (currentDate <= end) {
+    dates.push(new Date(currentDate));
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
 
-  const timeSlots = selectedMedico ? generateTimeSlots(selectedMedico) : [];
+  return medico.disponibilidad.flatMap(disp => {
+    return dates
+      .filter(date => {
+        const dayName = date.toLocaleDateString('es-ES', { weekday: 'long' });
+        return dayName.toLowerCase() === disp.diaSemana.toLowerCase();
+      })
+      .map(date => {
+        const startTime = new Date(date);
+        const [hours, minutes] = disp.horaInicio.split(':');
+        startTime.setHours(hours, minutes);
+        
+        const endTime = new Date(date);
+        const [endHours, endMinutes] = disp.horaFin.split(':');
+        endTime.setHours(endHours, endMinutes);
+        
+        const hoursSlots = [];
+        let currentTime = startTime;
+        
+        while (currentTime < endTime) {
+          hoursSlots.push(
+            currentTime.toLocaleTimeString('es-AR', { 
+              hour: '2-digit', 
+              minute: '2-digit'
+            })
+          );
+          currentTime = new Date(currentTime.getTime() + 30 * 60000); // +30 minutos
+        }
+        
+        return {
+          date: date.toLocaleDateString('es-AR'),
+          day: date.toLocaleDateString('es-ES', { weekday: 'long' }),
+          hours: hoursSlots
+        };
+      });
+  });
+};
+
+// Actualizar el uso de la función
+const timeSlots = selectedMedico 
+  ? generateTimeSlots(selectedMedico, startDate, endDate)
+  : [];
 
   return (
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="p-6 bg-white rounded-3xl shadow-sm max-w-4xl mx-auto"
+      className="w-5/6 h-1/2 self-center p-6 bg-white rounded-3xl shadow-sm max-w-4xl mx-auto"
     >
       {/* Selector de Médico */}
       <div className="mb-8">
@@ -62,7 +93,7 @@ const Consultas = () => {
                   <ChevronDown className={`absolute right-3 top-4 h-5 w-5 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`} />
                 </Listbox.Button>
                 
-                <Listbox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-lg py-2 max-h-96 overflow-auto">
+                <Listbox.Options className="absolute z-10 mt-1 w-full scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 bg-white shadow-lg rounded-lg py-2 max-h-96 overflow-auto">
                   {dataMedico.medicos.map((medico) => (
                     <Listbox.Option
                       key={medico.id}
@@ -92,9 +123,9 @@ const Consultas = () => {
           <select
             value={consultType}
             onChange={(e) => setConsultType(e.target.value)}
-            className="w-full bg-gray-50 rounded-lg p-4 border-2 border-gray-200 hover:border-blue-300 transition-colors"
+            className="w-full bg-gray-50 rounded-lg p-4 border-2 border-gray-200 hover:border-blue-300 transition-colors cursor-pointer"
           >
-            <option value="">Seleccione tipo de consulta</option>
+            <option value="" className='cursor-pointer'>Seleccione tipo de consulta</option>
             <option value="general">Consulta General</option>
             <option value="especialidad">Consulta de Especialidad</option>
             <option value="seguimiento">Seguimiento</option>
@@ -107,37 +138,38 @@ const Consultas = () => {
         <motion.div
           initial={{ y: -10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="mb-8"
+          className="mb-8 flex w-full items-center justify-between"
         >
-          <div className="flex items-center gap-2 mb-4">
-            <Calendar className="text-blue-500" />
-            <span className="text-sm font-medium text-gray-700">
-              Rango de fechas
-            </span>
-          </div>
-          
-          <DatePicker
+          <div className="flex flex-col  items-start  gap-2 mb-4">
+            <div className="flex justify-center items-center text-sm font-medium text-gray-700">
+              <Calendar className="text-blue-500" />
+              <p>Rango de fechas</p>
+            </div>
+            <DatePicker
             selectsRange
             startDate={startDate}
             endDate={endDate}
             onChange={(update) => setDateRange(update)}
-            className="w-full bg-gray-50 rounded-lg p-4 border-2 border-gray-200 hover:border-blue-300"
+            className="w-full bg-gray-50 rounded-lg p-4 border-2 border-gray-200 hover:border-blue-300 cursor-pointer"
             placeholderText="Seleccione fecha inicial y final"
           />
+          </div>
+
+          {/* Botón para ver turnos */}
+          {startDate && endDate && (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setShowTimeSlots(true)}
+              className="w-1/2 self-center bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors"
+            >
+              Ver turnos disponibles
+            </motion.button>
+          )}
         </motion.div>
       )}
 
-      {/* Botón para ver turnos */}
-      {startDate && endDate && (
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => setShowTimeSlots(true)}
-          className="w-full bg-blue-500 text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors"
-        >
-          Ver turnos disponibles
-        </motion.button>
-      )}
+
 
       {/* Modal de Turnos */}
       {showTimeSlots && (
@@ -171,7 +203,9 @@ const Consultas = () => {
                 <div key={index} className="border-b last:border-0 py-4">
                   <div className="flex items-center gap-2 mb-2">
                     <Clock className="text-blue-500 h-4 w-4" />
-                    <span className="font-medium">{slot.day}</span>
+                    <span className="font-medium">
+                      {slot.day.charAt(0).toUpperCase() + slot.day.slice(1)} - {slot.date}
+                    </span>
                   </div>
                   
                   <div className="grid grid-cols-3 gap-2">
