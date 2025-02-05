@@ -49,6 +49,7 @@ const Pacientes = () => {
     }
   };
 
+
   const deletePaciente = async (e) => {
     try {
       await deleteDatos(`/api/pacientes/${e.id}`, 'Error eliminando paciente');

@@ -35,6 +35,11 @@ const Medicos = () => {
     throw error;
   }
   };
+  
+  const handleEditPaciente = (medico) => {
+    setMedicoToEdit(medico);
+    setShowForm(true);
+  };
 
     const handleSubmitMedico = async (medicoData) => {
       try {
@@ -55,14 +60,11 @@ const Medicos = () => {
       }
     };
 
-  const handleEditPaciente = (medico) => {
-    setMedicoToEdit(medico);
-    setShowForm(true);
-  };
+
 
 
   return (
-    <main className='flex w-full  '>
+    <main className='flex w-full flex-col '>
     <button 
         onClick={() => {
           setMedicoToEdit(null);

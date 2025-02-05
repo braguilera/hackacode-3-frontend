@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { X, Plus, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getDatos } from '../api/crud';
 
 const FormPersona = ({ 
     tipo = 'paciente', 
@@ -10,6 +11,10 @@ const FormPersona = ({
     isEditing = false 
   }) => {
   const [formData, setFormData] = useState(initialData || getInitialData(tipo));
+  const [especialidades, setEspecialidades] = useState([])
+
+    const [loading, setLoading] = useState(true);
+    const [errorEspecialidades, setErrorEspecialidades] = useState(null);
   const [disponibilidades, setDisponibilidades] = useState(
     initialData?.disponibilidades || [getNuevaDisponibilidad()]
   );
@@ -74,6 +79,36 @@ const FormPersona = ({
       ...(tipo === 'medico' && { disponibilidades })
     });
   };
+
+  useEffect(() => {
+    const fetchEspecialidades = async () => {
+      try {
+        const data = await getDatos('/api/especialidades', 'Error cargando especialidades');
+        setEspecialidades(data);
+  
+        // Esperar a tener ambas cosas: especialidades y datos del médico
+        if (initialData?.especialidadesIDs && data.length > 0) {
+          // Convertir a string para match con el value del option
+          const initialEspecialidades = initialData.especialidadesIDs.map(String);
+          
+          // Filtrar solo las especialidades existentes
+          const validEspecialidades = initialEspecialidades.filter(id => 
+            data.some(e => e.id.toString() === id)
+          );
+  
+          setFormData(prev => ({
+            ...prev,
+            especialidadesIDs: validEspecialidades
+          }));
+        }
+      } catch (err) {
+        setErrorEspecialidades(err.message);
+      }
+    };
+  
+    fetchEspecialidades();
+  }, [initialData]);
+  
 
   return (
     <motion.div
@@ -174,26 +209,31 @@ const FormPersona = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Especialidades
-              </label>
-              <select
-                multiple
-                name="especialidadesIDs"
-                value={formData.especialidadesIDs}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  especialidadesIDs: Array.from(e.target.selectedOptions, option => option.value)
-                })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                required
-              >
-                {/* Asumiendo que las especialidades vienen de una API */}
-                <option value="1">Cardiología</option>
-                <option value="2">Pediatría</option>
-                <option value="3">Neurología</option>
-              </select>
-            </div>
+  <label className="block text-sm font-medium text-gray-700">
+    Especialidades
+  </label>
+  <select
+    multiple
+    name="especialidadesIDs"
+    value={formData.especialidadesIDs}
+    onChange={(e) => setFormData({
+      ...formData,
+      especialidadesIDs: Array.from(e.target.selectedOptions, option => option.value)
+    })}
+    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 h-32"
+    required
+  >
+    {especialidades.map(especialidad => (
+      <option 
+        key={especialidad.id} 
+        value={especialidad.id} // Asegurar string
+        className="p-2 hover:bg-blue-50"
+      >
+        {especialidad.nombre}
+      </option>
+    ))}
+  </select>
+</div>
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
