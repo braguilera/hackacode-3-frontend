@@ -65,6 +65,9 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
               <th className="p-4"></th>
             </tr>
           </thead>
+          
+          { pacientes
+          ?
           <tbody>
             {currentItems.map((paciente, index) => (
               <motion.tr
@@ -77,7 +80,7 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
               >
                 <td className="p-4">{paciente.nombre} {paciente.apellido}</td>
                 <td className="p-4">{paciente.dni}</td>
-                <td className="p-4">{paciente.fecha_nac}</td>
+                <td className="p-4">{paciente.fechaNac}</td>
                 <td className="p-4">{paciente.email}</td>
                 <td className="p-4">{paciente.telefono}</td>
                 <td className="p-4">{paciente.direccion}</td>
@@ -114,6 +117,10 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
               </motion.tr>
             ))}
           </tbody>
+          :
+          <div>No hay pacientes</div>
+          }
+
         </motion.table>
       </main>
 
@@ -135,7 +142,7 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
       </div>
 
       {/* Modal */}
-      {selectedPaciente && (
+      {/*selectedPaciente && (
         <PacienteDetails
           isOpen={!!selectedPaciente}
           onClose={closeModal}
@@ -143,7 +150,7 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
           consultas={consultas}
           colors={colors}
         />
-      )}
+      )*/}
     </div>
   );
 };
