@@ -2,7 +2,13 @@ import { motion } from 'framer-motion';
 import { X, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-const FormPersona = ({ tipo = 'paciente', onClose, onSubmit, initialData }) => {
+const FormPersona = ({ 
+    tipo = 'paciente', 
+    onClose, 
+    onSubmit, 
+    initialData, 
+    isEditing = false 
+  }) => {
   const [formData, setFormData] = useState(initialData || getInitialData(tipo));
   const [disponibilidades, setDisponibilidades] = useState(
     initialData?.disponibilidades || [getNuevaDisponibilidad()]
@@ -83,7 +89,7 @@ const FormPersona = ({ tipo = 'paciente', onClose, onSubmit, initialData }) => {
       </button>
 
       <h2 className="text-2xl font-bold text-gray-800 mb-6">
-        {initialData ? 'Editar' : 'Crear nuevo'} {tipo}
+        {isEditing ? 'Editar' : 'Crear nuevo'} {tipo}
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
