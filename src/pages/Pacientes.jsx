@@ -1,23 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import TablePacientes from '../components/TablePacientes';
 import { getDatos, deleteDatos, postDatos } from '../api/crud';
+import FormPersona from '../components/FormPersona'
 
 const Pacientes = () => {
   const [pacientes, setPacientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [pacienteData, setPacienteData] = useState(
-    {
-      "nombre": "Nahir",
-      "apellido":"Abregu",
-      "dni": "123",
-      "fechaNac": "2025-02-04",
-      "email": "string@gmail.com",
-      "telefono": "22334455",
-      "direccion": "casua 123",
-      "tieneObraSocial": true
-    }
-  );
+  const [showForm, setShowForm] = useState(false);
 
   const fetchPacientes = async () => {
     try {
@@ -48,15 +38,17 @@ const Pacientes = () => {
     }
   };
 
-  const addPaciente = async () =>{
+  const addPaciente = async (pacienteData) =>{
     try {
       await postDatos('/api/pacientes', pacienteData, 'Error creando médico');
       await fetchPacientes();
+      setShowForm(false);
     } catch (error) {
       console.error(error.message);
       throw error;
     }
   }
+
   
 
   if (loading) return <div>Cargando pacientes...</div>;
@@ -64,13 +56,23 @@ const Pacientes = () => {
 
   return (
     <div className='w-full flex flex-col justify-center items-center box-border mx-10'>
-    <button onClick={addPaciente}>AGREGAR pacientes</button>
+    <button onClick={() => setShowForm(true)}>AGREGAR pacientes</button>
 
       <TablePacientes 
         pacientes={pacientes} 
         onEdit={editPaciente} 
         onDelete={deletePaciente}
       />
+
+      {showForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+          <FormPersona
+            tipo="paciente"
+            onClose={() => setShowForm(false)}
+            onSubmit={addPaciente}
+          />
+        </div>
+      )}
     </div>
   );
 };
