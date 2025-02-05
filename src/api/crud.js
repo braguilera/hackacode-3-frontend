@@ -9,13 +9,13 @@ const handleResponse = async (response, errorMessage) => {
     // Verificar si hay contenido en la respuesta
     const text = await response.text();
     if (!text) {
-        return [];  // ⚠️ Devuelve un array vacío en lugar de null
+        return []; 
     }
 
     try {
         return JSON.parse(text);
     } catch (error) {
-        return text; // En caso de que no sea JSON, devolver el texto
+        return text; 
     }
 };
 

@@ -63,7 +63,7 @@ const CardMedico = ({ dataMedico, onEdit, onDelete }) => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             className="p-2 rounded-full bg-white/90 hover:bg-gray-100 text-gray-600 shadow-sm"
-            onClick={(e) => {e.stopPropagation(); onEdit();}}
+            onClick={(e) => {e.stopPropagation(); onEdit(dataMedico);}}
         >
             <Edit3 size={16} />
         </motion.button>
@@ -71,7 +71,7 @@ const CardMedico = ({ dataMedico, onEdit, onDelete }) => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             className="p-2 rounded-full bg-white/90 hover:bg-red-50 text-gray-600 hover:text-red-500 shadow-sm"
-            onClick={(e) => {e.stopPropagation(); onDelete();}}
+            onClick={(e) => {e.stopPropagation(); onDelete(dataMedico);}}
         >
             <Trash2 size={16} />
         </motion.button>
@@ -115,13 +115,15 @@ const CardMedico = ({ dataMedico, onEdit, onDelete }) => {
         </div>
     </motion.article>
 
-    {/* Modal */}    
+    {/* Modal */}
+    {/*
     <DoctorDetails
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         doctor={dataMedico}
         colors={colors}
     />    
+    */}    
     </>
 );    
 };

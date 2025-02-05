@@ -3,10 +3,12 @@ import { motion } from 'framer-motion';
 import { CircleCheck, X, Trash2, Edit3 } from 'lucide-react';
 import PacienteDetails from './PacienteDetails';
 
+
 const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filterDNI, setFilterDNI] = useState('');
   const [selectedPaciente, setSelectedPaciente] = useState(null);
+
   const itemsPerPage = 10;
 
   // Asegurar que pacientes es un array válido
@@ -33,6 +35,8 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
       setCurrentPage(Math.max(totalPages, 1));
     }
   };
+
+
 
   const colors = {
     bgLight: 'bg-blue-100',

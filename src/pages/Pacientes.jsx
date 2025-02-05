@@ -25,7 +25,7 @@ const Pacientes = () => {
     fetchPacientes();
   }, []);
 
-    const handleEditPaciente = (paciente) => {
+  const handleEditPaciente = (paciente) => {
     setPacienteToEdit(paciente);
     setShowForm(true);
   };
@@ -49,7 +49,6 @@ const Pacientes = () => {
     }
   };
 
-
   const deletePaciente = async (e) => {
     try {
       await deleteDatos(`/api/pacientes/${e.id}`, 'Error eliminando paciente');
@@ -59,9 +58,6 @@ const Pacientes = () => {
       throw error;
     }
   };
-
-
-  
 
   if (loading) return <div>Cargando pacientes...</div>;
   if (error) return <div>Error: {error}</div>;
