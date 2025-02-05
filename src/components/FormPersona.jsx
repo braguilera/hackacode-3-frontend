@@ -14,7 +14,7 @@ const FormPersona = ({
   const [especialidades, setEspecialidades] = useState([])
 
     const [loading, setLoading] = useState(true);
-    const [errorEspecialidades, setErrorEspecialidades] = useState(null);
+    const [error, setErrorEspecialidades] = useState(null);
   const [disponibilidades, setDisponibilidades] = useState(
     initialData?.disponibilidades || [getNuevaDisponibilidad()]
   );
@@ -46,7 +46,7 @@ const FormPersona = ({
       cubreTurno: 'MAÑANA',
       horaInicio: '08:00',
       horaFin: '12:00',
-      diaSemana: 'LUNES'
+      diaSemana: 'MONDAY'
     };
   }
 
@@ -258,7 +258,7 @@ const FormPersona = ({
                       onChange={(e) => handleDisponibilidadChange(index, 'diaSemana', e.target.value)}
                       className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     >
-                      {['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES'].map(dia => (
+                      {['MONDAY', 'WEDNESDAY', 'SATURDAY', 'THURSDAY', 'TUESDAY', 'FRIDAY', 'SUNDAY'].map(dia => (
                         <option key={dia} value={dia}>{dia}</option>
                       ))}
                     </select>
