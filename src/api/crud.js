@@ -6,14 +6,19 @@ const handleResponse = async (response, errorMessage) => {
         throw new Error(errorMessage || errorData.message || 'Error desconocido');
     }
 
-    // Si la respuesta está vacía (como en DELETE), devolver null
-    const contentLength = response.headers.get('Content-Length');
-    if (contentLength === '0' || !contentLength) {
-        return null;
+    // Verificar si hay contenido en la respuesta
+    const text = await response.text();
+    if (!text) {
+        return [];  // ⚠️ Devuelve un array vacío en lugar de null
     }
 
-    return response.json();
+    try {
+        return JSON.parse(text);
+    } catch (error) {
+        return text; // En caso de que no sea JSON, devolver el texto
+    }
 };
+
 
 export const getDatos = async (endpoint, errorMessage = 'Error al obtener datos') => {
     try {

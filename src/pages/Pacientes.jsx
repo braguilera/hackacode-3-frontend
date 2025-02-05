@@ -31,7 +31,6 @@ const Pacientes = () => {
     }
   };
 
-  // Obtener pacientes al montar el componente
   useEffect(() => {
     fetchPacientes();
   }, []);
@@ -42,6 +41,7 @@ const Pacientes = () => {
   const deletePaciente = async (e) => {
     try {
       await deleteDatos(`/api/pacientes/${e.id}`, 'Error eliminando paciente');
+      await fetchPacientes();
     } catch (error) {
       console.error(error.message);
       throw error;
@@ -50,16 +50,14 @@ const Pacientes = () => {
 
   const addPaciente = async () =>{
     try {
-      const response = await postDatos('/api/pacientes', pacienteData, 'Error creando médico');
-
-      const data = await response.json();
-      fetchPacientes();
-      setPacienteData(prevPacientes => [...prevPacientes, data]);
+      await postDatos('/api/pacientes', pacienteData, 'Error creando médico');
+      await fetchPacientes();
     } catch (error) {
       console.error(error.message);
       throw error;
     }
-  } 
+  }
+  
 
   if (loading) return <div>Cargando pacientes...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -73,7 +71,6 @@ const Pacientes = () => {
         onEdit={editPaciente} 
         onDelete={deletePaciente}
       />
-
     </div>
   );
 };

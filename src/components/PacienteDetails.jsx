@@ -58,7 +58,7 @@ const PacienteDetails = ({ isOpen, onClose, paciente, consultas, colors }) => {
             <DetailRow 
             icon={Calendar} 
             label="Fecha de nacimiento" 
-            value={new Date(paciente.fecha_nac).toLocaleDateString()} 
+            value={new Date(paciente.fechaNac).toLocaleDateString()} 
             />
             <DetailRow 
             icon={Award} 
@@ -73,7 +73,7 @@ const PacienteDetails = ({ isOpen, onClose, paciente, consultas, colors }) => {
         </div>
 
         {/* Medical Consultations */}
-        <div className="mt-6">
+        {/*<div className="mt-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
                 Consultas
             </h3>
@@ -86,7 +86,7 @@ const PacienteDetails = ({ isOpen, onClose, paciente, consultas, colors }) => {
                     <p className="text-gray-600">{consulta.estado}</p>
                 </div>
             ))}
-        </div>
+        </div>*/}
     </SlideOverModal>
 );
 };
