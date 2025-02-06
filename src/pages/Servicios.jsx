@@ -3,7 +3,7 @@ import CardServicio from '../components/CardServicio';
 import CardPaquete from '../components/CardPaquete';
 import dataPaquetes from '../tests/paquetes.json';
 import { Plus } from 'lucide-react';
-import { getDatos } from '../api/crud';
+import { deleteDatos, getDatos } from '../api/crud';
 
 const Servicios = () => {
   const [servicios, setServicios] = useState([]);
@@ -13,7 +13,6 @@ const Servicios = () => {
 
 
   const editService = () => alert("editado");
-  const deleteService = () => alert("eliminado");
   const editPaquete = () => alert("editado");
   const deletePaquete = () => alert("eliminado");
 
@@ -44,6 +43,16 @@ const Servicios = () => {
         fetchPaquetes();
       }, []);
 
+      const deleteService = async (e) => {
+        try {
+          await deleteDatos(`/api/servicios/individuales/${e.codigo}`, 'Error eliminando servicio');
+          await fetchServicios();
+        } catch (error) {
+          console.error(error.message);
+          throw error;
+        }
+      };
+
   return (
     <main className='w-full h-full flex gap-6 p-6 bg-gray-50'>
 
@@ -54,8 +63,8 @@ const Servicios = () => {
           <span className='text-gray-400 font-normal ml-2 text-lg'>({servicios.length} disponibles)</span>
         </h2>
         
-        <article className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pr-4 h-full overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50'>
-          <button className='border-gray-300 border-2 border-dashed rounded-xl flex justify-center items-center p-6 group hover:bg-blue-50 hover:border-blue-400 transition-all duration-300'>
+        <article className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pr-4 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50'>
+          <button className='border-gray-300 h-40 border-2 border-dashed rounded-xl flex justify-center items-center p-6 group hover:bg-blue-50 hover:border-blue-400 transition-all duration-300'>
             <Plus size={48} className='text-gray-400 group-hover:text-blue-500 transition-all duration-300' />
           </button>
           {servicios.map((servicio) => (

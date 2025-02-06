@@ -39,14 +39,14 @@ const CardServicio = ({ dataServicio, onEdit, onDelete }) => {
                 <motion.button
                     whileHover={{ scale: 1.1 }}
                     className="p-1.5 rounded-full bg-white hover:bg-gray-50 text-gray-600 shadow-sm"
-                    onClick={(e) => { e.stopPropagation(); onEdit(); }}
+                    onClick={(e) => { e.stopPropagation(); onEdit(dataServicio); }}
                 >
                     <Edit3 size={16} />
                 </motion.button>
                 <motion.button
                     whileHover={{ scale: 1.1 }}
                     className="p-1.5 rounded-full bg-white hover:bg-red-50 text-gray-600 hover:text-red-500 shadow-sm"
-                    onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                    onClick={(e) => { e.stopPropagation(); onDelete(dataServicio); }}
                 >
                     <Trash2 size={16} />
                 </motion.button>
@@ -54,11 +54,11 @@ const CardServicio = ({ dataServicio, onEdit, onDelete }) => {
 
             {/* Principal Container */}
             <article className="pt-4 px-4 pb-2 flex flex-col justify-between h-full">
-                <header>
-                    <h2 className={`text-lg w-auto font-semibold text-gray-800 mb-1 ${colors.bg} ${colors.text} px-3 py-1 rounded-full`}>
+                <header className='w-full flex flex-col items-start gap-2'>
+                    <h2 className={`text-xl w-auto font-semibold text-gray-800 ${colors.bg} ${colors.text} px-3 py-1 rounded-full`}>
                         {dataServicio.nombre}
                     </h2>
-                    <p className="text-sm text-gray-600 line-clamp-2">{dataServicio.descripcion}</p>
+                    <p className="text-base text-gray-600 line-clamp-2">{dataServicio.descripcion}</p>
                 </header>
                 
                 <footer className="flex items-center justify-between mt-2">
