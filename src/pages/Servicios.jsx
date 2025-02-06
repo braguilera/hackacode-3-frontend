@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import CardServicio from '../components/CardServicio';
 import CardPaquete from '../components/CardPaquete';
-import dataPaquetes from '../tests/paquetes.json';
-import { Plus } from 'lucide-react';
-import { deleteDatos, getDatos } from '../api/crud';
+import { ArrowRight, Plus, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { deleteDatos, getDatos, postDatos } from '../api/crud';
 
 const Servicios = () => {
   const [servicios, setServicios] = useState([]);
   const [paquetes, setPaquetes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [openForm, setOpenForm] = useState(false)
+  const [servicioData, setServicioData] = useState({
+    nombre: '',
+    descripcion: '',
+    precio: ''
+  });
 
   const editService = () => alert("editado");
   const editPaquete = () => alert("editado");
@@ -53,6 +58,28 @@ const Servicios = () => {
         }
       };
 
+      const handleChange = (e) => {
+        const { name, value } = e.target;
+        setServicioData(prev => ({ ...prev, [name]: value }));
+      };
+      
+
+      const handleSubmitServicio = async (e) => {
+        e.preventDefault(); // Evitar recarga de la página
+      
+        try {
+          await postDatos('/api/servicios/individuales', servicioData, 'Error creando servicio');
+          await fetchServicios(); // Recargar lista de servicios
+      
+          // 🔹 Resetear el estado con un nuevo objeto
+          setServicioData({ nombre: '', descripcion: '', precio: '' });
+      
+          setOpenForm(false); // Cerrar formulario después de enviar
+        } catch (error) {
+          console.error(error.message);
+        }
+      };
+
   return (
     <main className='w-full h-full flex gap-6 p-6 bg-gray-50'>
 
@@ -64,9 +91,82 @@ const Servicios = () => {
         </h2>
         
         <article className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pr-4 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50'>
-          <button className='border-gray-300 h-40 border-2 border-dashed rounded-xl flex justify-center items-center p-6 group hover:bg-blue-50 hover:border-blue-400 transition-all duration-300'>
-            <Plus size={48} className='text-gray-400 group-hover:text-blue-500 transition-all duration-300' />
+          <aside className='h-40 w-full'>
+          <AnimatePresence mode="wait">
+      {openForm ? (
+        <motion.article
+          key="close-button"
+          className="h-full w-full bg-white rounded-xl relative p-4 shadow-sm border border-gray-100"
+          initial={{ y: -50, opacity: 0, scale: 0.8 }}
+          animate={{ y: 0, opacity: 1, scale: 1 }}
+          exit={{ y: 50, opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
+          layout
+        >
+          <button
+            onClick={() => setOpenForm(false)}
+            className="hover:bg-gray-50 rounded-full p-1.5 absolute top-2 right-2 transition-colors"
+          >
+            <X size={16} className="text-gray-400" />
           </button>
+
+          <form onSubmit={handleSubmitServicio} className="flex flex-col gap-2 h-full">
+            <div className="space-y-3 flex-1">
+              <input
+                type="text"
+                name="nombre"
+                value={servicioData.nombre}
+                onChange={handleChange}
+                placeholder="Nombre del servicio"
+                required
+                className="w-4/5 px-3 py-1.5 text-sm bg-gray-50 rounded-md border-0 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+              />
+
+              <input
+                type="text"
+                name="descripcion"
+                value={servicioData.descripcion}
+                onChange={handleChange}
+                placeholder="Descripción breve"
+                required
+                className="w-4/5 px-3 py-1.5 text-sm bg-gray-50 rounded-md border-0 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+              />
+
+              <input
+                type="number"
+                name="precio"
+                value={servicioData.precio}
+                onChange={handleChange}
+                placeholder="Precio"
+                required
+                className="w-4/5 px-3 py-1.5 text-sm bg-gray-50 rounded-md border-0 placeholder:text-gray-400 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="absolute bottom-5 right-4 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors"
+            >
+              <ArrowRight size={20} />
+            </button>
+          </form>
+        </motion.article>
+      ) : (
+        <motion.button
+          key="open-button"
+          className="border-gray-300 h-full w-full border-2 border-dashed rounded-xl flex justify-center items-center p-6 group hover:bg-blue-50 hover:border-blue-400"
+          onClick={() => setOpenForm(true)}
+          initial={{ y: 50, opacity: 0, scale: 0.9 }}
+          animate={{ y: 0, opacity: 1, scale: 1 }}
+          exit={{ y: -50, opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+          layout
+        >
+          <Plus size={48} className="text-gray-400 group-hover:text-blue-500 transition-all duration-300" />
+        </motion.button>
+      )}
+    </AnimatePresence>
+            
+
+          </aside>  
           {servicios.map((servicio) => (
             <CardServicio
               key={servicio.codigo}
