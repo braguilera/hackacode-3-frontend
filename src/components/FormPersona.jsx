@@ -10,9 +10,20 @@ const FormPersona = ({
     initialData, 
     isEditing = false 
   }) => {
-  const [formData, setFormData] = useState(initialData || getInitialData(tipo));
+    const [formData, setFormData] = useState(() => {
+      // 1. Corregir inicialización de especialidadesIDs
+      const initial = initialData || getInitialData(tipo);
+      
+      return {
+        ...initial,
+        especialidadesIDs: initialData?.especialidades 
+          ? initialData.especialidades.map(e => String(e.id)) 
+          : initial.especialidadesIDs?.map(String) || []
+      };
+    });
+    
   const [especialidades, setEspecialidades] = useState([])
-
+  const [hasInitialized, setHasInitialized] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setErrorEspecialidades] = useState(null);
   const [disponibilidades, setDisponibilidades] = useState(
@@ -72,43 +83,52 @@ const FormPersona = ({
     setDisponibilidades(disponibilidades.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit({
-      ...formData,
-      ...(tipo === 'medico' && { disponibilidades })
-    });
-  };
 
+  // 1. Cargar especialidades primero
   useEffect(() => {
     const fetchEspecialidades = async () => {
       try {
         const data = await getDatos('/api/especialidades', 'Error cargando especialidades');
         setEspecialidades(data);
-  
-        // Esperar a tener ambas cosas: especialidades y datos del médico
-        if (initialData?.especialidadesIDs && data.length > 0) {
-          // Convertir a string para match con el value del option
-          const initialEspecialidades = initialData.especialidadesIDs.map(String);
-          
-          // Filtrar solo las especialidades existentes
-          const validEspecialidades = initialEspecialidades.filter(id => 
-            data.some(e => e.id.toString() === id)
-          );
-  
+        
+        // Sincronización solo si hay datos iniciales y no se ha inicializado
+        if (initialData && !hasInitialized) {
+          // 3. Obtener IDs de dos fuentes posibles (especialidades o especialidadesIDs)
+          const initialIds = initialData.especialidades
+            ? initialData.especialidades.map(e => String(e.id))
+            : initialData.especialidadesIDs?.map(String) || [];
+
+          // 4. Filtrar solo IDs válidos existentes
+          const validIds = data.filter(e => 
+            initialIds.includes(String(e.id))
+          ).map(e => String(e.id));
+
           setFormData(prev => ({
             ...prev,
-            especialidadesIDs: validEspecialidades
+            especialidadesIDs: validIds
           }));
+          setHasInitialized(true);
         }
       } catch (err) {
-        setErrorEspecialidades(err.message);
+        console.error(err);
       }
     };
-  
+
     fetchEspecialidades();
-  }, [initialData]);
-  
+  }, [initialData, hasInitialized]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    const dataToSend = {
+      ...formData,
+      // Convertir a números para el backend
+      especialidadesIDs: formData.especialidadesIDs.map(Number)
+    };
+
+    onSubmit(dataToSend);
+  };
+
 
   return (
     <motion.div
@@ -209,32 +229,55 @@ const FormPersona = ({
             </div>
 
             <div>
-  <label className="block text-sm font-medium text-gray-700">
-    Especialidades
-  </label>
-  <select
-    multiple
-    name="especialidadesIDs"
-    value={formData.especialidadesIDs}
-    onChange={(e) => setFormData({
-      ...formData,
-      especialidadesIDs: Array.from(e.target.selectedOptions, option => option.value)
-    })}
-    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 h-32"
-    required
-  >
-    {especialidades.map(especialidad => (
-      <option 
-        key={especialidad.id} 
-        value={especialidad.id} // Asegurar string
-        className="p-2 hover:bg-blue-50"
-      >
-        {especialidad.nombre}
-      </option>
-    ))}
-  </select>
-</div>
+      <label className="block text-sm font-medium text-gray-700 mb-2">
+        Especialidades
+      </label>
+      <select
+  multiple
+  name="especialidadesIDs"
+  value={formData.especialidadesIDs}
+  onChange={(e) => {
+    const selected = Array.from(e.target.selectedOptions, opt => opt.value);
+    setFormData(prev => ({
+      ...prev,
+      // Mantener como strings hasta el envío
+      especialidadesIDs: selected 
+    }));
+  }}
+  className="w-full border rounded-lg p-2 h-32"
+>
+  {especialidades.map(especialidad => (
+    <option 
+      key={especialidad.id} 
+      value={String(especialidad.id)}
+      className="p-2 hover:bg-blue-50"
+    >
+      {especialidad.nombre}
+    </option>
+  ))}
+</select>
 
+<div className="mt-2 text-sm text-gray-600">
+  {formData.especialidadesIDs.length > 0 ? (
+    <>
+      Seleccionadas:{" "}
+      {formData.especialidadesIDs.map(id => {
+        const especialidad = especialidades.find(e => String(e.id) === id);
+        return (
+          <span 
+            key={id} 
+            className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full mr-1"
+          >
+            {especialidad?.nombre || 'Especialidad eliminada'}
+          </span>
+        );
+      })}
+    </>
+  ) : (
+    <span className="text-red-500">Debe seleccionar al menos una especialidad</span>
+  )}
+</div>
+    </div>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <h3 className="text-sm font-medium text-gray-700">
