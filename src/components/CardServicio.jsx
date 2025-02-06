@@ -34,13 +34,6 @@ const CardServicio = ({ dataServicio, onEdit, onDelete }) => {
             transition={{ duration: 0.2 }}
             className={`w-full flex flex-col h-40 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden relative group cursor-pointer select-none`}
         >
-            {/* Specialities */}
-            {category !== 'general' && (
-                <div className={`absolute top-3 left-3 ${colors.bg} ${colors.text} px-3 py-1 rounded-full text-xs font-medium`}>
-                    {category === 'especialidad' ? 'ESPECIALIDAD' : category.toUpperCase()}
-                </div>
-            )}
-
             {/* Edit and Delete */}
             <aside className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <motion.button
@@ -60,10 +53,10 @@ const CardServicio = ({ dataServicio, onEdit, onDelete }) => {
             </aside>
 
             {/* Principal Container */}
-            <article className="pt-10 px-4 pb-2 flex flex-col justify-between h-full">
+            <article className="pt-4 px-4 pb-2 flex flex-col justify-between h-full">
                 <header>
-                    <h2 className="text-lg font-semibold text-gray-800 mb-1">
-                        {category === 'especialidad' ? cleanTitle : dataServicio.nombre}
+                    <h2 className={`text-lg w-auto font-semibold text-gray-800 mb-1 ${colors.bg} ${colors.text} px-3 py-1 rounded-full`}>
+                        {dataServicio.nombre}
                     </h2>
                     <p className="text-sm text-gray-600 line-clamp-2">{dataServicio.descripcion}</p>
                 </header>

@@ -1,18 +1,48 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import CardServicio from '../components/CardServicio';
 import CardPaquete from '../components/CardPaquete';
-import dataServicios from '../tests/servicios.json';
 import dataPaquetes from '../tests/paquetes.json';
 import { Plus } from 'lucide-react';
+import { getDatos } from '../api/crud';
 
 const Servicios = () => {
-  const { servicios } = dataServicios;
-  const { paquetes } = dataPaquetes;
+  const [servicios, setServicios] = useState([]);
+  const [paquetes, setPaquetes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
 
   const editService = () => alert("editado");
   const deleteService = () => alert("eliminado");
   const editPaquete = () => alert("editado");
   const deletePaquete = () => alert("eliminado");
+
+      const fetchServicios = async () => {
+        try {
+          const data = await getDatos('/api/servicios/individuales', 'Error cargando medicos');
+          setServicios(data);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const fetchPaquetes = async () => {
+        try {
+          const data = await getDatos('/api/servicios/paquetes', 'Error cargando medicos');
+          setPaquetes(data);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+    
+      useEffect(() => {
+        fetchServicios();
+        fetchPaquetes();
+      }, []);
 
   return (
     <main className='w-full h-full flex gap-6 p-6 bg-gray-50'>
@@ -30,7 +60,7 @@ const Servicios = () => {
           </button>
           {servicios.map((servicio) => (
             <CardServicio
-              key={servicio.id}
+              key={servicio.codigo}
               dataServicio={servicio}
               onEdit={editService}
               onDelete={deleteService}
