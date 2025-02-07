@@ -116,14 +116,14 @@ const CardMedico = ({ dataMedico, onEdit, onDelete }) => {
     </motion.article>
 
     {/* Modal */}
-    {/*
+    {
     <DoctorDetails
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         doctor={dataMedico}
         colors={colors}
     />    
-    */}    
+    }    
     </>
 );    
 };

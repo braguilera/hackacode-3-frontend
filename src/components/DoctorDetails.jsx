@@ -1,7 +1,5 @@
 import React from 'react';
-import { 
-  Phone, Mail, Calendar, MapPin, Clock, Award 
-} from 'lucide-react';
+import { Phone, Mail, Calendar, MapPin, Clock, Award } from 'lucide-react';
 import SlideOverModal from './SlideOverModal';
 
 const DetailRow = ({ icon: Icon, label, value }) => (
@@ -23,6 +21,7 @@ const DoctorDetails = ({ isOpen, onClose, doctor, colors }) => {
       onClose={onClose}
       title="Detalles del Médico"
     >
+
       {/* Avatar and name */}
       <div className="flex items-center gap-4 mb-6">
         <div className={`w-16 h-16 rounded-full flex items-center justify-center text-xl font-semibold ${colors.bgLight}`}>
@@ -60,7 +59,7 @@ const DoctorDetails = ({ isOpen, onClose, doctor, colors }) => {
         <DetailRow 
           icon={Calendar} 
           label="Fecha de nacimiento" 
-          value={new Date(doctor.fecha_nac).toLocaleDateString()} 
+          value={new Date(doctor.fechaNac).toLocaleDateString()} 
         />
         <DetailRow 
           icon={Award} 
@@ -74,7 +73,7 @@ const DoctorDetails = ({ isOpen, onClose, doctor, colors }) => {
         <h3 className="text-lg font-medium text-gray-900 mb-4">
           Disponibilidad
         </h3>
-        {doctor.disponibilidad.map((disp, index) => (
+        {doctor.disponibilidades.map((disp, index) => (
           <div key={index} className="bg-gray-50 rounded-lg p-4 mb-3">
             <div className="flex items-center gap-2 text-gray-700">
               <Clock className="w-4 h-4" />
@@ -88,6 +87,7 @@ const DoctorDetails = ({ isOpen, onClose, doctor, colors }) => {
       </div>
 
       {/* Next turns */}
+      {/*
       <div className="mt-6">
         <h3 className="text-lg font-medium text-gray-900 mb-4">
           Próximos turnos
@@ -101,6 +101,7 @@ const DoctorDetails = ({ isOpen, onClose, doctor, colors }) => {
           </div>
         ))}
       </div>
+      */}
     </SlideOverModal>
   );
 };
