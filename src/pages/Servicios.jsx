@@ -139,7 +139,7 @@ const Servicios = () => {
           <span className='text-gray-400 font-normal ml-2 text-lg'>({servicios.length} disponibles)</span>
         </h2>
         
-        <article className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pr-4 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50'>
+        <article className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pr-4 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50'>
         <aside className="h-40 w-full">
       <AnimatePresence mode="wait">
         {openFormServicios ? (
