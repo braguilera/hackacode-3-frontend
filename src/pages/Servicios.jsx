@@ -189,7 +189,7 @@ const Servicios = () => {
       {/* Main Content */}
       <div className='flex gap-6 h-[calc(100%-120px)]'>
         {/* Principal Container - Services */}
-        <section className='flex-1 flex flex-col h-full bg-white rounded-xl shadow-sm p-6'>
+        <section className='flex-1 flex flex-col h-full pl-6'>
           <header className='flex items-center justify-between mb-6'>
             <div>
               <h2 className='text-2xl font-bold text-gray-800'>
@@ -302,11 +302,18 @@ const Servicios = () => {
         </section>
 
         {/* Secundary Container - Packages */}
-        <section className='w-96 min-w-96 flex flex-col h-full bg-white rounded-xl shadow-sm p-6'>
+        <section className='w-96 min-w-96 flex flex-col h-full pl-6 border-l border-gray-200'>
           <header className='mb-6'>
             <h2 className='text-2xl font-bold text-gray-800'>
               Paquetes
-              <span className='text-gray-400 font-normal ml-2 text-lg'>({paquetes.length} combinaciones)</span>
+              <span className='text-gray-400 font-normal ml-2 text-lg'>
+                {paquetes.length} 
+                {paquetes.length === 1
+                ? ' combinación'
+                : ' combinaciones'}
+                
+                
+                </span>
             </h2>
             <p className='text-gray-500 mt-1'>Combina servicios para crear ofertas especiales</p>
           </header>
