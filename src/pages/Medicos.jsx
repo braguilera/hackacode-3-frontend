@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, GraduationCap, Plus, X, ArrowRight, Stethoscope, Award, Calendar, HeartPulse } from 'lucide-react';
+import { Users, GraduationCap, Plus, X, ArrowRight, Stethoscope, Award, Calendar, HeartPulse, Wrench, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CardMedico from '../components/CardMedico';
 import FormPersona from '../components/FormPersona';
@@ -209,36 +209,44 @@ const Medicos = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
-                  className="bg-white rounded-lg border border-gray-200 p-4"
+                  className="flex flex-col bg-white rounded-lg border border-gray-200 p-4 relative gap-2"
                 >
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-gray-800">Nueva Especialidad</h3>
-                    <button
-                      type="button"
-                      onClick={() => setShowEspecialidadForm(false)}
-                      className="p-1 hover:bg-gray-100 rounded-full"
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Nombre de la especialidad"
-                    className="w-full p-2 border rounded-lg mb-3"
-                    value={especialidadData.nombre}
-                    onChange={(e) => setEspecialidadData(prev => ({ ...prev, nombre: e.target.value }))}
-                  />
+                  <header className="w-full flex items-center gap-2 bg-white">
+                    <aside className="p-2 bg-blue-100 rounded-lg">
+                      <Star  size={20} className="text-blue-600" />
+                    </aside>
+                    <input
+                      type="text"
+                      placeholder="Nombre de la especialidad"
+                      className="flex-1 text-lg w-full font-semibold text-gray-800 bg-transparent border-0 focus:ring-0 outline-none placeholder:text-gray-400"
+                      required
+                      maxLength={50}
+                      value={especialidadData.nombre}
+                      onChange={(e) => setEspecialidadData(prev => ({ ...prev, nombre: e.target.value }))}
+                    />
+                      <button
+                        type="button"
+                        onClick={() => setShowEspecialidadForm(false)}
+                        className="p-1 hover:bg-gray-100 rounded-full"
+                      >
+                        <X size={16} />
+                      </button>
+                  </header>
                   <textarea
                     placeholder="Descripción"
-                    className="w-full p-2 border rounded-lg mb-3"
+                    className="w-full text-base text-gray-600 bg-transparent border-0 focus:ring-0 outline-none resize-none placeholder:text-gray-400 line-clamp-2"
+                    rows={2}
+                    required
+                    maxLength={50}
                     value={especialidadData.descripcion}
                     onChange={(e) => setEspecialidadData(prev => ({ ...prev, descripcion: e.target.value }))}
                   />
                   <button
                     type="submit"
-                    className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+                    className="w-full justify-center bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
                   >
-                    Guardar Especialidad
+                    <span>Guardar Especialidad</span>
+                    <ArrowRight size={18} />
                   </button>
                 </motion.form>
               ) : (
