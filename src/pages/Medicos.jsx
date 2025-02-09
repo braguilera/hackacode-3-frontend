@@ -52,7 +52,6 @@ const Medicos = () => {
       await deleteDatos(`/api/medicos/${e.id}`, 'Error eliminando paciente');
       await fetchMedicos();
     } catch (error) {
-      console.error(error.message);
       throw error;
     }
   };
@@ -72,7 +71,6 @@ const Medicos = () => {
       await fetchMedicos();
       setShowForm(false);
     } catch (error) {
-      console.error(error.message);
       throw error;
     } finally {
       setMedicoToEdit(null);
@@ -230,7 +228,7 @@ const Medicos = () => {
 
       {/* Modal Form */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <FormPersona
             tipo="medico"
             onClose={() => {
