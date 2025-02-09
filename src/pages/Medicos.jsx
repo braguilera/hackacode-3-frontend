@@ -92,10 +92,10 @@ const Medicos = () => {
   );
 
   return (
-    <main className='w-full h-full flex flex-col gap-6 p-6 bg-gray-50'>
+    <main className='w-full h-full flex flex-col gap-6 p-6 bg-gray-50 '>
       {/* Dashboard Stats */}
-      <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+      <section className="grid grid-cols-1 md:grid-cols-4 gap-4 border-b border-gray-200 pb-6">
+        <div className="bg-white p-4 rounded-xl shadow-sm">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 rounded-lg">
               <Stethoscope className="text-blue-600 h-5 w-5" />
@@ -106,7 +106,7 @@ const Medicos = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-white p-4 rounded-xl shadow-sm">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-green-100 rounded-lg">
               <Award className="text-green-600 h-5 w-5" />
@@ -117,7 +117,7 @@ const Medicos = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-white p-4 rounded-xl shadow-sm">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-purple-100 rounded-lg">
               <GraduationCap className="text-purple-600 h-5 w-5" />
@@ -128,7 +128,7 @@ const Medicos = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-white p-4 rounded-xl shadow-sm">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-orange-100 rounded-lg">
               <HeartPulse className="text-orange-600 h-5 w-5" />
@@ -247,7 +247,7 @@ const Medicos = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
                   onClick={() => setShowEspecialidadForm(true)}
-                  className="flex items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 group transition-all"
+                  className="flex h-32 items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 group transition-all"
                 >
                   <Plus size={24} className="text-gray-400 group-hover:text-blue-500" />
                 </motion.button>

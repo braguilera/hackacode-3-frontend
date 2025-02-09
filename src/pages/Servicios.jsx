@@ -139,8 +139,8 @@ const Servicios = () => {
   return (
 <main className='w-full h-full flex flex-col gap-6 p-6 bg-gray-50'>
       {/* Dashboard Stats */}
-      <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+      <section className="grid grid-cols-1 md:grid-cols-4 gap-4 border-b border-gray-200 pb-6">
+        <div className="bg-white p-4 rounded-xl shadow-sm ">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 rounded-lg">
               <Activity className="text-blue-600 h-5 w-5" />
@@ -151,7 +151,7 @@ const Servicios = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-white p-4 rounded-xl shadow-sm ">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-green-100 rounded-lg">
               <Package className="text-green-600 h-5 w-5" />
@@ -162,7 +162,7 @@ const Servicios = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-white p-4 rounded-xl shadow-sm ">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-purple-100 rounded-lg">
               <DollarSign className="text-purple-600 h-5 w-5" />
@@ -173,7 +173,7 @@ const Servicios = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-white p-4 rounded-xl shadow-sm ">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-orange-100 rounded-lg">
               <TrendingUp className="text-orange-600 h-5 w-5" />
@@ -216,7 +216,7 @@ const Servicios = () => {
             className="w-full flex flex-col h-40 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden relative group"
           >
             {/* Header with Icon */}
-            <header className="absolute top-0 left-0 right-0 flex items-center gap-2 p-4 bg-white">
+            <header className="absolute top-0 left-0 w-full flex items-center gap-2 p-4 bg-white">
               <aside className="p-2 bg-blue-100 rounded-lg">
                 <Wrench size={20} className="text-blue-600" />
               </aside>
@@ -227,11 +227,11 @@ const Servicios = () => {
                 onChange={handleChange}
                 placeholder="Nombre del servicio"
                 required
-                className="flex-1 text-xl font-semibold text-gray-800 bg-transparent border-0 focus:ring-0 outline-none placeholder:text-gray-400"
+                className="flex-1 text-lg w-full font-semibold text-gray-800 bg-transparent border-0 focus:ring-0 outline-none placeholder:text-gray-400"
               />
               <button
                 onClick={() => setOpenFormServicios(false)}
-                className="p-1.5 rounded-full hover:bg-gray-50 text-gray-600"
+                className=" p-1.5 rounded-full hover:bg-gray-50 text-gray-600"
               >
                 <X size={16} />
               </button>
@@ -282,7 +282,6 @@ const Servicios = () => {
             onClick={() => setOpenFormServicios(true)}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            whileHover={{ y: -5 }}
             transition={{ duration: 0.2 }}
           >
             <Plus size={48} className="text-gray-400 group-hover:text-blue-500 transition-all duration-300" />
@@ -435,14 +434,13 @@ const Servicios = () => {
           ) : (
             <motion.button
               key="open-button"
-              className="border-gray-300 h-40 w-full border-2 border-dashed rounded-xl flex justify-center items-center p-6 group hover:bg-orange-50 hover:border-orange-400"
+              className="border-gray-300 h-40 w-full border-2 border-dashed rounded-xl flex justify-center items-center p-6 group hover:bg-blue-50 hover:border-blue-400"
               onClick={() => setOpenFormPaquetes(true)}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              whileHover={{ y: -5 }}
               transition={{ duration: 0.2 }}
             >
-              <Plus size={48} className="text-gray-400 group-hover:text-orange-500 transition-all duration-300" />
+              <Plus size={48} className="text-gray-400 group-hover:text-blue-500 transition-all duration-300" />
             </motion.button>
           )}
         </AnimatePresence>
