@@ -9,7 +9,7 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
   const [filterDNI, setFilterDNI] = useState('');
   const [selectedPaciente, setSelectedPaciente] = useState(null);
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 8;
 
   // Asegurar que pacientes es un array válido
   const safePacientes = Array.isArray(pacientes) ? pacientes : [];
@@ -36,8 +36,6 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
     }
   };
 
-
-
   const colors = {
     bgLight: 'bg-blue-100',
     textDark: 'text-blue-800',
@@ -53,7 +51,7 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
   
 
   return (
-    <div className="p-4 w-full h-full bg-white rounded-3xl shadow-sm flex flex-col">
+    <div className="p-4 w-full h-full bg-white rounded-3xl shadow-sm flex flex-col ">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -78,94 +76,129 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
         </header>
 
         {/* Table Container with Flex-grow */}
-        <div className="flex-1 min-h-0 flex flex-col">
-          <div className="rounded-xl overflow-hidden border border-gray-100 flex-1">
-            {filteredPacientes.length > 0 ? (
-              <div className="overflow-auto h-full">
-                <table className="w-full">
-                  <thead className="sticky top-0 bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-left">Nombre Completo</th>
-                      <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-left">DNI</th>
-                      <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-left">Fecha de Nacimiento</th>
-                      <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-left">Email</th>
-                      <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-left">Teléfono</th>
-                      <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-left">Dirección</th>
-                      <th className="px-6 py-4 text-sm font-semibold text-gray-600 text-left">Obra Social</th>
-                      <th className="px-6 py-4"></th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {currentItems.map((paciente, index) => (
-                      <motion.tr
-                        key={paciente.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.2, delay: index * 0.05 }}
-                        className="group hover:bg-blue-50/50 cursor-pointer"
-                        onClick={() => handleRowClick(paciente)}
-                      >
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                              <span className="text-sm font-medium text-blue-600">
-                                {paciente.nombre[0]}{paciente.apellido[0]}
-                              </span>
-                            </div>
-                            <span className="font-medium text-gray-800">
-                              {paciente.nombre} {paciente.apellido}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-gray-600">{paciente.dni}</td>
-                        <td className="px-6 py-4 text-gray-600">{paciente.fechaNac}</td>
-                        <td className="px-6 py-4 text-gray-600">{paciente.email}</td>
-                        <td className="px-6 py-4 text-gray-600">{paciente.telefono}</td>
-                        <td className="px-6 py-4 text-gray-600">{paciente.direccion}</td>
-                        <td className="px-6 py-4">
-                          {paciente.tieneObraSocial ? (
-                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-sm font-medium text-green-700">
-                              <CircleCheck size={14} /> Sí
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100 text-sm font-medium text-gray-600">
-                              <X size={14} /> No
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <motion.button
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.95 }}
-                              className="p-2 rounded-full hover:bg-white text-gray-600 hover:shadow-sm transition-all"
-                              onClick={(e) => { e.stopPropagation(); onEdit(paciente); }}
-                            >
-                              <Edit3 size={16} />
-                            </motion.button>
-                            <motion.button
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.95 }}
-                              className="p-2 rounded-full hover:bg-white text-gray-600 hover:text-red-500 hover:shadow-sm transition-all"
-                              onClick={(e) => { e.stopPropagation(); handleDelete(paciente); }}
-                            >
-                              <Trash2 size={16} />
-                            </motion.button>
-                            <ChevronRight size={16} className="text-gray-400 ml-2" />
-                          </div>
-                        </td>
-                      </motion.tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="py-12 text-center">
-                <p className="text-gray-500 text-lg">No hay pacientes registrados.</p>
-              </div>
-            )}
-          </div>
-        </div>
+        <div className="flex-1 flex flex-col ">
+  <div className="rounded-xl  border border-gray-100 flex-1 h-full">
+    {filteredPacientes.length > 0 ? (
+      <div className="h-auto">
+        <table className="w-full table-fixed"> {/* Usamos table-fixed */}
+          <thead className="sticky top-0 bg-gray-50">
+            <tr>
+              {/* Nombre Completo */}
+              <th className="w-64 px-6 py-4 text-sm font-semibold text-gray-600 text-left">
+                Nombre Completo
+              </th>
+              {/* DNI */}
+              <th className="w-32 px-6 py-4 text-sm font-semibold text-gray-600 text-right">
+                DNI
+              </th>
+              {/* Fecha de Nacimiento */}
+              <th className="w-40 px-6 py-4 text-sm font-semibold text-gray-600 text-left">
+                Fecha de Nac.
+              </th>
+              {/* Email */}
+              <th className="w-64 px-6 py-4 text-sm font-semibold text-gray-600 text-left">
+                Email
+              </th>
+              {/* Teléfono */}
+              <th className="w-40 px-6 py-4 text-sm font-semibold text-gray-600 text-left">
+                Teléfono
+              </th>
+              {/* Dirección */}
+              <th className="w-64 px-6 py-4 text-sm font-semibold text-gray-600 text-left">
+                Dirección
+              </th>
+              {/* Obra Social */}
+              <th className="w-32 px-6 py-4 text-sm font-semibold text-gray-600 text-left">
+                Obra Social
+              </th>
+              {/* Acciones */}
+              <th className="w-24 px-6 py-4"></th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {currentItems.map((paciente, index) => (
+              <motion.tr
+                key={paciente.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, delay: index * 0.05 }}
+                className="group hover:bg-blue-50/50 cursor-pointer"
+                onClick={() => handleRowClick(paciente)}
+              >
+                {/* Nombre Completo */}
+                <td className="w-64 px-6 py-4">
+                  <div className="flex items-center gap-3 truncate"> {/* Usamos truncate para textos largos */}
+                    <span className="font-medium text-gray-800">
+                      {paciente.nombre} {paciente.apellido}
+                    </span>
+                  </div>
+                </td>
+                {/* DNI */}
+                <td className="w-32 px-6 py-4 text-gray-600 text-right">
+                  {paciente.dni}
+                </td>
+                {/* Fecha de Nacimiento */}
+                <td className="w-40 px-6 py-4 text-gray-600">
+                  {paciente.fechaNac}
+                </td>
+                {/* Email */}
+                <td className="w-64 px-6 py-4 text-gray-600 truncate"> {/* Usamos truncate para emails largos */}
+                  {paciente.email}
+                </td>
+                {/* Teléfono */}
+                <td className="w-40 px-6 py-4 text-gray-600">
+                  {paciente.telefono}
+                </td>
+                {/* Dirección */}
+                <td className="w-64 px-6 py-4 text-gray-600 truncate"> {/* Usamos truncate para direcciones largas */}
+                  {paciente.direccion}
+                </td>
+                {/* Obra Social */}
+                <td className="w-32 px-6 py-4">
+                  {paciente.tieneObraSocial ? (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-sm font-medium text-green-700">
+                      <CircleCheck size={14} /> Sí
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100 text-sm font-medium text-gray-600">
+                      <X size={14} /> No
+                    </span>
+                  )}
+                </td>
+                {/* Acciones */}
+                <td className="w-24 px-6 py-4">
+                  <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="p-2 rounded-full hover:bg-white text-gray-600 hover:shadow-sm transition-all"
+                      onClick={(e) => { e.stopPropagation(); onEdit(paciente); }}
+                    >
+                      <Edit3 size={16} />
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="p-2 rounded-full hover:bg-white text-gray-600 hover:text-red-500 hover:shadow-sm transition-all"
+                      onClick={(e) => { e.stopPropagation(); handleDelete(paciente); }}
+                    >
+                      <Trash2 size={16} />
+                    </motion.button>
+                    <ChevronRight size={16} className="text-gray-400 ml-2" />
+                  </div>
+                </td>
+              </motion.tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    ) : (
+      <div className="py-12 text-center">
+        <p className="text-gray-500 text-lg">No hay pacientes registrados.</p>
+      </div>
+    )}
+  </div>
+</div>
 
         {/* Pagination - Now properly contained */}
         {filteredPacientes.length > itemsPerPage && (

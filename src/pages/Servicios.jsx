@@ -130,7 +130,7 @@ const Servicios = () => {
       );
 
   return (
-<main className='w-full h-full flex flex-col gap-6 p-6 bg-gray-50'>
+<main className='w-full h-full flex flex-col gap-6 p-6 '>
 
       {/* Main Content */}
       <div className='flex gap-6 h-[calc(100%-120px)]'>
@@ -163,7 +163,7 @@ const Servicios = () => {
             </div>
           </div>
           
-          <article className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pr-4 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50'>
+          <article className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pr-4  scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50'>
         <aside className="h-40 w-full">
       <AnimatePresence mode="wait">
         {openFormServicios ? (

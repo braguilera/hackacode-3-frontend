@@ -7,11 +7,7 @@ import { deleteDatos, getDatos, postDatos, putDatos } from '../api/crud';
 
 const Medicos = () => {
   const [medicos, setMedicos] = useState([]);
-  const [especialidades, setEspecialidades] = useState([
-    { id: 1, nombre: 'Cardiología', descripcion: 'Especialista en el corazón' },
-    { id: 2, nombre: 'Pediatría', descripcion: 'Atención médica a niños' },
-    // Aquí puedes agregar más especialidades cuando las obtengas de la base de datos
-  ]);
+  const [especialidades, setEspecialidades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -19,8 +15,7 @@ const Medicos = () => {
   const [medicoToEdit, setMedicoToEdit] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [especialidadData, setEspecialidadData] = useState({
-    nombre: '',
-    descripcion: ''
+    nombre: ''
   });
 
   // Fetch functions
@@ -35,9 +30,20 @@ const Medicos = () => {
     }
   };
 
+  const fetchEspecialidades = async () => {
+    try {
+      const data = await getDatos('/api/especialidades', 'Error cargando especialidades');
+      setEspecialidades(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchMedicos();
-    // Aquí podrías agregar fetchEspecialidades cuando lo implementes
+    fetchEspecialidades();
   }, []);
 
   // Existing handlers
@@ -80,10 +86,10 @@ const Medicos = () => {
   );
 
   return (
-    <main className='w-full h-full flex flex-col gap-6 p-6 bg-gray-50 '>
+    <main className='w-full h-full flex flex-col gap-6 p-6'>
 
       {/* Main Content */}
-      <div className='flex gap-6 h-[calc(100%-120px)]'>
+      <div className='flex gap-6 h-full'>
         {/* Médicos Section */}
         <section className='flex-1 flex flex-col h-full  pl-6 '>
           <header className='flex items-center justify-between mb-6'>
@@ -120,7 +126,7 @@ const Medicos = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto pr-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 pr-2">
             {medicosFiltrados.map(medico => (
               <CardMedico 
                 dataMedico={medico} 
@@ -133,7 +139,7 @@ const Medicos = () => {
         </section>
 
         {/* Especialidades Section */}
-        <section className='w-96 min-w-96 flex flex-col h-full  pl-6 border-l border-gray-200'>
+        <section className='w-96 min-w-96 flex flex-col h-full pl-6 border-l border-gray-200'>
           <header className='mb-6'>
             <h2 className='text-2xl font-bold text-gray-800'>
               Especialidades
@@ -150,7 +156,7 @@ const Medicos = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
-                  className="flex flex-col bg-white rounded-lg border border-gray-200 p-4 relative gap-2"
+                  className="flex flex-col bg-white rounded-lg border border-gray-200 p-4 relative gap-4"
                 >
                   <header className="w-full flex items-center gap-2 bg-white">
                     <aside className="p-2 bg-blue-100 rounded-lg">
@@ -173,15 +179,6 @@ const Medicos = () => {
                         <X size={16} />
                       </button>
                   </header>
-                  <textarea
-                    placeholder="Descripción"
-                    className="w-full text-base text-gray-600 bg-transparent border-0 focus:ring-0 outline-none resize-none placeholder:text-gray-400 line-clamp-2"
-                    rows={2}
-                    required
-                    maxLength={50}
-                    value={especialidadData.descripcion}
-                    onChange={(e) => setEspecialidadData(prev => ({ ...prev, descripcion: e.target.value }))}
-                  />
                   <button
                     type="submit"
                     className="w-full justify-center bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
@@ -196,7 +193,7 @@ const Medicos = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
                   onClick={() => setShowEspecialidadForm(true)}
-                  className="flex h-32 items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 group transition-all"
+                  className="flex h-24 items-center justify-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 group transition-all"
                 >
                   <Plus size={24} className="text-gray-400 group-hover:text-blue-500" />
                 </motion.button>
@@ -214,7 +211,7 @@ const Medicos = () => {
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="font-semibold text-gray-800">{especialidad.nombre}</h3>
-                    <p className="text-sm text-gray-500 mt-1">{especialidad.descripcion}</p>
+                    
                   </div>
                   <button className="p-1 hover:bg-gray-100 rounded-full">
                     <X size={16} className="text-gray-400" />
