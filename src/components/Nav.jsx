@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, Stethoscope, Users, User, ClipboardList, LogOut } from 'lucide-react';
+import { Home, Stethoscope, Users, User, ClipboardList, LogOut, CalendarDays } from 'lucide-react';
 import Contexto from '../contexto/Contexto';
 
 const Nav = () => {
@@ -78,6 +78,18 @@ const Nav = () => {
         >
           <ClipboardList className="w-5 h-5 mr-2" />
           Servicios
+        </NavLink>
+
+        <NavLink
+          to="agenda"
+          className={({ isActive }) =>
+            isActive
+              ? "flex items-center text-blue-500 bg-blue-50 px-4 py-2 my-1 rounded-lg font-semibold transition-all duration-200"
+              : "flex items-center text-gray-600 px-4 py-2 my-1 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-all duration-200"
+          }
+        >
+          <CalendarDays className="w-5 h-5 mr-2" />
+          Agenda
         </NavLink>
       </section>
 

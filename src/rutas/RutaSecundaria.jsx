@@ -6,6 +6,7 @@ import Consultas from '../pages/Consultas'
 import Pacientes from '../pages/Pacientes'
 import Medicos from '../pages/Medicos'
 import Servicios from '../pages/Servicios'
+import AgendaMedica from '../pages/AgendaMedica'
 
 const RutaSecundaria = () => {
   return (
@@ -19,6 +20,7 @@ const RutaSecundaria = () => {
         <Route path='pacientes' element={<Pacientes/>}/>
         <Route path='medicos' element={<Medicos/>}/>
         <Route path='servicios' element={<Servicios/>}/>
+        <Route path='agenda' element={<AgendaMedica/>}/>
 
 
         <Route path="/" element={<Navigate to="dashboard" />} />
