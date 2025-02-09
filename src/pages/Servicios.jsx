@@ -125,71 +125,12 @@ const Servicios = () => {
         }
       };
 
-      const calcularEstadisticas = () => {
-        const precioPromedio = servicios.reduce((acc, serv) => acc + Number(serv.precio), 0) / servicios.length;
-        const precioTotal = servicios.reduce((acc, serv) => acc + Number(serv.precio), 0);
-        return {
-          precioPromedio: precioPromedio || 0,
-          precioTotal: precioTotal || 0,
-          serviciosEnPaquetes: paquetes.reduce((acc, paq) => acc + paq.servicios?.length || 0, 0)
-        };
-      };
-    
-      const stats = calcularEstadisticas();
-
       const serviciosFiltrados = servicios.filter(servicio =>
         servicio.nombre?.toLowerCase().startsWith(searchTerm.toLowerCase())
       );
 
   return (
 <main className='w-full h-full flex flex-col gap-6 p-6 bg-gray-50'>
-      {/* Dashboard Stats */}
-      <section className="grid grid-cols-1 md:grid-cols-4 gap-4 border-b border-gray-200 pb-6">
-        <div className="bg-white p-4 rounded-xl shadow-sm ">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Activity className="text-blue-600 h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Servicios Activos</p>
-              <p className="text-xl font-semibold text-gray-800">{servicios.length}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white p-4 rounded-xl shadow-sm ">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Package className="text-green-600 h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Paquetes Disponibles</p>
-              <p className="text-xl font-semibold text-gray-800">{paquetes.length}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white p-4 rounded-xl shadow-sm ">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <DollarSign className="text-purple-600 h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Precio Promedio</p>
-              <p className="text-xl font-semibold text-gray-800">${stats.precioPromedio.toFixed(2)}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white p-4 rounded-xl shadow-sm ">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <TrendingUp className="text-orange-600 h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Servicios en Paquetes</p>
-              <p className="text-xl font-semibold text-gray-800">{stats.serviciosEnPaquetes}</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Main Content */}
       <div className='flex gap-6 h-[calc(100%-120px)]'>
@@ -205,7 +146,7 @@ const Servicios = () => {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500">Valor total de servicios:</span>
-              <span className="text-lg font-semibold text-gray-800">${stats.precioTotal.toFixed(2)}</span>
+              <span className="text-lg font-semibold text-gray-800">1</span>
             </div>
           </header>
                     {/* Search Bar */}

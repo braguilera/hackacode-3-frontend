@@ -73,18 +73,6 @@ const Medicos = () => {
     }
   };
 
-  // Stats calculation
-  const calcularEstadisticas = () => {
-    return {
-      totalMedicos: medicos.length,
-      totalEspecialidades: especialidades.length,
-      promedioEspecialidades: (medicos.reduce((acc, med) => acc + (med.especialidades?.length || 0), 0) / medicos.length) || 0,
-      medicosActivos: medicos.filter(med => med.activo).length
-    };
-  };
-
-  const stats = calcularEstadisticas();
-
   // Filter médicos based on search
   const medicosFiltrados = medicos.filter(medico =>
     medico.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -93,53 +81,6 @@ const Medicos = () => {
 
   return (
     <main className='w-full h-full flex flex-col gap-6 p-6 bg-gray-50 '>
-      {/* Dashboard Stats */}
-      <section className="grid grid-cols-1 md:grid-cols-4 gap-4 border-b border-gray-200 pb-6">
-        <div className="bg-white p-4 rounded-xl shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Stethoscope className="text-blue-600 h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Médicos Activos</p>
-              <p className="text-xl font-semibold text-gray-800">{stats.medicosActivos}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white p-4 rounded-xl shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Award className="text-green-600 h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Especialidades</p>
-              <p className="text-xl font-semibold text-gray-800">{stats.totalEspecialidades}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white p-4 rounded-xl shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <GraduationCap className="text-purple-600 h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Promedio Especialidades</p>
-              <p className="text-xl font-semibold text-gray-800">{stats.promedioEspecialidades.toFixed(1)}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white p-4 rounded-xl shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <HeartPulse className="text-orange-600 h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Total Consultas</p>
-              <p className="text-xl font-semibold text-gray-800">0</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Main Content */}
       <div className='flex gap-6 h-[calc(100%-120px)]'>
