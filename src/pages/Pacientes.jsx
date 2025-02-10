@@ -17,7 +17,10 @@ const Pacientes = () => {
     setLoading(true);
     try {
       const data = await getDatos('/api/pacientes', 'Error cargando pacientes');
-      setPacientes(data);
+      setTimeout(() => {
+        setPacientes(data);
+        
+      }, 2000);
     } catch (err) {
       setError(err.message);
     } finally {

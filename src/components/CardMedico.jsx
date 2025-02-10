@@ -48,48 +48,6 @@ const CardMedico = ({ dataMedico, onEdit, onDelete, isLoading }) => {
 
   return (
     <>
-
-      {isLoading 
-      ? 
-      <motion.article
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="w-full bg-white rounded-xl shadow-sm overflow-hidden relative"
-    >
-      <header className="p-4 flex items-start gap-4">
-        {/* Avatar placeholder */}
-        <div className="w-14 h-14 rounded-full bg-gray-100 flex-shrink-0">
-          <LoadingIndicator />
-        </div>
-
-        <div className="flex-1 space-y-3">
-          {/* Name placeholder */}
-          <LoadingIndicator height="h-6" width="w-48" />
-          
-          {/* Specialty placeholder */}
-          <LoadingIndicator height="h-6" width="w-32" />
-        </div>
-      </header>
-
-      <div className="grid grid-cols-2 divide-x border-t">
-        <div className="p-4 flex items-center gap-2">
-          <User size={18} className="text-gray-300" />
-          <div className="space-y-2">
-            <LoadingIndicator height="h-4" width="w-16" />
-            <LoadingIndicator height="h-5" width="w-8" />
-          </div>
-        </div>
-        
-        <div className="p-4 flex items-center gap-2">
-          <DollarSign size={18} className="text-gray-300" />
-          <div className="space-y-2">
-            <LoadingIndicator height="h-4" width="w-16" />
-            <LoadingIndicator height="h-5" width="w-20" />
-          </div>
-        </div>
-      </div>
-    </motion.article>
-      :
       <motion.article
         onClick={() => setIsOpen(true)}
         initial={{ opacity: 0, y: 20 }}
@@ -156,8 +114,6 @@ const CardMedico = ({ dataMedico, onEdit, onDelete, isLoading }) => {
                 </div>
         </div>
     </motion.article>
-      }
-    
 
     {/* Modal */}
     {

@@ -5,7 +5,7 @@ import PacienteDetails from './PacienteDetails';
 import LoadingIndicator from './LoadingIndicator';
 
 
-const PacientesTable = ({ pacientes, consultas, onEdit, onDelete, isLoading }) => {
+const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filterDNI, setFilterDNI] = useState('');
   const [selectedPaciente, setSelectedPaciente] = useState(null);
@@ -19,6 +19,8 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete, isLoading }) =
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredPacientes.slice(indexOfFirstItem, indexOfLastItem);
+
+  const ItemsLoading = [1,2,3,4,5,6,7,8];
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const handleRowClick = (paciente) => setSelectedPaciente(paciente);
@@ -79,7 +81,7 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete, isLoading }) =
         {/* Table Container with Flex-grow */}
         <div className="flex-1 flex flex-col ">
   <div className="rounded-xl  border border-gray-100 flex-1 h-full">
-    {filteredPacientes.length > 0 ? (
+    
       <div className="h-auto">
         <table className="w-full table-fixed"> {/* Usamos table-fixed */}
           <thead className="sticky top-0 bg-gray-50">
@@ -116,64 +118,7 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete, isLoading }) =
               <th className="w-24 px-6 py-4"></th>
             </tr>
           </thead>
-          {isLoading 
-          ?
-          <tbody className="divide-y divide-gray-100">
-            {currentItems.map((paciente, index) => (
-              <motion.tr
-                key={paciente.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2, delay: index * 0.05 }}
-              >
-                {/* Nombre Completo */}
-                <td className="w-64 px-6 py-4">
-                  <LoadingIndicator width={"w-64"}/>
-                </td>
-                {/* DNI */}
-                <td className="w-32 px-6 py-4 text-gray-600 text-right">
-                  <LoadingIndicator width={"w-32"}/>
-                </td>
-                {/* Fecha de Nacimiento */}
-                <td className="w-40 px-6 py-4 text-gray-600">
-                  <LoadingIndicator width={"w-40"}/>
-                </td>
-                {/* Email */}
-                <td className="w-64 px-6 py-4 text-gray-600 truncate"> {/* Usamos truncate para emails largos */}
-                  <LoadingIndicator width={"w-64"}/>
-                </td>
-                {/* Teléfono */}
-                <td className="w-40 px-6 py-4 text-gray-600">
-                  <LoadingIndicator width={"w-40"}/>
-                </td>
-                {/* Dirección */}
-                <td className="w-64 px-6 py-4 text-gray-600 truncate"> {/* Usamos truncate para direcciones largas */}
-                  <LoadingIndicator width={"w-64"}/>
-                </td>
-                {/* Obra Social */}
-                <td className="w-32 px-6 py-4">
-                  <LoadingIndicator width={"w-32"}/>
-                </td>
-                {/* Acciones */}
-                <td className="w-24 px-6 py-4">
-                  <div className="flex items-center justify-end gap-2 opacity-0">
-                    <motion.button
-                      className="p-2 rounded-full hover:bg-white text-gray-600"
-                    >
-                      <Edit3 size={16} opacity={0}/>
-                    </motion.button>
-                    <motion.button
-                      className="p-2 rounded-full hover:bg-white text-gray-600 "
-                    >
-                      <Trash2 size={16} opacity={0}/>
-                    </motion.button>
-                  </div>
-                </td>
-              </motion.tr>
-            ))}
-          </tbody>
-          :
-
+          {filteredPacientes.length > 0 ? (
           <tbody className="divide-y divide-gray-100">
             {currentItems.map((paciente, index) => (
               <motion.tr
@@ -249,19 +194,68 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete, isLoading }) =
               </motion.tr>
             ))}
           </tbody>
-        }
+        ) : (
+          <tbody className="divide-y divide-gray-100 flex-1 h-full w-full">
+            {Array.from({ length: 8 }).map((_, index) => (
+              <motion.tr
+                key={index}
+              >
+                {/* Nombre Completo */}
+                <td className="w-64 px-6 py-4">
+                  <LoadingIndicator width={"w-64"}/>
+                </td>
+                {/* DNI */}
+                <td className="w-32 px-6 py-4 text-gray-600 text-right">
+                  <LoadingIndicator width={"w-32"}/>
+                </td>
+                {/* Fecha de Nacimiento */}
+                <td className="w-40 px-6 py-4 text-gray-600">
+                  <LoadingIndicator width={"w-40"}/>
+                </td>
+                {/* Email */}
+                <td className="w-64 px-6 py-4 text-gray-600 truncate"> {/* Usamos truncate para emails largos */}
+                  <LoadingIndicator width={"w-64"}/>
+                </td>
+                {/* Teléfono */}
+                <td className="w-40 px-6 py-4 text-gray-600">
+                  <LoadingIndicator width={"w-40"}/>
+                </td>
+                {/* Dirección */}
+                <td className="w-64 px-6 py-4 text-gray-600 truncate"> {/* Usamos truncate para direcciones largas */}
+                  <LoadingIndicator width={"w-64"}/>
+                </td>
+                {/* Obra Social */}
+                <td className="w-32 px-6 py-4">
+                  <LoadingIndicator width={"w-32"}/>
+                </td>
+                {/* Acciones */}
+                <td className="w-24 px-6 py-4">
+                  <div className="flex items-center justify-end gap-2 opacity-0">
+                    <motion.button
+                      className="p-2 rounded-full hover:bg-white text-gray-600"
+                    >
+                      <Edit3 size={16} opacity={0}/>
+                    </motion.button>
+                    <motion.button
+                      className="p-2 rounded-full hover:bg-white text-gray-600 "
+                    >
+                      <Trash2 size={16} opacity={0}/>
+                    </motion.button>
+                  </div>
+                </td>
+              </motion.tr>
+            ))}
+          </tbody>)}
         </table>
       </div>
-    ) : (
-      <div className="py-12 text-center">
-        <p className="text-gray-500 text-lg">No hay pacientes registrados.</p>
-      </div>
-    )}
+    
+      
+    
   </div>
 </div>
 
         {/* Pagination - Now properly contained */}
-        {(filteredPacientes.length > itemsPerPage && !isLoading ) && (
+        {(filteredPacientes.length > itemsPerPage && filteredPacientes.length!==0 ) && (
           <div className="pt-6 pb-2">
             <div className="flex justify-center gap-2">
               {Array.from({ length: Math.ceil(filteredPacientes.length / itemsPerPage) }, (_, i) => (

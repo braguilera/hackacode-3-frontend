@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Users, GraduationCap, Plus, X, ArrowRight, Stethoscope, Award, Calendar, HeartPulse, Wrench, Star } from 'lucide-react';
+import { Users, GraduationCap, Plus, X, ArrowRight, Stethoscope, Award, Calendar, HeartPulse, Wrench, Star, User, DollarSign } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CardMedico from '../components/CardMedico';
 import FormPersona from '../components/FormPersona';
 import { deleteDatos, getDatos, postDatos, putDatos } from '../api/crud';
+import LoadingIndicator from '../components/LoadingIndicator';
 
 const Medicos = () => {
   const [medicos, setMedicos] = useState([]);
@@ -24,7 +25,9 @@ const Medicos = () => {
     setLoadingMedico(true)
     try {
       const data = await getDatos('/api/medicos', 'Error cargando medicos');
-      setMedicos(data);
+      setTimeout(() => {
+        setMedicos(data);
+      }, 2000);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -126,17 +129,60 @@ const Medicos = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 pr-2">
-            {medicosFiltrados.map(medico => (
-              <CardMedico 
-                dataMedico={medico} 
-                key={medico.id} 
-                onEdit={handleEditPaciente} 
-                onDelete={deleteMedic}
-                isLoading={loadingMedico}
-              />
-            ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {loadingMedico ? (
+              // Renderiza los placeholders de carga cuando se está esperando la respuesta
+              Array.from({ length: 4 }).map((_, index) => (
+                <motion.article
+                  key={index}
+                  className="w-full bg-white rounded-xl shadow-sm overflow-hidden relative"
+                >
+                  <header className="p-4 flex items-start gap-4">
+                    {/* Avatar placeholder */}
+                    <div className="w-14 h-14 rounded-full bg-gray-100 flex-shrink-0">
+                      <LoadingIndicator />
+                    </div>
+
+                    <div className="flex-1 space-y-3">
+                      {/* Name placeholder */}
+                      <LoadingIndicator height="h-6" width="w-48" />
+                      
+                      {/* Specialty placeholder */}
+                      <LoadingIndicator height="h-6" width="w-32" />
+                    </div>
+                  </header>
+
+                  <div className="grid grid-cols-2 divide-x border-t">
+                    <div className="p-4 flex items-center gap-2">
+                      <User size={18} className="text-gray-300" />
+                      <div className="space-y-2">
+                        <LoadingIndicator height="h-4" width="w-16" />
+                        <LoadingIndicator height="h-5" width="w-8" />
+                      </div>
+                    </div>
+                    
+                    <div className="p-4 flex items-center gap-2">
+                      <DollarSign size={18} className="text-gray-300" />
+                      <div className="space-y-2">
+                        <LoadingIndicator height="h-4" width="w-16" />
+                        <LoadingIndicator height="h-5" width="w-20" />
+                      </div>
+                    </div>
+                  </div>
+                </motion.article>
+              ))
+            ) : (
+              medicosFiltrados.map(medico => (
+                <CardMedico 
+                  dataMedico={medico} 
+                  key={medico.id} 
+                  onEdit={handleEditPaciente} 
+                  onDelete={deleteMedic} 
+                />
+              ))
+            )}
           </div>
+
         </section>
 
         {/* Especialidades Section */}
