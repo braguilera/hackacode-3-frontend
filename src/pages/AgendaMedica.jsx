@@ -227,7 +227,7 @@ const daysInMonth = eachDayOfInterval({
 
 
   return (
-    <main className="w-full h-full flex flex-col pt-6 px-6 ml-6 mr-2">
+    <main className="w-full h-full flex flex-col py-6 px-12">
       {/* Header Section */}
       <header className="flex items-center justify-between mb-6">
         <div>
@@ -245,7 +245,7 @@ const daysInMonth = eachDayOfInterval({
       </header>
 
       {/* Calendar Section */}
-      <section className="bg-white rounded-xl h-[88%] shadow-sm border border-gray-200 p-6">
+      <section className="bg-white rounded-xl h-[90%] shadow-sm border border-gray-200 p-6">
         {/* Month Navigation */}
         <div className="flex items-center justify-between mb-8">
           <h3 className="text-2xl font-bold text-gray-800">

@@ -136,7 +136,7 @@ const FormPersona = ({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.2 }}
-      className="bg-white rounded-3xl p-6 h-auto w-full max-w-5xl relative shadow-lg border border-gray-100"
+      className={`bg-white rounded-3xl p-6 h-auto w-full ${tipo==="medico" ? "max-w-5xl" : "max-w-3xl" } relative shadow-lg border border-gray-100`}
     >
       {/* Close Button */}
       <motion.button
@@ -159,7 +159,7 @@ const FormPersona = ({
       </div>
   
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-2 gap-6">
+        <div className={`grid ${tipo==="medico" ? "grid-cols-2" : "grid-cols-1"} gap-6`}>
           {/* Columna izquierda - Datos personales */}
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">

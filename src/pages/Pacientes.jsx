@@ -3,6 +3,7 @@ import { Users, Plus, Search, RefreshCw } from 'lucide-react';
 import TablePacientes from '../components/TablePacientes';
 import { getDatos, deleteDatos, postDatos, putDatos } from '../api/crud';
 import FormPersona from '../components/FormPersona';
+import LoadingIndicator from '../components/LoadingIndicator';
 
 const Pacientes = () => {
   const [pacientes, setPacientes] = useState([]);
@@ -84,6 +85,7 @@ const Pacientes = () => {
   return (
     <div className="w-full h-full flex flex-col p-6">
         {/* Header Section */}
+        
         <div className=" border-gray-200 px-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
