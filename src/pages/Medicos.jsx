@@ -8,7 +8,8 @@ import { deleteDatos, getDatos, postDatos, putDatos } from '../api/crud';
 const Medicos = () => {
   const [medicos, setMedicos] = useState([]);
   const [especialidades, setEspecialidades] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingMedico, setLoadingMedico] = useState(false);
+  const [loadingEspecialidad, setLoadingEspecialidad] = useState(false);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [showEspecialidadForm, setShowEspecialidadForm] = useState(false);
@@ -20,13 +21,14 @@ const Medicos = () => {
 
   // Fetch functions
   const fetchMedicos = async () => {
+    setLoadingMedico(true)
     try {
       const data = await getDatos('/api/medicos', 'Error cargando medicos');
       setMedicos(data);
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      setLoadingMedico(false);
     }
   };
 
@@ -37,7 +39,7 @@ const Medicos = () => {
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      setLoadingEspecialidad(false);
     }
   };
 
@@ -131,6 +133,7 @@ const Medicos = () => {
                 key={medico.id} 
                 onEdit={handleEditPaciente} 
                 onDelete={deleteMedic}
+                isLoading={loadingMedico}
               />
             ))}
           </div>
