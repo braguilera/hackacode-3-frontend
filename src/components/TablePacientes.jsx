@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { CircleCheck, X, Trash2, Edit3, ChevronRight, Search } from 'lucide-react';
 import PacienteDetails from './PacienteDetails';
+import LoadingIndicator from './LoadingIndicator';
 
 
-const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
+const PacientesTable = ({ pacientes, consultas, onEdit, onDelete, isLoading }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [filterDNI, setFilterDNI] = useState('');
   const [selectedPaciente, setSelectedPaciente] = useState(null);
@@ -115,6 +116,64 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
               <th className="w-24 px-6 py-4"></th>
             </tr>
           </thead>
+          {isLoading 
+          ?
+          <tbody className="divide-y divide-gray-100">
+            {currentItems.map((paciente, index) => (
+              <motion.tr
+                key={paciente.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, delay: index * 0.05 }}
+              >
+                {/* Nombre Completo */}
+                <td className="w-64 px-6 py-4">
+                  <LoadingIndicator width={"w-64"}/>
+                </td>
+                {/* DNI */}
+                <td className="w-32 px-6 py-4 text-gray-600 text-right">
+                  <LoadingIndicator width={"w-32"}/>
+                </td>
+                {/* Fecha de Nacimiento */}
+                <td className="w-40 px-6 py-4 text-gray-600">
+                  <LoadingIndicator width={"w-40"}/>
+                </td>
+                {/* Email */}
+                <td className="w-64 px-6 py-4 text-gray-600 truncate"> {/* Usamos truncate para emails largos */}
+                  <LoadingIndicator width={"w-64"}/>
+                </td>
+                {/* Teléfono */}
+                <td className="w-40 px-6 py-4 text-gray-600">
+                  <LoadingIndicator width={"w-40"}/>
+                </td>
+                {/* Dirección */}
+                <td className="w-64 px-6 py-4 text-gray-600 truncate"> {/* Usamos truncate para direcciones largas */}
+                  <LoadingIndicator width={"w-64"}/>
+                </td>
+                {/* Obra Social */}
+                <td className="w-32 px-6 py-4">
+                  <LoadingIndicator width={"w-32"}/>
+                </td>
+                {/* Acciones */}
+                <td className="w-24 px-6 py-4">
+                  <div className="flex items-center justify-end gap-2 opacity-0">
+                    <motion.button
+                      className="p-2 rounded-full hover:bg-white text-gray-600"
+                    >
+                      <Edit3 size={16} opacity={0}/>
+                    </motion.button>
+                    <motion.button
+                      className="p-2 rounded-full hover:bg-white text-gray-600 "
+                    >
+                      <Trash2 size={16} opacity={0}/>
+                    </motion.button>
+                  </div>
+                </td>
+              </motion.tr>
+            ))}
+          </tbody>
+          :
+
           <tbody className="divide-y divide-gray-100">
             {currentItems.map((paciente, index) => (
               <motion.tr
@@ -190,6 +249,7 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
               </motion.tr>
             ))}
           </tbody>
+        }
         </table>
       </div>
     ) : (
@@ -201,7 +261,7 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
 </div>
 
         {/* Pagination - Now properly contained */}
-        {filteredPacientes.length > itemsPerPage && (
+        {(filteredPacientes.length > itemsPerPage && !isLoading ) && (
           <div className="pt-6 pb-2">
             <div className="flex justify-center gap-2">
               {Array.from({ length: Math.ceil(filteredPacientes.length / itemsPerPage) }, (_, i) => (

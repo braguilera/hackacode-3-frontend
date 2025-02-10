@@ -7,20 +7,23 @@ import LoadingIndicator from '../components/LoadingIndicator';
 
 const Pacientes = () => {
   const [pacientes, setPacientes] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [pacienteToEdit, setPacienteToEdit] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   const fetchPacientes = async () => {
+    setLoading(true);
     try {
       const data = await getDatos('/api/pacientes', 'Error cargando pacientes');
       setPacientes(data);
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      setTimeout(()=> {
+        setLoading(false);
+      },2000)
     }
   };
 
@@ -66,13 +69,7 @@ const Pacientes = () => {
     )
   );
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
-      </div>
-    );
-  }
+
 
   if (error) {
     return (
@@ -126,6 +123,7 @@ const Pacientes = () => {
             pacientes={filteredPacientes} 
             onEdit={handleEditPaciente} 
             onDelete={deletePaciente}
+            isLoading={loading}
           />
         </div>
 
