@@ -19,19 +19,20 @@ const Medicos = () => {
   const [especialidadData, setEspecialidadData] = useState({
     nombre: ''
   });
+  const [medicosPorEspecialidad, setMedicosPorEspecialidad] = useState({});
 
   // Fetch functions
   const fetchMedicos = async () => {
     setLoadingMedico(true)
     try {
       const data = await getDatos('/api/medicos', 'Error cargando medicos');
-      setTimeout(() => {
-        setMedicos(data);
-      }, 2000);
+      setMedicos(data);
     } catch (err) {
       setError(err.message);
-    } finally {
-      setLoadingMedico(false);
+    }finally {
+      setTimeout(() => {
+        setLoadingMedico(false);
+      }, 1000);
     }
   };
 
@@ -51,11 +52,24 @@ const Medicos = () => {
     fetchEspecialidades();
   }, []);
 
+  useEffect(() => {
+    const cargarCantidadMedicos = async () => {
+      const counts = {};
+      for (const especialidad of especialidades) {
+        counts[especialidad.id] = await lengthMedicsPerSpeciality(especialidad.id);
+      }
+      setMedicosPorEspecialidad(counts);
+    };
+  
+    cargarCantidadMedicos();
+  }, [especialidades]);
+
   // Existing handlers
   const deleteMedic = async (e) => {
     try {
       await deleteDatos(`/api/medicos/${e.id}`, 'Error eliminando paciente');
       await fetchMedicos();
+      await fetchEspecialidades();
     } catch (error) {
       throw error;
     }
@@ -74,11 +88,23 @@ const Medicos = () => {
         await postDatos('/api/medicos', medicoData, 'Error creando médico');
       }
       await fetchMedicos();
-      setShowForm(false);
+      await fetchEspecialidades();
     } catch (error) {
       throw error;
     } finally {
+      setShowForm(false);
       setMedicoToEdit(null);
+    }
+  };
+
+  const lengthMedicsPerSpeciality = async (especialidadId) => {
+    try {
+      const data = await getDatos(`/api/medicos/especialidad/${especialidadId}`, 'Error cargando especialidades');
+      console.log(data)
+      return data.length;
+    } catch (err) {
+      setError(err.message);
+      return 0; // Devuelve 0 en caso de error
     }
   };
 
@@ -132,23 +158,20 @@ const Medicos = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {loadingMedico ? (
               // Renderiza los placeholders de carga cuando se está esperando la respuesta
-              Array.from({ length: 4 }).map((_, index) => (
+              Array.from({ length: 16 }).map((_, index) => (
                 <motion.article
                   key={index}
                   className="w-full bg-white rounded-xl shadow-sm overflow-hidden relative"
                 >
                   <header className="p-4 flex items-start gap-4">
-                    {/* Avatar placeholder */}
-                    <div className="w-14 h-14 rounded-full bg-gray-100 flex-shrink-0">
-                      <LoadingIndicator />
-                    </div>
+
 
                     <div className="flex-1 space-y-3">
                       {/* Name placeholder */}
-                      <LoadingIndicator height="h-6" width="w-48" />
+                      <LoadingIndicator height="h-6" />
                       
                       {/* Specialty placeholder */}
-                      <LoadingIndicator height="h-6" width="w-32" />
+                      <LoadingIndicator height="h-6" width="w-52" />
                     </div>
                   </header>
 
@@ -247,30 +270,38 @@ const Medicos = () => {
               )}
             </AnimatePresence>
 
-            {/* Especialidades List */}
             {especialidades.map((especialidad) => (
-              <motion.div
-                key={especialidad.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="font-semibold text-gray-800">{especialidad.nombre}</h3>
-                    
-                  </div>
-                  <button className="p-1 hover:bg-gray-100 rounded-full">
-                    <X size={16} className="text-gray-400" />
-                  </button>
+            <motion.div
+              key={especialidad.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="font-semibold text-gray-800">
+                  {loadingMedico ? <LoadingIndicator width={'w-32'} /> : `${especialidad.nombre}`}
+                  
+                  </h3>
                 </div>
-                <div className="mt-3 pt-3 border-t border-gray-100">
-                  <p className="text-sm text-gray-500">
-                    <span className="font-medium">0</span> médicos asignados
-                  </p>
-                </div>
-              </motion.div>
-            ))}
+                <button className="p-1 hover:bg-gray-100 rounded-full">
+                  <X size={16} className="text-gray-400" />
+                </button>
+              </div>
+              <div className="mt-3 pt-3 border-t border-gray-100">
+                <p className="text-sm text-gray-500">
+                {loadingMedico ? <LoadingIndicator width={'w-40'} /> : 
+                <span className="font-medium">
+                {medicosPorEspecialidad[especialidad.id] || 0}
+
+                {(medicosPorEspecialidad[especialidad.id]>1 || medicosPorEspecialidad[especialidad.id]===0) 
+                  ? ' médicos asignados' 
+                  : ' médico asignado'}
+                  </span> }
+                </p>
+              </div>
+            </motion.div>
+          ))}
           </div>
         </section>
       </div>

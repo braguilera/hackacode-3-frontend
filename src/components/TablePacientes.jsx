@@ -12,15 +12,12 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
 
   const itemsPerPage = 8;
 
-  // Asegurar que pacientes es un array válido
   const safePacientes = Array.isArray(pacientes) ? pacientes : [];
   const filteredPacientes = safePacientes.filter(paciente => paciente.dni?.startsWith(filterDNI));
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredPacientes.slice(indexOfFirstItem, indexOfLastItem);
-
-  const ItemsLoading = [1,2,3,4,5,6,7,8];
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const handleRowClick = (paciente) => setSelectedPaciente(paciente);
@@ -62,9 +59,6 @@ const PacientesTable = ({ pacientes, consultas, onEdit, onDelete }) => {
       >
         {/* Header */}
         <header className="flex w-full justify-between items-center mb-6">
-          <h1 className="font-semibold text-gray-800 text-2xl">
-            Tienes <span className="font-extrabold text-blue-600">{filteredPacientes.length}</span> pacientes
-          </h1>
           <div className="relative w-1/3">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
             <input
