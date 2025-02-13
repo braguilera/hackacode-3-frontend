@@ -5,6 +5,7 @@ import CardMedico from '../components/CardMedico';
 import FormPersona from '../components/FormPersona';
 import { deleteDatos, getDatos, postDatos, putDatos } from '../api/crud';
 import LoadingIndicator from '../components/LoadingIndicator';
+import PopUpConfirmation from '../components/PopUpConfirmation';
 
 const Medicos = () => {
   const [medicos, setMedicos] = useState([]);
@@ -27,6 +28,7 @@ const Medicos = () => {
     try {
       const data = await getDatos('/api/medicos', 'Error cargando medicos');
       setMedicos(data);
+      console.log(data)
     } catch (err) {
       setError(err.message);
     }finally {
@@ -40,6 +42,7 @@ const Medicos = () => {
     try {
       const data = await getDatos('/api/especialidades', 'Error cargando especialidades');
       setEspecialidades(data);
+      console.log(data)
     } catch (err) {
       setError(err.message);
     } finally {
@@ -116,7 +119,7 @@ const Medicos = () => {
 
   return (
     <main className='w-full h-full flex flex-col gap-6 p-6'>
-
+      <PopUpConfirmation/>
       {/* Main Content */}
       <div className='flex gap-6 h-full'>
         {/* Médicos Section */}
@@ -154,7 +157,7 @@ const Medicos = () => {
               <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             </div>
           </div>
-
+              
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {loadingMedico ? (
               // Renderiza los placeholders de carga cuando se está esperando la respuesta
@@ -167,10 +170,9 @@ const Medicos = () => {
 
 
                     <div className="flex-1 space-y-3">
-                      {/* Name placeholder */}
                       <LoadingIndicator height="h-6" />
                       
-                      {/* Specialty placeholder */}
+
                       <LoadingIndicator height="h-6" width="w-52" />
                     </div>
                   </header>
@@ -204,8 +206,8 @@ const Medicos = () => {
                 />
               ))
             )}
+          
           </div>
-
         </section>
 
         {/* Especialidades Section */}

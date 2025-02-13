@@ -133,7 +133,7 @@ const Servicios = () => {
 <main className='w-full h-full flex flex-col gap-6 p-6 '>
 
       {/* Main Content */}
-      <div className='flex gap-6 h-[calc(100%-120px)]'>
+      <div className='flex gap-6 h-full'>
         {/* Principal Container - Services */}
         <section className='flex-1 flex flex-col h-full pl-6'>
           <header className='flex items-center justify-between mb-6'>

@@ -37,12 +37,12 @@ const especialidadColors = {
 };
 
 const CardMedico = ({ dataMedico, onEdit, onDelete, isLoading }) => {
-  const especialidad = dataMedico.especialidades[0].nombre;
-  const colors = especialidadColors[especialidad] || {
-    bgLight: 'bg-gray-100',
-    textDark: 'text-gray-800',
-    badge: 'bg-gray-50 text-gray-700'
-  };
+  //const especialidad = dataMedico.especialidades[0].nombre;
+  //const colors = especialidadColors[especialidad] || {
+  //  bgLight: 'bg-gray-100',
+  //  textDark: 'text-gray-800',
+  //  badge: 'bg-gray-50 text-gray-700'
+  //};
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -79,17 +79,17 @@ const CardMedico = ({ dataMedico, onEdit, onDelete, isLoading }) => {
 
         <header className="p-4 flex items-start gap-4">
             <motion.div
-            className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-semibold shadow-sm ${colors.bgLight}`}
+            className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-semibold shadow-sm`}
             >
-                <span className={colors.textDark}>{getInitials(dataMedico.nombre, dataMedico.apellido)}</span>
+                <span className={{/*colors.textDark*/}}>{getInitials(dataMedico.nombre, dataMedico.apellido)}</span>
             </motion.div>
 
             <div className="flex-1">
                 <h2 className="text-lg font-semibold text-gray-800">
                     {dataMedico.nombre} {dataMedico.apellido}
                 </h2>
-                <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium mt-1 ${colors.badge}`}>
-                    {especialidad}
+                <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium mt-1 {/*colors.badge*/}`}>
+                    {/*especialidad*/}
                 </div>
             </div>
         </header>
@@ -121,7 +121,7 @@ const CardMedico = ({ dataMedico, onEdit, onDelete, isLoading }) => {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         doctor={dataMedico}
-        colors={colors}
+        //colors={colors}
     />    
     }    
     </>
