@@ -17,6 +17,7 @@ const Medicos = () => {
   const [showEspecialidadForm, setShowEspecialidadForm] = useState(false);
   const [medicoToEdit, setMedicoToEdit] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isOpenDelete, setIsOpenDelete] = useState(false);
   const [especialidadData, setEspecialidadData] = useState({
     nombre: ''
   });
@@ -119,7 +120,24 @@ const Medicos = () => {
 
   return (
     <main className='w-full h-full flex flex-col gap-6 p-6'>
-      <PopUpConfirmation/>
+
+      <button onClick={()=> setIsOpenDelete(true)}>abrir</button>
+
+      {isOpenDelete &&( 
+        <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <PopUpConfirmation 
+          isOpen={isOpenDelete}
+          onConfirm={deleteMedic}
+          onCancel={() => setIsOpenDelete(false)}
+          itemId={1}
+          isDelete={true}
+          />
+        </div>
+      )
+      }
+      
+    
+    
       {/* Main Content */}
       <div className='flex gap-6 h-full'>
         {/* Médicos Section */}
