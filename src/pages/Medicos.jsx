@@ -17,7 +17,7 @@ const Medicos = () => {
   const [showEspecialidadForm, setShowEspecialidadForm] = useState(false);
   const [medicoToEdit, setMedicoToEdit] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isOpenDelete, setIsOpenDelete] = useState(false);
+  const [selectedMedicoToDelete, setSelectedMedicoToDelete] = useState(null);
   const [especialidadData, setEspecialidadData] = useState({
     nombre: ''
   });
@@ -68,14 +68,16 @@ const Medicos = () => {
     cargarCantidadMedicos();
   }, [especialidades]);
 
-  // Existing handlers
-  const deleteMedic = async (e) => {
+  const handleDeleteMedic = async (medicoId) => {
     try {
-      await deleteDatos(`/api/medicos/${e.id}`, 'Error eliminando paciente');
+      await deleteDatos(`/api/medicos/${medicoId}`, 'Error eliminando médico');
       await fetchMedicos();
       await fetchEspecialidades();
     } catch (error) {
       throw error;
+    }
+    finally{
+      setSelectedMedicoToDelete(null);
     }
   };
 
@@ -93,26 +95,26 @@ const Medicos = () => {
       }
       await fetchMedicos();
       await fetchEspecialidades();
+      
     } catch (error) {
       throw error;
     } finally {
       setShowForm(false);
       setMedicoToEdit(null);
+      setSelectedMedicoToDelete(null);
     }
   };
 
   const lengthMedicsPerSpeciality = async (especialidadId) => {
     try {
       const data = await getDatos(`/api/medicos/especialidad/${especialidadId}`, 'Error cargando especialidades');
-      console.log(data)
       return data.length;
     } catch (err) {
       setError(err.message);
-      return 0; // Devuelve 0 en caso de error
+      return 0;
     }
   };
 
-  // Filter médicos based on search
   const medicosFiltrados = medicos.filter(medico =>
     medico.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     medico.apellido?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -121,20 +123,18 @@ const Medicos = () => {
   return (
     <main className='w-full h-full flex flex-col gap-6 p-6'>
 
-      <button onClick={()=> setIsOpenDelete(true)}>abrir</button>
 
-      {isOpenDelete &&( 
+      {selectedMedicoToDelete && (
         <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <PopUpConfirmation 
-          isOpen={isOpenDelete}
-          onConfirm={deleteMedic}
-          onCancel={() => setIsOpenDelete(false)}
-          itemId={1}
-          isDelete={true}
+            isOpen={!!selectedMedicoToDelete}
+            onConfirm={() => handleDeleteMedic(selectedMedicoToDelete.id)}
+            onCancel={() => setSelectedMedicoToDelete(null)}
+            itemId={selectedMedicoToDelete.id}
+            isDelete={true}
           />
         </div>
-      )
-      }
+      )}
       
     
     
@@ -178,7 +178,6 @@ const Medicos = () => {
               
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {loadingMedico ? (
-              // Renderiza los placeholders de carga cuando se está esperando la respuesta
               Array.from({ length: 16 }).map((_, index) => (
                 <motion.article
                   key={index}
@@ -216,12 +215,12 @@ const Medicos = () => {
               ))
             ) : (
               medicosFiltrados.map(medico => (
-                <CardMedico 
-                  dataMedico={medico} 
-                  key={medico.id} 
-                  onEdit={handleEditPaciente} 
-                  onDelete={deleteMedic} 
-                />
+        <CardMedico 
+          key={medico.id}
+          dataMedico={medico} 
+          onEdit={handleEditPaciente}
+          onDelete={() => setSelectedMedicoToDelete(medico)} 
+        />
               ))
             )}
           

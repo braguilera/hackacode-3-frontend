@@ -59,21 +59,28 @@ const CardMedico = ({ dataMedico, onEdit, onDelete, isLoading }) => {
     >
       {/* Edit and Delete */}
       <aside className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-        <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className="p-2 rounded-full bg-white/90 hover:bg-gray-100 text-gray-600 shadow-sm"
-            onClick={(e) => {e.stopPropagation(); onEdit(dataMedico);}}
+      <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          className="p-2 rounded-full bg-white/90 hover:bg-gray-100 text-gray-600 shadow-sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit(dataMedico);
+          }}
         >
-            <Edit3 size={16} />
+          <Edit3 size={16} />
         </motion.button>
+        
         <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            className="p-2 rounded-full bg-white/90 hover:bg-red-50 text-gray-600 hover:text-red-500 shadow-sm"
-            onClick={(e) => {e.stopPropagation(); onDelete(dataMedico);}}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          className="p-2 rounded-full bg-white/90 hover:bg-red-50 text-gray-600 hover:text-red-500 shadow-sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(dataMedico); // Ahora solo activa el popup
+          }}
         >
-            <Trash2 size={16} />
+          <Trash2 size={16} />
         </motion.button>
       </aside>
 

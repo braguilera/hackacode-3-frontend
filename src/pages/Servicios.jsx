@@ -4,6 +4,7 @@ import CardPaquete from '../components/CardPaquete';
 import { Activity, ArrowRight, DollarSign, HeartPulse, Package, Plus, TrendingUp, Users, Wrench, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { deleteDatos, getDatos, postDatos } from '../api/crud';
+import PopUpConfirmation from '../components/PopUpConfirmation';
 
 const Servicios = () => {
   const [servicios, setServicios] = useState([]);
@@ -11,6 +12,7 @@ const Servicios = () => {
   const [serviciosActuales, setServiciosActuales] = useState([]);
   const [paquetes, setPaquetes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selecteServicioToDelete, SetSelecteServicioToDelete] = useState(null)
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState(null);
   const [openFormServicios, setOpenFormServicios] = useState(false);
@@ -59,11 +61,14 @@ const Servicios = () => {
 
       const deleteService = async (e) => {
         try {
-          await deleteDatos(`/api/servicios/individuales/${e.codigo}`, 'Error eliminando servicio');
+          await deleteDatos(`/api/servicios/individuales/${e}`, 'Error eliminando servicio');
           await fetchServicios();
         } catch (error) {
           console.error(error.message);
           throw error;
+        }
+        finally{
+          SetSelecteServicioToDelete(null)
         }
       };
 
@@ -134,6 +139,20 @@ const Servicios = () => {
 
       {/* Main Content */}
       <div className='flex gap-6 h-full'>
+
+
+      {selecteServicioToDelete && (
+        <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <PopUpConfirmation 
+            isOpen={!!selecteServicioToDelete}
+            onConfirm={() => deleteService(selecteServicioToDelete.codigo)}
+            onCancel={() => SetSelecteServicioToDelete(null)}
+            itemId={selecteServicioToDelete.codigo}
+            isDelete={true}
+          />
+        </div>
+      )}
+
         {/* Principal Container - Services */}
         <section className='flex-1 flex flex-col h-full pl-6'>
           <header className='flex items-center justify-between mb-6'>
@@ -257,7 +276,7 @@ const Servicios = () => {
               key={servicio.codigo}
               dataServicio={servicio}
               onEdit={editService}
-              onDelete={deleteService}
+              onDelete={()=> SetSelecteServicioToDelete(servicio)}
             />
           ))}
         </article>
@@ -415,7 +434,7 @@ const Servicios = () => {
                 key={paquete.id}
                 dataPaquete={paquete}
                 onEdit={editPaquete}
-                onDelete={deletePaquete}
+                onDelete={deletePaquete} 
               />
             ))}
           </article>

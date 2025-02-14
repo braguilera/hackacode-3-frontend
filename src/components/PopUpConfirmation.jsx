@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, Check, X, Edit2 } from 'lucide-react';
 
 const PopUpConfirmation = ({ isOpen, onConfirm, onCancel, itemId, isDelete = true }) => {
-  // Configuración de estilos según el tipo de acción
+
   const styles = {
     delete: {
       icon: AlertTriangle,
