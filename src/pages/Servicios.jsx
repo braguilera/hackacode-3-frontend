@@ -18,6 +18,8 @@ const Servicios = () => {
   const [error, setError] = useState(null);
   const [openFormServicios, setOpenFormServicios] = useState(false);
   const [openFormPaquetes, setOpenFormPaquetes] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [servicioData, setServicioData] = useState({
     nombre: '',
     descripcion: '',
@@ -82,6 +84,7 @@ const Servicios = () => {
 
       const handleSubmitServicio = async (e) => {
         e.preventDefault();
+        console.log(servicioData)
       
         try {
           await postDatos('/api/servicios/individuales', servicioData, 'Error creando servicio');
@@ -103,6 +106,7 @@ const Servicios = () => {
           servicios: [...prev.servicios, servicio.codigo] 
         }));
       };
+
       const handleQuitarServicio = (servicio) => {
         setServiciosDisponibles((prev) => [...prev, servicio]);
         setServiciosActuales((prev) => prev.filter((s) => s.codigo !== servicio.codigo));
@@ -119,15 +123,32 @@ const Servicios = () => {
 
       const handleSubmitPaquete = async (e) => {
         e.preventDefault();
+        console.log(paqueteData)
 
+        if (paqueteData.servicios.length === 0) {
+          alert('Debe seleccionar al menos un servicio');
+          return;
+        }
+      
+        if (!paqueteData.nombre.trim()) {
+          alert('El nombre del paquete es requerido');
+          return;
+        }
         try {
-          await postDatos('/api/paquetes', paqueteData, 'Error creando paquete');
+          setIsSubmitting(true)
+          await postDatos('/api/servicios/paquetes', paqueteData, 'Error creando paquete');
+          fetchServicios();
+          fetchPaquetes();
           setPaqueteData({ nombre: '', servicios: [] });
           setServiciosActuales([]);
-          fetchServicios();
-          setOpenFormPaquetes(false);
         } catch (error) {
           console.error(error.message);
+        } finally {
+          setTimeout(() => {
+            setIsSubmitting(false);
+            setOpenFormPaquetes(false);
+            
+          }, 1000);
         }
       };
 
@@ -414,21 +435,22 @@ const Servicios = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
                         <AnimatePresence>
                           {serviciosDisponibles.map((servicio) => (
-                            <motion.button
-                              key={servicio.codigo}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
-                              onClick={() => handleAgregarServicio(servicio)}
-                              className="flex justify-between items-center py-2 px-3 bg-white border border-gray-200 rounded-lg hover:border-blue-200 hover:bg-blue-50/50 transition-all text-left group"
-                            >
-                              <span className="text-sm text-gray-700">{servicio.nombre}</span>
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-semibold text-gray-700">${servicio.precio}</span>
-                                <Plus size={14} className="text-gray-400 group-hover:text-blue-500" />
-                              </div>
-                            </motion.button>
-                          ))}
+  <motion.button
+    key={servicio.codigo}
+    type="button" // <- Esto es crucial para evitar el submit automático
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -10 }}
+    onClick={() => handleAgregarServicio(servicio)}
+    className="flex justify-between items-center py-2 px-3 bg-white border border-gray-200 rounded-lg hover:border-blue-200 hover:bg-blue-50/50 transition-all text-left group"
+  >
+    <span className="text-sm text-gray-700">{servicio.nombre}</span>
+    <div className="flex items-center gap-2">
+      <span className="text-sm font-semibold text-gray-700">${servicio.precio}</span>
+      <Plus size={14} className="text-gray-400 group-hover:text-blue-500" />
+    </div>
+  </motion.button>
+))}
                         </AnimatePresence>
                       </div>
                     </div>
@@ -439,10 +461,17 @@ const Servicios = () => {
                 <footer className="p-4 border-t border-gray-100 flex justify-end">
                   <button
                     type="submit"
+                    disabled={paqueteData.servicios.length === 0} // Deshabilitar si no hay servicios
                     className="w-full justify-center bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
                   >
-                    <span>Guardar Paquete</span>
-                    <ArrowRight size={18} />
+                  {isSubmitting ? (
+                      <span>Guardando...</span>
+                    ) : (
+                      <>
+                        <span>Guardar Paquete</span>
+                        <ArrowRight size={18} />
+                      </>
+                    )}
                   </button>
                 </footer>
               </form>
