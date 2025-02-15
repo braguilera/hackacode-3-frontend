@@ -22,7 +22,10 @@ const CardPaquete = ({ dataPaquete, onEdit, onDelete }) => {
                     <motion.button
                         whileHover={{ scale: 1.1 }}
                         className="p-1.5 rounded-full bg-white hover:bg-gray-50 text-gray-600 shadow-sm"
-                        onClick={(e) => { e.stopPropagation(); onEdit(); }}
+                        onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(dataPaquete);
+                        }}
                     >
                         <Edit3 size={16} />
                     </motion.button>

@@ -37,15 +37,10 @@ const Servicios = () => {
     nombre: '',
     servicios: []
   });
-  const [editingPaqueteId, setEditingPaqueteId] = useState(null);
-  const [paqueteDataEdit, setPaqueteDataEdit] = useState({
-    nombre: '',
-    servicios: []
-  });
+  const [paqueteEditando, setPaqueteEditando] = useState(null);
 
 
-  const editPaquete = () => alert("editado");
-  const deletePaquete = () => alert("eliminado");
+
 
       const fetchServicios = async () => {
         setLoadingServicios(true);
@@ -194,45 +189,47 @@ const Servicios = () => {
         }
       };
 
-      const handleEditPaqueteClick = (paquete) => {
-        setEditingPaqueteId(paquete.id);
-        setPaqueteDataEdit(paquete);
+      const iniciarEdicion = (paquete) => {
+        setPaqueteEditando(paquete);
       };
-    
-      // Maneja el cambio en el formulario de edición (por ejemplo, para el campo nombre)
-      const handlePaqueteEditChange = (e) => {
-        setPaqueteDataEdit({
-          ...paqueteDataEdit,
-          [e.target.name]: e.target.value
-        });
+      
+      // Función para cancelar
+      const cancelarEdicion = () => {
+        setPaqueteEditando(null);
       };
-    
-      // Envía la edición y actualiza el paquete (por ejemplo, con una llamada a API)
-      const handleSavePaqueteEdit = (e) => {
-        e.preventDefault();
-        editService(paqueteDataEdit);
-        setEditingPaqueteId(null);
-        setPaqueteDataEdit({ nombre: '', servicios: [] });
+      
+      // Función para guardar cambios
+      const guardarEdicion = (paqueteActualizado) => {
+        editPaquete(paqueteActualizado); // Tu función para actualizar
+        setPaqueteEditando(null);
       };
-    
-      // Cancela la edición
-      const handleCancelPaqueteEdit = () => {
-        setEditingPaqueteId(null);
-        setPaqueteDataEdit({ nombre: '', servicios: [] });
-      };
-    
 
       const serviciosFiltrados = servicios.filter(servicio =>
         servicio.nombre?.toLowerCase().startsWith(searchTerm.toLowerCase())
       );
 
-      const editService = async (paquete) => {
+      const editPaquete = async (paquete) => {
+        if (!paquete.nombre.trim()) {
+          alert('El nombre del paquete es requerido');
+          return;
+        }
         try {
           await putDatos(`/api/servicios/paquetes/${paquete.codigo}`, paquete, 'Error editando servicio');
-          fetchPaquetes();
+          await fetchPaquetes();
         } catch (error) {
           console.error(error);
         }
+      }
+
+      const deletePaquete = async (paquete) => {
+        try {
+          await deleteDatos(`/api/servicios/paquetes/${paquete.codigo}`, 'Error eliminando servicio');
+          await fetchPaquetes();
+        } catch (error) {
+          console.error(error.message);
+          throw error;
+        }
+        
       }
 
   return (
@@ -586,53 +583,53 @@ const Servicios = () => {
         </AnimatePresence>
       </aside>
   
-
       {loadingPaquetes ? (
-        // Renderizamos _skeletons_ o placeholders mientras carga
-        Array.from({ length: 5 }).map((_, index) => (
-          <motion.main
-            key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.02 }}
-            className="relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-4 border border-gray-100 group cursor-pointer select-none"
-          >
-            <p className="text-gray-400">Cargando...</p>
-          </motion.main>
-        ))
-      ) : (
-        // Iteramos los paquetes y, según el estado de edición, renderizamos la card correspondiente
-        paquetes.map((paquete) => (
-          <AnimatePresence mode="wait" key={paquete.id}>
-            {editingPaqueteId === paquete.id ? (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-              >
-                <CardPaqueteEdit 
-                  paqueteDataEdit={paqueteDataEdit}
-                  onChange={handlePaqueteEditChange}
-                  onSubmit={handleSavePaqueteEdit}
-                  onCancel={handleCancelPaqueteEdit}
-                />
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-              >
-                <CardPaquete 
-                  dataPaquete={paquete}
-                  onEdit={() => handleEditPaqueteClick(paquete)}
-                  onDelete={() => deletePaquete(paquete.id)}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        ))
-      )}
+  Array.from({ length: 5 }).map((_, index) => (
+    <motion.main
+      key={index}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.02 }}
+      className="relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-4 border border-gray-100 group cursor-pointer select-none"
+    >
+      <p className="text-gray-400">Cargando...</p>
+    </motion.main>
+  ))
+) : (
+  paquetes.map((paquete) => (
+  <div key={paquete.codigo} className="relative">
+    {/* Solo muestra el formulario de edición en el paquete seleccionado */}
+    <AnimatePresence>
+      {paqueteEditando?.codigo === paquete.codigo ? ( // 👈 Comparación por ID
+        <motion.div
+          className=" inset-0 z-10"
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+        >
+          <CardPaqueteEdit
+            paquete={paqueteEditando}
+            serviciosDisponibles={serviciosDisponibles}
+            onCancel={cancelarEdicion}
+            onSave={guardarEdicion}
+          />
+        </motion.div>
+      )
+    
+    :
+
+    (<motion.div layout
+    >
+      <CardPaquete
+        dataPaquete={paquete}
+        onEdit={() => iniciarEdicion(paquete)} // 👈 Pasa el paquete completo
+        onDelete={() => deletePaquete(paquete.codigo)}
+      />
+    </motion.div>)}
+    </AnimatePresence>
+  </div>
+))
+)}
 
             
           </article>
