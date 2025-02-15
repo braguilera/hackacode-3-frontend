@@ -586,14 +586,33 @@ const Servicios = () => {
       {loadingPaquetes ? (
   Array.from({ length: 5 }).map((_, index) => (
     <motion.main
-      key={index}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.02 }}
-      className="relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-4 border border-gray-100 group cursor-pointer select-none"
-    >
-      <p className="text-gray-400">Cargando...</p>
-    </motion.main>
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            key={index}
+            transition={{ duration: 0.02 }}
+            className='relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-4 border border-gray-100 group cursor-pointer select-none'
+        >
+            <header className="flex items-center gap-2 mb-2">
+                <aside className="p-2 bg-blue-100 rounded-lg">
+                    <Package size={20} className="text-blue-600" />
+                </aside>
+                <LoadingIndicator height={'h-6'}/>
+            </header>
+
+            <article className="space-y-2 mb-3">
+                    <div className="flex justify-between items-center text-sm bg-gray-100 rounded-lg">
+                <LoadingIndicator height={'h-20'}/>
+                    </div>
+
+            </article>
+
+            <footer className="pt-2 border-t border-gray-200">
+                <div className="flex justify-between items-center mt-2">
+
+                <LoadingIndicator height={'h-6'}/>
+                </div>
+            </footer>
+        </motion.main>
   ))
 ) : (
   paquetes.map((paquete) => (
