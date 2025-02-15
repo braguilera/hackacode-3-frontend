@@ -3,9 +3,11 @@ import CardServicio from '../components/CardServicio';
 import CardPaquete from '../components/CardPaquete';
 import { Activity, ArrowRight, DollarSign, HeartPulse, Package, Plus, TrendingUp, Users, Wrench, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { deleteDatos, getDatos, postDatos } from '../api/crud';
+import { deleteDatos, getDatos, postDatos, putDatos } from '../api/crud';
 import PopUpConfirmation from '../components/PopUpConfirmation';
 import LoadingIndicator from '../components/LoadingIndicator';
+import EditableCardService from '../components/EditableCardService';
+import CardPaqueteEdit from '../components/CardPaqueteEdit';
 
 const Servicios = () => {
   const [servicios, setServicios] = useState([]);
@@ -20,8 +22,13 @@ const Servicios = () => {
   const [openFormServicios, setOpenFormServicios] = useState(false);
   const [openFormPaquetes, setOpenFormPaquetes] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [editingService, setEditingService] = useState(null);
   const [servicioData, setServicioData] = useState({
+    nombre: '',
+    descripcion: '',
+    precio: ''
+  });
+  const [servicioDataEdit, setServicioDataEdit] = useState({
     nombre: '',
     descripcion: '',
     precio: ''
@@ -30,8 +37,13 @@ const Servicios = () => {
     nombre: '',
     servicios: []
   });
+  const [editingPaqueteId, setEditingPaqueteId] = useState(null);
+  const [paqueteDataEdit, setPaqueteDataEdit] = useState({
+    nombre: '',
+    servicios: []
+  });
 
-  const editService = () => alert("editado");
+
   const editPaquete = () => alert("editado");
   const deletePaquete = () => alert("eliminado");
 
@@ -80,6 +92,29 @@ const Servicios = () => {
         }
         finally{
           SetSelecteServicioToDelete(null)
+        }
+      };
+
+      const handleEditClick = (servicio) => {
+        setEditingService(servicio);
+        setServicioDataEdit({
+          nombre: servicio.nombre,
+          descripcion: servicio.descripcion,
+          precio: servicio.precio
+        });
+      };
+
+      const handleSubmitEdit = async (e) => {
+        e.preventDefault();
+        try {
+          console.log(editingService)
+          await putDatos(`/api/servicios/individuales/${editingService.codigo}`, servicioDataEdit, 'Error editando servicio');
+          fetchServicios();
+          setEditingService(null);
+        } catch (error) {
+          console.error(error);
+        }finally{
+          setServicioDataEdit({ nombre: '', descripcion: '', precio: '' });
         }
       };
 
@@ -159,9 +194,46 @@ const Servicios = () => {
         }
       };
 
+      const handleEditPaqueteClick = (paquete) => {
+        setEditingPaqueteId(paquete.id);
+        setPaqueteDataEdit(paquete);
+      };
+    
+      // Maneja el cambio en el formulario de edición (por ejemplo, para el campo nombre)
+      const handlePaqueteEditChange = (e) => {
+        setPaqueteDataEdit({
+          ...paqueteDataEdit,
+          [e.target.name]: e.target.value
+        });
+      };
+    
+      // Envía la edición y actualiza el paquete (por ejemplo, con una llamada a API)
+      const handleSavePaqueteEdit = (e) => {
+        e.preventDefault();
+        editService(paqueteDataEdit);
+        setEditingPaqueteId(null);
+        setPaqueteDataEdit({ nombre: '', servicios: [] });
+      };
+    
+      // Cancela la edición
+      const handleCancelPaqueteEdit = () => {
+        setEditingPaqueteId(null);
+        setPaqueteDataEdit({ nombre: '', servicios: [] });
+      };
+    
+
       const serviciosFiltrados = servicios.filter(servicio =>
         servicio.nombre?.toLowerCase().startsWith(searchTerm.toLowerCase())
       );
+
+      const editService = async (paquete) => {
+        try {
+          await putDatos(`/api/servicios/paquetes/${paquete.codigo}`, paquete, 'Error editando servicio');
+          fetchPaquetes();
+        } catch (error) {
+          console.error(error);
+        }
+      }
 
   return (
 <main className='w-full h-full flex flex-col gap-6 p-6 '>
@@ -305,14 +377,14 @@ const Servicios = () => {
         ?
         (
           Array.from({ length: 15 }).map((_, index) => (
-                    <motion.main
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.2 }}
-                        key={index}
-                        className={`w-full flex flex-col h-40 bg-white rounded-xl shadow-sm  overflow-hidden relative group select-none`}
-                    >
-        <article className="pt-4 px-4 pb-2 flex flex-col justify-between h-full" >
+            <motion.main
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                key={index}
+                className={`w-full flex flex-col h-40 bg-white rounded-xl shadow-sm  overflow-hidden relative group select-none`}
+            >
+          <article className="pt-4 px-4 pb-2 flex flex-col justify-between h-full" >
                 <header className='w-full flex flex-col items-start gap-2'>
                     <h2 className={`text-xl w-auto font-semibold text-gray-800 py-1 rounded-full`}>
                         <LoadingIndicator width={'w-32'} height={'h-7'}/>
@@ -330,14 +402,32 @@ const Servicios = () => {
           )))
         :
         
-
           (serviciosFiltrados.map((servicio) => (
-            <CardServicio
-              key={servicio.codigo}
-              dataServicio={servicio}
-              onEdit={editService}
-              onDelete={()=> SetSelecteServicioToDelete(servicio)}
-            />
+            <AnimatePresence mode="wait" key={servicio.codigo}>
+              {editingService?.codigo === servicio.codigo ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="relative z-10"
+                >
+                  <EditableCardService
+                    servicioData={servicioDataEdit}
+                    setServicioData={setServicioDataEdit}
+                    onCancel={() => setEditingService(null)}
+                    onSubmit={handleSubmitEdit}
+                  />
+                </motion.div>
+              ) : (
+                <CardServicio
+                  key={servicio.codigo}
+                  dataServicio={servicio}
+                  onEdit={handleEditClick}
+                  onDelete={() => SetSelecteServicioToDelete(servicio)}
+                />
+              )}
+            </AnimatePresence>
           )))
         }
         </article>
@@ -353,8 +443,6 @@ const Servicios = () => {
                 {paquetes.length === 1
                 ? ' combinación'
                 : ' combinaciones'}
-                
-                
                 </span>
             </h2>
             <p className='text-gray-500 mt-1'>Combina servicios para crear ofertas especiales</p>
@@ -392,7 +480,7 @@ const Servicios = () => {
                     setOpenFormPaquetes(false);
                     setPaqueteData({ nombre: '', servicios: [] });
                     setServiciosActuales([]);
-                    fetchServicios();
+                    
                   }}
                   className="p-1.5 rounded-full hover:bg-gray-50 text-gray-600"
                 >
@@ -442,22 +530,22 @@ const Servicios = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
                         <AnimatePresence>
                           {serviciosDisponibles.map((servicio) => (
-  <motion.button
-    key={servicio.codigo}
-    type="button" // <- Esto es crucial para evitar el submit automático
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -10 }}
-    onClick={() => handleAgregarServicio(servicio)}
-    className="flex justify-between items-center py-2 px-3 bg-white border border-gray-200 rounded-lg hover:border-blue-200 hover:bg-blue-50/50 transition-all text-left group"
-  >
-    <span className="text-sm text-gray-700">{servicio.nombre}</span>
-    <div className="flex items-center gap-2">
-      <span className="text-sm font-semibold text-gray-700">${servicio.precio}</span>
-      <Plus size={14} className="text-gray-400 group-hover:text-blue-500" />
-    </div>
-  </motion.button>
-))}
+                            <motion.button
+                              key={servicio.codigo}
+                              type="button" // <- Esto es crucial para evitar el submit automático
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              onClick={() => handleAgregarServicio(servicio)}
+                              className="flex justify-between items-center py-2 px-3 bg-white border border-gray-200 rounded-lg hover:border-blue-200 hover:bg-blue-50/50 transition-all text-left group"
+                            >
+                              <span className="text-sm text-gray-700">{servicio.nombre}</span>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-semibold text-gray-700">${servicio.precio}</span>
+                                <Plus size={14} className="text-gray-400 group-hover:text-blue-500" />
+                              </div>
+                            </motion.button>
+                          ))}
                         </AnimatePresence>
                       </div>
                     </div>
@@ -499,42 +587,52 @@ const Servicios = () => {
       </aside>
   
 
-          {loadingPaquetes 
-          ?
-          (Array.from({ length: 5 }).map((_, index) => (            
-                    <motion.main
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.02 }}
-                        key={index}
-                        className='relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-4 border border-gray-100 group cursor-pointer select-none'
-                    >
-            <article className="space-y-2 mb-3">
-                    <LoadingIndicator width={'w-52'} height={'h-8'}/>
-                    <div  className="flex justify-between items-center text-sm bg-gray-100 rounded-lg">
-                    <LoadingIndicator height={'h-20'}/>
-                    </div>
-                
-            </article>
-
-            <footer className="pt-2 border-t border-gray-200">
-                <div className="flex justify-between items-center mt-2">
-
-                    <LoadingIndicator height={'h-8'}/>
-                </div>
-            </footer>
-            </motion.main>)))
-          :
-          (paquetes.map((paquete) => (
-              <CardPaquete
-                key={paquete.id}
-                dataPaquete={paquete}
-                onEdit={editPaquete}
-                onDelete={deletePaquete} 
-              />
-            )))
-          }
-
+      {loadingPaquetes ? (
+        // Renderizamos _skeletons_ o placeholders mientras carga
+        Array.from({ length: 5 }).map((_, index) => (
+          <motion.main
+            key={index}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.02 }}
+            className="relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-4 border border-gray-100 group cursor-pointer select-none"
+          >
+            <p className="text-gray-400">Cargando...</p>
+          </motion.main>
+        ))
+      ) : (
+        // Iteramos los paquetes y, según el estado de edición, renderizamos la card correspondiente
+        paquetes.map((paquete) => (
+          <AnimatePresence mode="wait" key={paquete.id}>
+            {editingPaqueteId === paquete.id ? (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+              >
+                <CardPaqueteEdit 
+                  paqueteDataEdit={paqueteDataEdit}
+                  onChange={handlePaqueteEditChange}
+                  onSubmit={handleSavePaqueteEdit}
+                  onCancel={handleCancelPaqueteEdit}
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+              >
+                <CardPaquete 
+                  dataPaquete={paquete}
+                  onEdit={() => handleEditPaqueteClick(paquete)}
+                  onDelete={() => deletePaquete(paquete.id)}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        ))
+      )}
 
             
           </article>
