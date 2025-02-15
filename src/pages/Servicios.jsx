@@ -13,6 +13,7 @@ const Servicios = () => {
   const [serviciosActuales, setServiciosActuales] = useState([]);
   const [paquetes, setPaquetes] = useState([]);
   const [loadingServicios, setLoadingServicios] = useState(true);
+  const [loadingPaquetes, setLoadingPaquetes] = useState(true);
   const [selecteServicioToDelete, SetSelecteServicioToDelete] = useState(null)
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState(null);
@@ -50,12 +51,18 @@ const Servicios = () => {
       };
 
       const fetchPaquetes = async () => {
+        setLoadingPaquetes(true)
         try {
           const data = await getDatos('/api/servicios/paquetes', 'Error cargando medicos');
           setPaquetes(data);
         } catch (err) {
           setError(err.message);
-        } 
+        }finally{
+          setTimeout(() => {
+            setLoadingPaquetes(false)
+          }, 1000);
+        }
+
       };
     
       useEffect(() => {
@@ -491,14 +498,45 @@ const Servicios = () => {
         </AnimatePresence>
       </aside>
   
-            {paquetes.map((paquete) => (
+
+          {loadingPaquetes 
+          ?
+          (Array.from({ length: 5 }).map((_, index) => (            
+                    <motion.main
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.02 }}
+                        key={index}
+                        className='relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-4 border border-gray-100 group cursor-pointer select-none'
+                    >
+            <article className="space-y-2 mb-3">
+                    <LoadingIndicator width={'w-52'} height={'h-8'}/>
+                    <div  className="flex justify-between items-center text-sm bg-gray-100 rounded-lg">
+                    <LoadingIndicator height={'h-20'}/>
+                    </div>
+                
+            </article>
+
+            <footer className="pt-2 border-t border-gray-200">
+                <div className="flex justify-between items-center mt-2">
+
+                    <LoadingIndicator height={'h-8'}/>
+                </div>
+            </footer>
+            </motion.main>)))
+          :
+          (paquetes.map((paquete) => (
               <CardPaquete
                 key={paquete.id}
                 dataPaquete={paquete}
                 onEdit={editPaquete}
                 onDelete={deletePaquete} 
               />
-            ))}
+            )))
+          }
+
+
+            
           </article>
         </section>
       </div>
