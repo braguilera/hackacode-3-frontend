@@ -14,20 +14,21 @@ const LoadingIndicator = ({ width, height }) => {
         style={{
           background: `
             linear-gradient(
-                to left,
-                rgba(255, 255, 255, 0.4) 40%,
-                rgba(255, 255, 255, 0.7) 70%,
-                rgba(255, 255, 255, 0.4) 40%,
+              90deg,
+              transparent 0%,
+              rgba(255, 255, 255, 0.6) 50%,
+              transparent 100%
             )
           `,
-          backgroundSize: '200% 100%',
+          backgroundSize: '100% 100%',
         }}
         animate={{
-          x: ['-100%', '100%']
+          x: ['-100%', '100%', '100%'],
         }}
         transition={{
-          duration: 2,
-          ease: 'easeInOut',
+          duration: 1.5,
+          times: [0, 0.5, 1],
+          ease: "linear",
           repeat: Infinity,
         }}
       />
