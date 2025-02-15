@@ -5,13 +5,14 @@ import { Activity, ArrowRight, DollarSign, HeartPulse, Package, Plus, TrendingUp
 import { AnimatePresence, motion } from 'framer-motion';
 import { deleteDatos, getDatos, postDatos } from '../api/crud';
 import PopUpConfirmation from '../components/PopUpConfirmation';
+import LoadingIndicator from '../components/LoadingIndicator';
 
 const Servicios = () => {
   const [servicios, setServicios] = useState([]);
   const [serviciosDisponibles, setServiciosDisponibles] = useState([]);
   const [serviciosActuales, setServiciosActuales] = useState([]);
   const [paquetes, setPaquetes] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingServicios, setLoadingServicios] = useState(true);
   const [selecteServicioToDelete, SetSelecteServicioToDelete] = useState(null)
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState(null);
@@ -32,6 +33,7 @@ const Servicios = () => {
   const deletePaquete = () => alert("eliminado");
 
       const fetchServicios = async () => {
+        setLoadingServicios(true);
         try {
           const data = await getDatos('/api/servicios/individuales', 'Error cargando medicos');
           setServicios(data);
@@ -39,7 +41,9 @@ const Servicios = () => {
         } catch (err) {
           setError(err.message);
         } finally {
-          setLoading(false);
+          setTimeout(() => {
+            setLoadingServicios(false);
+          }, 1000);
         }
       };
 
@@ -49,9 +53,7 @@ const Servicios = () => {
           setPaquetes(data);
         } catch (err) {
           setError(err.message);
-        } finally {
-          setLoading(false);
-        }
+        } 
       };
     
       useEffect(() => {
@@ -92,7 +94,6 @@ const Servicios = () => {
           console.error(error.message);
         }
       };
-
 
       const handleAgregarServicio = (servicio) => {
         setServiciosActuales((prev) => [...prev, servicio]);
@@ -142,7 +143,7 @@ const Servicios = () => {
 
 
       {selecteServicioToDelete && (
-        <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
           <PopUpConfirmation 
             isOpen={!!selecteServicioToDelete}
             onConfirm={() => deleteService(selecteServicioToDelete.codigo)}
@@ -169,7 +170,7 @@ const Servicios = () => {
             </div>
           </header>
                     {/* Search Bar */}
-                    <div className="mb-6">
+
             <div className="relative max-w-md">
               <input
                 type="text"
@@ -180,9 +181,9 @@ const Servicios = () => {
               />
               <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             </div>
-          </div>
           
-          <article className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pr-4  scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50'>
+          
+          <article className=' grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pr-4 pt-6  scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50'>
         <aside className="h-40 w-full">
       <AnimatePresence mode="wait">
         {openFormServicios ? (
@@ -271,14 +272,46 @@ const Servicios = () => {
         )}
       </AnimatePresence>
     </aside>
-          {serviciosFiltrados.map((servicio) => (
+
+        {loadingServicios 
+        ?
+        (
+          Array.from({ length: 15 }).map((_, index) => (
+                    <motion.main
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.2 }}
+                        key={index}
+                        className={`w-full flex flex-col h-40 bg-white rounded-xl shadow-sm  overflow-hidden relative group select-none`}
+                    >
+        <article className="pt-4 px-4 pb-2 flex flex-col justify-between h-full" >
+                <header className='w-full flex flex-col items-start gap-2'>
+                    <h2 className={`text-xl w-auto font-semibold text-gray-800 py-1 rounded-full`}>
+                        <LoadingIndicator width={'w-32'} height={'h-7'}/>
+                    </h2>
+                    <p className="text-base text-gray-600 line-clamp-2"><LoadingIndicator width={'w-52'} height={'h-4'}/></p>
+                </header>
+                
+                <footer className="flex items-center justify-between mt-2">
+                    <article className="flex items-center gap-2 pt-2 border-t border-gray-100 w-full">
+                        <span className='text-xl font-semibold text-slate-600'><LoadingIndicator width={'w-20'} height={'h-6'}/></span>
+                    </article>
+                </footer>
+            </article>
+            </motion.main>
+          )))
+        :
+        
+
+          (serviciosFiltrados.map((servicio) => (
             <CardServicio
               key={servicio.codigo}
               dataServicio={servicio}
               onEdit={editService}
               onDelete={()=> SetSelecteServicioToDelete(servicio)}
             />
-          ))}
+          )))
+        }
         </article>
         </section>
 

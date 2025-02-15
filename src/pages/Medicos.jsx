@@ -181,6 +181,9 @@ const Medicos = () => {
               Array.from({ length: 16 }).map((_, index) => (
                 <motion.article
                   key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.2 }}
                   className="w-full bg-white rounded-xl shadow-sm overflow-hidden relative"
                 >
                   <header className="p-4 flex items-start gap-4">
