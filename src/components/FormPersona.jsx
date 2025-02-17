@@ -11,14 +11,13 @@ const FormPersona = ({
     isEditing = false 
   }) => {
     const [formData, setFormData] = useState(() => {
-      // 1. Corregir inicialización de especialidadesIDs
       const initial = initialData || getInitialData(tipo);
       
       return {
         ...initial,
-        especialidadesIDs: initialData?.especialidades 
-          ? initialData.especialidades.map(e => String(e.id)) 
-          : initial.especialidadesIDs?.map(String) || []
+        especialidadId: initialData?.especialidadId 
+          ? String(initialData.especialidadId) 
+          : ''
       };
     });
     
@@ -43,7 +42,7 @@ const FormPersona = ({
 
     return tipo === 'medico' ? {
       ...base,
-      especialidadesIDs: [],
+      especialidadesIDs: '',
       sueldo: 0,
       disponibilidades: [getNuevaDisponibilidad()]
     } : {
@@ -54,15 +53,22 @@ const FormPersona = ({
 
   function getNuevaDisponibilidad() {
     return {
-      cubreTurno: 'MAÑANA',
-      horaInicio: '08:00',
-      horaFin: '12:00',
-      diaSemana: 'MONDAY'
+      cubreTurno: "Mañana", // Cambiar a español
+      horaInicio: "08:00:00", // Agregar segundos
+      horaFin: "12:00:00", // Agregar segundos
+      diaSemana: "MONDAY"
     };
   }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    
+    // Manejar especialidadId como string
+    if (name === 'especialidadId') {
+      setFormData(prev => ({ ...prev, [name]: value }));
+      return;
+    }
+    
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
@@ -82,6 +88,8 @@ const FormPersona = ({
   const removeDisponibilidad = (index) => {
     setDisponibilidades(disponibilidades.filter((_, i) => i !== index));
   };
+
+  
 
 
   // 1. Cargar especialidades primero
@@ -117,17 +125,22 @@ const FormPersona = ({
     fetchEspecialidades();
   }, [initialData, hasInitialized]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    const dataToSend = {
-      ...formData,
-      // Convertir a números para el backend
-      especialidadesIDs: formData.especialidadesIDs.map(Number)
-    };
-
-    onSubmit(dataToSend);
+// En handleSubmit
+const handleSubmit = (e) => {
+  e.preventDefault();
+  
+  const dataToSend = {
+    ...formData,
+    especialidadId: Number(formData.especialidadId),
+    disponibilidades: disponibilidades.map(disp => ({
+      ...disp,
+      horaInicio: `${disp.horaInicio}:00`, // Formato HH:mm:ss
+      horaFin: `${disp.horaFin}:00`       // Formato HH:mm:ss
+    }))
   };
+
+  onSubmit(dataToSend);
+};
 
 
   return (
@@ -288,45 +301,26 @@ const FormPersona = ({
             <div className="space-y-4">
               {/* Especialidades */}
               <div className="bg-gray-50 p-4 rounded-xl">
-                <h3 className="text-sm font-semibold text-gray-800 mb-3">Especialidades</h3>
-                <div className="space-y-3">
-                  <select
-                    multiple
-                    name="especialidadesIDs"
-                    value={formData.especialidadesIDs}
-                    onChange={(e) => {
-                      const selected = Array.from(e.target.selectedOptions, opt => opt.value);
-                      setFormData(prev => ({ ...prev, especialidadesIDs: selected }));
-                    }}
-                    className="w-full border border-gray-200 rounded-lg p-2 h-[120px] focus:border-blue-500 focus:ring-2 focus:ring-blue-100 scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50"
-                  >
-                    {especialidades.map(especialidad => (
-                      <option
-                        key={especialidad.id}
-                        value={String(especialidad.id)}
-                        className="p-1.5 hover:bg-blue-50"
-                      >
-                        {especialidad.nombre}
-                      </option>
-                    ))}
-                  </select>
-  
-                  <div className="flex flex-wrap gap-1.5">
-                    {formData.especialidadesIDs.map(id => {
-                      const especialidad = especialidades.find(e => String(e.id) === id);
-                      return (
-                        <span
-                          key={id}
-                          className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full text-sm font-medium"
-                        >
-                          {especialidad?.nombre || 'Especialidad eliminada'}
-                        </span>
-                      );
-                    })}
-                  </div>
-                </div>
+                <h3 className="text-sm font-semibold text-gray-800 mb-3">Especialidad</h3>
+                <select
+                  name="especialidadId"
+                  value={formData.especialidadId}
+                  onChange={handleChange}
+                  className="w-full border border-gray-200 rounded-lg p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  required
+                >
+                  <option value="">Seleccionar especialidad</option>
+                  {especialidades.map(especialidad => (
+                    <option
+                      key={especialidad.id}
+                      value={String(especialidad.id)}
+                    >
+                      {especialidad.nombre}
+                    </option>
+                  ))}
+                </select>
               </div>
-  
+                
               {/* Disponibilidades */}
               <div className="bg-gray-50 p-4 rounded-xl h-80 overflow-hidden">
                 <div className="flex justify-between items-center mb-3">
@@ -359,21 +353,25 @@ const FormPersona = ({
                             onChange={(e) => handleDisponibilidadChange(index, 'diaSemana', e.target.value)}
                             className="w-full px-2 py-1.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                           >
-                            {['MONDAY', 'WEDNESDAY', 'SATURDAY', 'THURSDAY', 'TUESDAY', 'FRIDAY', 'SUNDAY'].map(dia => (
-                              <option key={dia} value={dia}>{dia}</option>
-                            ))}
+                            <option value="MONDAY">Lunes</option>
+                            <option value="TUESDAY">Martes</option>
+                            <option value="WEDNESDAY">Miércoles</option>
+                            <option value="THURSDAY">Jueves</option>
+                            <option value="FRIDAY">Viernes</option>
+                            <option value="SATURDAY">Sábado</option>
+                            <option value="SUNDAY">Domingo</option>
                           </select>
-                        </div>
-  
-                        <div>
-                          <label className="block text-xs text-gray-600 mb-1">Turno</label>
-                          <select
+                                                  </div>
+                            
+                                                  <div>
+                                                    <label className="block text-xs text-gray-600 mb-1">Turno</label>
+                                                    <select
                             value={disp.cubreTurno}
                             onChange={(e) => handleDisponibilidadChange(index, 'cubreTurno', e.target.value)}
                             className="w-full px-2 py-1.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                           >
-                            <option value="MAÑANA">Mañana</option>
-                            <option value="TARDE">Tarde</option>
+                            <option value="Mañana">Mañana</option>
+                            <option value="Tarde">Tarde</option>
                           </select>
                         </div>
   
