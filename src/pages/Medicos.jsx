@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, GraduationCap, Plus, X, ArrowRight, Stethoscope, Award, Calendar, HeartPulse, Wrench, Star, User, DollarSign } from 'lucide-react';
+import { Users, GraduationCap, Plus, X, ArrowRight, Stethoscope, Award, Calendar, HeartPulse, Wrench, Star, User, DollarSign, Edit2, Trash, Trash2, Edit3 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CardMedico from '../components/CardMedico';
 import FormPersona from '../components/FormPersona';
@@ -29,7 +29,6 @@ const Medicos = () => {
     try {
       const data = await getDatos('/api/medicos', 'Error cargando medicos');
       setMedicos(data);
-      console.log(data)
     } catch (err) {
       setError(err.message);
     }finally {
@@ -43,7 +42,6 @@ const Medicos = () => {
     try {
       const data = await getDatos('/api/especialidades', 'Error cargando especialidades');
       setEspecialidades(data);
-      console.log(data)
     } catch (err) {
       setError(err.message);
     } finally {
@@ -104,6 +102,47 @@ const Medicos = () => {
       setSelectedMedicoToDelete(null);
     }
   };
+
+  const submitEspecialidad = async (e) => { // 👈 Añade el parámetro (e)
+    e.preventDefault(); // 👈 Previene el comportamiento por defecto
+    console.log(especialidadData);
+
+    if (!especialidadData.nombre.trim()) {
+      setError('El nombre de la especialidad es requerido');
+      return;
+    }
+    
+    try {
+      // Aquí tu lógica para guardar...
+      await postDatos('/api/especialidades', especialidadData, 'Error creando especialidad');
+      await fetchEspecialidades();
+
+    } catch (error) {
+      setError(error.message);
+    }
+    finally{
+      setEspecialidadData({ nombre: '' }); // Limpiar formulario
+      setShowEspecialidadForm(false);
+    }
+  };
+
+  const editEspecialidad = async (speciality) =>{
+    console.log(speciality)
+  }
+
+  const deleteEspecialidad = async (especialidadId) =>{
+    console.log(especialidadId)
+    try {
+      await deleteDatos(`/api/especialidades/${especialidadId.id}`, 'Error eliminando especialidad');
+      await fetchMedicos();
+      await fetchEspecialidades();
+    } catch (error) {
+      throw error;
+    }
+    finally{
+      setSelectedMedicoToDelete(null);
+    }
+  }
 
   const lengthMedicsPerSpeciality = async (especialidadId) => {
     try {
@@ -248,6 +287,7 @@ const Medicos = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
+                  onSubmit={submitEspecialidad}
                   className="flex flex-col bg-white rounded-lg border border-gray-200 p-4 relative gap-4"
                 >
                   <header className="w-full flex items-center gap-2 bg-white">
@@ -273,6 +313,7 @@ const Medicos = () => {
                   </header>
                   <button
                     type="submit"
+                    disabled={!especialidadData.nombre.trim()}
                     className="w-full justify-center bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
                   >
                     <span>Guardar Especialidad</span>
@@ -297,18 +338,33 @@ const Medicos = () => {
               key={especialidad.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+              whileHover={{ y: -5 }}
+              className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow group"
             >
-              <div className="flex items-start justify-between">
+              <div className="flex items-start justify-between relative">
                 <div>
                   <h3 className="font-semibold text-gray-800">
                   {loadingMedico ? <LoadingIndicator width={'w-32'} /> : `${especialidad.nombre}`}
                   
                   </h3>
                 </div>
-                <button className="p-1 hover:bg-gray-100 rounded-full">
-                  <X size={16} className="text-gray-400" />
-                </button>
+              {/* Edit and Delete */}
+                <aside className="absolute top-0 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      className="p-1.5 rounded-full bg-white hover:bg-gray-50 text-gray-600 shadow-sm"
+                      onClick={(e) => { e.stopPropagation(); editEspecialidad(especialidad); }}
+                  >
+                      <Edit3 size={16} />
+                  </motion.button>
+                  <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      className="p-1.5 rounded-full bg-white hover:bg-red-50 text-gray-600 hover:text-red-500 shadow-sm"
+                      onClick={(e) => { e.stopPropagation(); deleteEspecialidad(especialidad); }}
+                  >
+                      <Trash2 size={16} />
+                  </motion.button>
+                </aside>
               </div>
               <div className="mt-3 pt-3 border-t border-gray-100">
                 <p className="text-sm text-gray-500">
