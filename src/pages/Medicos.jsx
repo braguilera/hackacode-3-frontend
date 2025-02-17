@@ -18,6 +18,7 @@ const Medicos = () => {
   const [medicoToEdit, setMedicoToEdit] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMedicoToDelete, setSelectedMedicoToDelete] = useState(null);
+  const [selectedMedicoToEdit, setSelectedMedicoToEdit] = useState(null);
   const [especialidadData, setEspecialidadData] = useState({
     nombre: ''
   });
@@ -81,7 +82,7 @@ const Medicos = () => {
     }
   };
 
-  const handleEditPaciente = (medico) => {
+  const handleEditMedico= (medico) => {
     setMedicoToEdit({
       ...medico,
       especialidadId: medico.especialidad?.id || ''
@@ -105,6 +106,7 @@ const Medicos = () => {
       setShowForm(false);
       setMedicoToEdit(null);
       setSelectedMedicoToDelete(null);
+      setSelectedMedicoToEdit(null);
     }
   };
 
@@ -199,6 +201,18 @@ const Medicos = () => {
           />
         </div>
       )}
+
+      {selectedMedicoToEdit && (
+        <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <PopUpConfirmation 
+            isOpen={!!selectedMedicoToEdit}
+            onConfirm={() => handleEditMedico(selectedMedicoToEdit)}
+            onCancel={() => setSelectedMedicoToEdit(null)}
+            itemId={selectedMedicoToEdit.id}
+            isDelete={true}
+          />
+        </div>
+      )}
       
     
     
@@ -285,7 +299,7 @@ const Medicos = () => {
         <CardMedico 
           key={medico.id}
           dataMedico={medico} 
-          onEdit={handleEditPaciente}
+          onEdit={() => setSelectedMedicoToEdit(medico)}
           onDelete={() => setSelectedMedicoToDelete(medico)} 
         />
               ))
