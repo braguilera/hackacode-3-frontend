@@ -80,7 +80,10 @@ const Medicos = () => {
   };
 
   const handleEditPaciente = (medico) => {
-    setMedicoToEdit(medico);
+    setMedicoToEdit({
+      ...medico,
+      especialidadId: medico.especialidad?.id || ''
+    });
     setShowForm(true);
   };
 
@@ -146,7 +149,7 @@ const Medicos = () => {
 
   const lengthMedicsPerSpeciality = async (especialidadId) => {
     try {
-      const data = await getDatos(`/api/medicos/especialidad/${especialidadId}`, 'Error cargando especialidades');
+      const data = await getDatos(`/api/medicos?especialidadId=${especialidadId}`, 'Error cargando especialidades');
       return data.length;
     } catch (err) {
       setError(err.message);

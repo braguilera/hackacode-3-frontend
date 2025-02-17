@@ -12,12 +12,9 @@ const FormPersona = ({
   }) => {
     const [formData, setFormData] = useState(() => {
       const initial = initialData || getInitialData(tipo);
-      
       return {
         ...initial,
-        especialidadId: initialData?.especialidadId 
-          ? String(initialData.especialidadId) 
-          : ''
+        especialidadId: initialData?.especialidadId ? String(initialData.especialidadId) : ''
       };
     });
     
@@ -39,10 +36,10 @@ const FormPersona = ({
       telefono: '',
       direccion: ''
     };
-
+  
     return tipo === 'medico' ? {
       ...base,
-      especialidadesIDs: '',
+      especialidadId: '',
       sueldo: 0,
       disponibilidades: [getNuevaDisponibilidad()]
     } : {
@@ -90,30 +87,17 @@ const FormPersona = ({
   };
 
   
-
-
-  // 1. Cargar especialidades primero
   useEffect(() => {
     const fetchEspecialidades = async () => {
       try {
         const data = await getDatos('/api/especialidades', 'Error cargando especialidades');
         setEspecialidades(data);
         
-        // Sincronización solo si hay datos iniciales y no se ha inicializado
-        if (initialData && !hasInitialized) {
-          // 3. Obtener IDs de dos fuentes posibles (especialidades o especialidadesIDs)
-          const initialIds = initialData.especialidades
-            ? initialData.especialidades.map(e => String(e.id))
-            : initialData.especialidadesIDs?.map(String) || [];
-
-          // 4. Filtrar solo IDs válidos existentes
-          const validIds = data.filter(e => 
-            initialIds.includes(String(e.id))
-          ).map(e => String(e.id));
-
+        // Sincronizar especialidadId si hay datos iniciales
+        if (initialData?.especialidadId && !hasInitialized) {
           setFormData(prev => ({
             ...prev,
-            especialidadesIDs: validIds
+            especialidadId: String(initialData.especialidadId)
           }));
           setHasInitialized(true);
         }
@@ -121,27 +105,30 @@ const FormPersona = ({
         console.error(err);
       }
     };
-
+  
     fetchEspecialidades();
   }, [initialData, hasInitialized]);
 
-// En handleSubmit
-const handleSubmit = (e) => {
-  e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    const dataToSend = {
+      ...formData,
+      sueldo: Number(formData.sueldo),
+      especialidadId: Number(formData.especialidadId),
+      disponibilidades: disponibilidades.map(disp => ({
+        cubreTurno: disp.cubreTurno,
+        diaSemana: disp.diaSemana,
+        horaInicio: disp.horaInicio.includes(':') ? `${disp.horaInicio}` : disp.horaInicio,
+        horaFin: disp.horaFin.includes(':') ? `${disp.horaFin}` : disp.horaFin
+      }))
+    };
   
-  const dataToSend = {
-    ...formData,
-    especialidadId: Number(formData.especialidadId),
-    disponibilidades: disponibilidades.map(disp => ({
-      ...disp,
-      horaInicio: `${disp.horaInicio}:00`, // Formato HH:mm:ss
-      horaFin: `${disp.horaFin}:00`       // Formato HH:mm:ss
-    }))
+    // Eliminar campo sobrante
+    delete dataToSend.especialidad;
+  
+    onSubmit(dataToSend);
   };
-
-  onSubmit(dataToSend);
-};
-
 
   return (
     <motion.div
@@ -311,8 +298,8 @@ const handleSubmit = (e) => {
                 >
                   <option value="">Seleccionar especialidad</option>
                   {especialidades.map(especialidad => (
-                    <option
-                      key={especialidad.id}
+                    <option 
+                      key={especialidad.id} 
                       value={String(especialidad.id)}
                     >
                       {especialidad.nombre}

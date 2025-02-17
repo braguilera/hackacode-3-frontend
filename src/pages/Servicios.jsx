@@ -193,14 +193,12 @@ const Servicios = () => {
         setPaqueteEditando(paquete);
       };
       
-      // Función para cancelar
       const cancelarEdicion = () => {
         setPaqueteEditando(null);
       };
       
-      // Función para guardar cambios
       const guardarEdicion = (paqueteActualizado) => {
-        editPaquete(paqueteActualizado); // Tu función para actualizar
+        editPaquete(paqueteActualizado);
         setPaqueteEditando(null);
       };
 
@@ -221,9 +219,9 @@ const Servicios = () => {
         }
       }
 
-      const deletePaquete = async (paquete) => {
+      const deletePaquete = async (paqueteCodigo) => {
         try {
-          await deleteDatos(`/api/servicios/paquetes/${paquete.codigo}`, 'Error eliminando servicio');
+          await deleteDatos(`/api/servicios/paquetes/${paqueteCodigo}`, 'Error eliminando servicio');
           await fetchPaquetes();
         } catch (error) {
           console.error(error.message);
