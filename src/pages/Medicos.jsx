@@ -22,6 +22,8 @@ const Medicos = () => {
     nombre: ''
   });
   const [medicosPorEspecialidad, setMedicosPorEspecialidad] = useState({});
+  const [editingEspecialidadData, setEditingEspecialidadData] = useState({ nombre: '' });
+  const [editingEspecialidad, setEditingEspecialidad] = useState(null);
 
   // Fetch functions
   const fetchMedicos = async () => {
@@ -106,32 +108,52 @@ const Medicos = () => {
     }
   };
 
-  const submitEspecialidad = async (e) => { // 👈 Añade el parámetro (e)
-    e.preventDefault(); // 👈 Previene el comportamiento por defecto
-    console.log(especialidadData);
-
-    if (!especialidadData.nombre.trim()) {
+  const submitEspecialidad = async (e) => {
+    e.preventDefault();
+  
+    const nombre = editingEspecialidad 
+      ? editingEspecialidadData.nombre.trim() 
+      : especialidadData.nombre.trim();
+  
+    if (!nombre) {
       setError('El nombre de la especialidad es requerido');
       return;
     }
-    
+  
     try {
-      // Aquí tu lógica para guardar...
-      await postDatos('/api/especialidades', especialidadData, 'Error creando especialidad');
+      if (editingEspecialidad) {
+        console.log('Ejecutando PUT con:', {
+          id: editingEspecialidad.id,
+          editingEspecialidadData: editingEspecialidadData
+        });
+        
+        await putDatos(
+          `/api/especialidades/${editingEspecialidad.id}`, editingEspecialidadData, 'Error actualizando especialidad'
+        );
+      } else {
+        await postDatos(
+          '/api/especialidades', especialidadData, 'Error creando especialidad'
+        );
+      }
+      
       await fetchEspecialidades();
-
+      
     } catch (error) {
+      console.error('Error completo:', error.response?.data || error.message);
       setError(error.message);
-    }
-    finally{
-      setEspecialidadData({ nombre: '' }); // Limpiar formulario
+    } finally {
+      console.log("finally")
+      setEditingEspecialidad(null);
+      setEspecialidadData({ nombre: '' });
+      setEditingEspecialidadData({ nombre: '' });
       setShowEspecialidadForm(false);
     }
   };
 
-  const editEspecialidad = async (speciality) =>{
-    console.log(speciality)
-  }
+  const editEspecialidad = (especialidad) => {
+    setEditingEspecialidad(especialidad);
+    setEditingEspecialidadData({ nombre: especialidad.nombre });
+  };
 
   const deleteEspecialidad = async (especialidadId) =>{
     console.log(especialidadId)
@@ -306,13 +328,13 @@ const Medicos = () => {
                       value={especialidadData.nombre}
                       onChange={(e) => setEspecialidadData(prev => ({ ...prev, nombre: e.target.value }))}
                     />
-                      <button
-                        type="button"
-                        onClick={() => setShowEspecialidadForm(false)}
-                        className="p-1 hover:bg-gray-100 rounded-full"
-                      >
-                        <X size={16} />
-                      </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowEspecialidadForm(false)}
+                      className="p-1 hover:bg-gray-100 rounded-full"
+                    >
+                      <X size={16} />
+                    </button>
                   </header>
                   <button
                     type="submit"
@@ -337,52 +359,118 @@ const Medicos = () => {
             </AnimatePresence>
 
             {especialidades.map((especialidad) => (
-            <motion.div
-              key={especialidad.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              whileHover={{ y: -5 }}
-              className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow group"
-            >
-              <div className="flex items-start justify-between relative">
-                <div>
-                  <h3 className="font-semibold text-gray-800">
-                  {loadingMedico ? <LoadingIndicator width={'w-32'} /> : `${especialidad.nombre}`}
-                  
-                  </h3>
-                </div>
-              {/* Edit and Delete */}
-                <aside className="absolute top-0 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      className="p-1.5 rounded-full bg-white hover:bg-gray-50 text-gray-600 shadow-sm"
-                      onClick={(e) => { e.stopPropagation(); editEspecialidad(especialidad); }}
+              <AnimatePresence mode="wait" key={especialidad.id}>
+                {editingEspecialidad?.id === especialidad.id ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.2 }}
+                    className="relative z-10"
                   >
-                      <Edit3 size={16} />
-                  </motion.button>
-                  <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      className="p-1.5 rounded-full bg-white hover:bg-red-50 text-gray-600 hover:text-red-500 shadow-sm"
-                      onClick={(e) => { e.stopPropagation(); deleteEspecialidad(especialidad); }}
+                    <motion.form
+                      onSubmit={submitEspecialidad}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex flex-col bg-white rounded-lg border border-gray-200 p-4 relative gap-4 shadow-lg"
+                    >
+                      <header className="w-full flex items-center gap-2 bg-white">
+                        <aside className="p-2 bg-blue-100 rounded-lg">
+                          <Star size={20} className="text-blue-600" />
+                        </aside>
+                        <input
+                          type="text"
+                          placeholder="Nombre de la especialidad"
+                          className="flex-1 text-lg w-full font-semibold text-gray-800 bg-transparent border-0 focus:ring-0 outline-none placeholder:text-gray-400"
+                          required
+                          maxLength={50}
+                          value={editingEspecialidadData.nombre}
+                          onChange={(e) => setEditingEspecialidadData(prev => ({ ...prev, nombre: e.target.value }))}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingEspecialidad(null);
+                            setEspecialidadData({ nombre: '' });
+                          }}
+                          className="p-1 hover:bg-gray-100 rounded-full"
+                        >
+                          <X size={16} />
+                        </button>
+                      </header>
+                      
+                        <button
+                          type="submit"
+                          className="w-full justify-center bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
+                        >
+                          {editingEspecialidad ? 'Actualizar Especialidad' : 'Guardar'}
+                          <ArrowRight size={18} />
+                        </button>
+                      
+                    </motion.form>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    whileHover={{ y: -5 }}
+                    className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md shadow-sm transition-shadow group"
                   >
-                      <Trash2 size={16} />
-                  </motion.button>
-                </aside>
-              </div>
-              <div className="mt-3 pt-3 border-t border-gray-100">
-                <p className="text-sm text-gray-500">
-                {loadingMedico ? <LoadingIndicator width={'w-40'} /> : 
-                <span className="font-medium">
-                {medicosPorEspecialidad[especialidad.id] || 0}
-
-                {(medicosPorEspecialidad[especialidad.id]>1 || medicosPorEspecialidad[especialidad.id]===0) 
-                  ? ' médicos asignados' 
-                  : ' médico asignado'}
-                  </span> }
-                </p>
-              </div>
-            </motion.div>
-          ))}
+                    <div className="flex items-start justify-between relative">
+                      <div>
+                        <h3 className="font-semibold text-gray-800">
+                          {loadingMedico ? (
+                            <LoadingIndicator width={'w-32'} height={'h-4'}/>
+                          ) : (
+                            especialidad.nombre
+                          )}
+                        </h3>
+                      </div>
+                      <aside className="absolute top-0 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          className="p-1.5 rounded-full bg-white hover:bg-gray-50 text-gray-600 shadow-sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            editEspecialidad(especialidad);
+                          }}
+                        >
+                          <Edit3 size={16} />
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          className="p-1.5 rounded-full bg-white hover:bg-red-50 text-gray-600 hover:text-red-500 shadow-sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteEspecialidad(especialidad);
+                          }}
+                        >
+                          <Trash2 size={16} />
+                        </motion.button>
+                      </aside>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <p className="text-sm text-gray-500">
+                        {loadingMedico ? (
+                          <LoadingIndicator width={'w-40'} height={'h-4'}/>
+                        ) : (
+                          <span className="font-medium">
+                            {medicosPorEspecialidad[especialidad.id] || 0}
+                            {medicosPorEspecialidad[especialidad.id] > 1 ||
+                            medicosPorEspecialidad[especialidad.id] === 0
+                              ? ' médicos asignados'
+                              : ' médico asignado'}
+                          </span>
+                        )}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            ))}
           </div>
         </section>
       </div>

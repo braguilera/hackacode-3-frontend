@@ -13,6 +13,10 @@ const EditableCardService = ({ servicioData, setServicioData, onCancel, onSubmit
   
     return (
       <motion.main
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.2 }}
         className={`w-full flex flex-col h-40 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden relative group select-none`}
       >
         <form onSubmit={onSubmit}>
