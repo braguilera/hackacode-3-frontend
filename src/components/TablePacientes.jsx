@@ -67,13 +67,13 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
   const handleRowClick = (paciente) => setSelectedPaciente(paciente);
   const closeModal = () => setSelectedPaciente(null);
 
-  if (error) {
-    return (
-      <div className="mx-auto mt-4 max-w-2xl p-4 bg-red-50 border border-red-200 rounded-lg">
-        <p className="text-red-600">{error}</p>
-      </div>
-    );
-  }
+  //if (error) {
+  //  return (
+  //    <div className="mx-auto mt-4 max-w-2xl p-4 bg-red-50 border border-red-200 rounded-lg">
+  //      <p className="text-red-600">{error}</p>
+  //    </div>
+  //  );
+  //}
 
   return (
     <div className="p-4 w-full h-full bg-white rounded-3xl shadow-sm flex flex-col">

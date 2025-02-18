@@ -85,7 +85,7 @@ const Medicos = () => {
     }
   };
 
-  const handleEditMedico= (medico) => {
+  const handleEditMedico = (medico) => {
     setMedicoToEdit({
       ...medico,
       especialidadId: medico.especialidad?.id || ''
@@ -93,18 +93,18 @@ const Medicos = () => {
     setShowForm(true);
   };
 
+
   const handleSubmitMedico = async (medicoData) => {
     try {
-      if (medicoToEdit) {
-        await putDatos(`/api/medicos/${medicoToEdit.id}`, medicoData, 'Error actualizando medico');
+      if (medicoData.id) {
+        await putDatos(`/api/medicos/${medicoData.id}`, medicoData, 'Error actualizando medico');
       } else {
         await postDatos('/api/medicos', medicoData, 'Error creando médico');
       }
       await fetchMedicos();
       await fetchEspecialidades();
-      
     } catch (error) {
-      throw error;
+      setError(error.message);
     } finally {
       setShowForm(false);
       setMedicoToEdit(null);
@@ -210,7 +210,10 @@ const Medicos = () => {
         <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <PopUpConfirmation 
             isOpen={!!selectedMedicoToEdit}
-            onConfirm={() => handleEditMedico(selectedMedicoToEdit)}
+            onConfirm={() => {
+              handleSubmitMedico(selectedMedicoToEdit.formData);
+              setSelectedMedicoToEdit(null);
+            }}
             onCancel={() => setSelectedMedicoToEdit(null)}
             itemId={selectedMedicoToEdit.id}
             isDelete={false}
@@ -231,16 +234,34 @@ const Medicos = () => {
       )}
 
       {selectedEspecialidadToEdit && (
-        <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <PopUpConfirmation 
-            isOpen={!!selectedEspecialidadToEdit}
-            onConfirm={() => submitEspecialidad}
-            onCancel={() => setSelectedEspecialidadToEdit(null)}
-            itemId={selectedEspecialidadToEdit.id}
-            isDelete={false}
-          />
-        </div>
-      )}
+  <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+    <PopUpConfirmation 
+      isOpen={!!selectedEspecialidadToEdit}
+      onConfirm={async () => {
+        try {
+          await putDatos(
+            `/api/especialidades/${selectedEspecialidadToEdit.id}`,
+            selectedEspecialidadToEdit.newData,
+            'Error actualizando especialidad'
+          );
+          await fetchEspecialidades();
+        } catch (error) {
+          setError(error.message);
+        } finally {
+          setSelectedEspecialidadToEdit(null);
+          setEditingEspecialidad(null);
+          setEditingEspecialidadData({ nombre: '' });
+        }
+      }}
+      onCancel={() => {
+        setSelectedEspecialidadToEdit(null);
+        setEditingEspecialidad(null);
+      }}
+      itemId={selectedEspecialidadToEdit.id}
+      isDelete={false}
+    />
+  </div>
+)}
       
     
     
@@ -328,7 +349,7 @@ const Medicos = () => {
                 <CardMedico 
                   key={medico.id}
                   dataMedico={medico} 
-                  onEdit={() => setSelectedMedicoToEdit(medico)}
+                  onEdit={() => handleEditMedico(medico)} // Abre el formulario
                   onDelete={() => setSelectedMedicoToDelete(medico)} 
                 />
               ))
@@ -416,11 +437,13 @@ const Medicos = () => {
                     className="relative z-10"
                   >
                     <motion.form
-                      onSubmit={(e)=> {e.stopPropagation(); setSelectedEspecialidadToEdit(editingEspecialidad)}}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.2 }}
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        setSelectedEspecialidadToEdit({
+                          ...editingEspecialidad,
+                          newData: editingEspecialidadData
+                        });
+                      }}
                       className="flex flex-col bg-white rounded-lg border border-gray-200 p-4 relative gap-4 shadow-lg"
                     >
                       <header className="w-full flex items-center gap-2 bg-white">
@@ -531,12 +554,19 @@ const Medicos = () => {
               setMedicoToEdit(null);
               setShowForm(false);
             }}
-            onSubmit={handleSubmitMedico}
+            onSubmit={(formData) => {
+              setSelectedMedicoToEdit({
+                id: medicoToEdit?.id,
+                formData: formData
+              });
+              setShowForm(false);
+            }}
             initialData={medicoToEdit}
             isEditing={!!medicoToEdit}
           />
         </div>
       )}
+
     </main>
   );
 };
