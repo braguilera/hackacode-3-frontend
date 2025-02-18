@@ -4,33 +4,13 @@ import TablePacientes from '../components/TablePacientes';
 import { getDatos, deleteDatos, postDatos, putDatos } from '../api/crud';
 import FormPersona from '../components/FormPersona';
 import LoadingIndicator from '../components/LoadingIndicator';
+import EmptyState from '../components/EmptyState';
 
 const Pacientes = () => {
-  const [pacientes, setPacientes] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
-  const [pacienteToEdit, setPacienteToEdit] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-
-  const fetchPacientes = async () => {
-    setLoading(true);
-    try {
-      const data = await getDatos('/api/pacientes', 'Error cargando pacientes');
-      setPacientes(data);
-      console.log(data)
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
-    }
-  };
-
-  useEffect(() => {
-    fetchPacientes();
-  }, []);
+  const [pacienteToEdit, setPacienteToEdit] = useState(null);
 
   const handleEditPaciente = (paciente) => {
     setPacienteToEdit(paciente);
@@ -44,7 +24,7 @@ const Pacientes = () => {
       } else {
         await postDatos('/api/pacientes', pacienteData, 'Error creando médico');
       }
-      await fetchPacientes();
+      //await fetchPacientes();
       setShowForm(false);
     } catch (error) {
       console.error(error.message);
@@ -53,24 +33,6 @@ const Pacientes = () => {
       setPacienteToEdit(null);
     }
   };
-
-  const deletePaciente = async (e) => {
-    try {
-      await deleteDatos(`/api/pacientes/${e.id}`, 'Error eliminando paciente');
-      await fetchPacientes();
-    } catch (error) {
-      console.error(error.message);
-      throw error;
-    }
-  };
-
-  const filteredPacientes = pacientes.filter(paciente =>
-    Object.values(paciente).some(value =>
-      value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
-
-
 
   if (error) {
     return (
@@ -82,53 +44,49 @@ const Pacientes = () => {
 
   return (
     <div className="w-full h-full flex flex-col p-6">
-        {/* Header Section */}
-        
-        <div className=" border-gray-200 px-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Users className="h-6 w-6 text-blue-500" />
-              <h2 className='text-2xl font-bold text-gray-800'>
-                Pacientes
-                <span className='text-gray-400 font-normal ml-2 text-lg'>({pacientes.length} registrados)</span>
-              </h2>
-            </div>
-
+      {/* Header Section */}
+      <div className="border-gray-200 px-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Users className="h-6 w-6 text-blue-500" />
+            <h2 className="text-2xl font-bold text-gray-800">
+              Pacientes
+            </h2>
           </div>
-          
-          {/* Search and Refresh Section */}
-          <div className="flex items-center w-full justify-between space-x-2 mt-4">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Buscar pacientes..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <button 
-              onClick={() => {
-                setPacienteToEdit(null);
-                setShowForm(true);
-              }}
-              className="flex items-center justify-end space-x-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Agregar Paciente</span>
-            </button>
+          <button 
+            onClick={() => {
+              setPacienteToEdit(null);
+              setShowForm(true);
+            }}
+            className="flex items-center justify-end space-x-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Agregar Paciente</span>
+          </button>
+        </div>
+        {/* Puedes agregar un input global de búsqueda si lo deseas */}
+        <div className="flex items-center w-full justify-between space-x-2 mt-4">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Buscar pacientes..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </div>
         </div>
+      </div>
 
-        {/* Table Section */}
+              {/* Table Section */}
         <div className="p-6 h-full overflow-hidden">
-          <TablePacientes 
-            pacientes={filteredPacientes} 
-            onEdit={handleEditPaciente} 
-            onDelete={deletePaciente}
-            isLoading={loading}
-          />
+            <TablePacientes 
+              consultas={[]} 
+              onEdit={handleEditPaciente} 
+              searchTerm={searchTerm}
+            />
+            
         </div>
 
 
@@ -152,3 +110,6 @@ const Pacientes = () => {
 };
 
 export default Pacientes;
+
+
+

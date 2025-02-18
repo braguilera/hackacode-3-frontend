@@ -6,6 +6,7 @@ import FormPersona from '../components/FormPersona';
 import { deleteDatos, getDatos, postDatos, putDatos } from '../api/crud';
 import LoadingIndicator from '../components/LoadingIndicator';
 import PopUpConfirmation from '../components/PopUpConfirmation';
+import EmptyState from '../components/EmptyState';
 
 const Medicos = () => {
   const [medicos, setMedicos] = useState([]);
@@ -19,6 +20,8 @@ const Medicos = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMedicoToDelete, setSelectedMedicoToDelete] = useState(null);
   const [selectedMedicoToEdit, setSelectedMedicoToEdit] = useState(null);
+  const [selectedEspecialidadToDelete, setSelectedEspecialidadToDelete] = useState(null);
+  const [selectedEspecialidadToEdit, setSelectedEspecialidadToEdit] = useState(null);
   const [especialidadData, setEspecialidadData] = useState({
     nombre: ''
   });
@@ -168,6 +171,7 @@ const Medicos = () => {
     }
     finally{
       setSelectedMedicoToDelete(null);
+      setSelectedEspecialidadToDelete(null);
     }
   }
 
@@ -209,7 +213,31 @@ const Medicos = () => {
             onConfirm={() => handleEditMedico(selectedMedicoToEdit)}
             onCancel={() => setSelectedMedicoToEdit(null)}
             itemId={selectedMedicoToEdit.id}
+            isDelete={false}
+          />
+        </div>
+      )}
+
+      {selectedEspecialidadToDelete && (
+        <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <PopUpConfirmation 
+            isOpen={!!selectedEspecialidadToDelete}
+            onConfirm={() => deleteEspecialidad(selectedEspecialidadToDelete)}
+            onCancel={() => setSelectedEspecialidadToDelete(null)}
+            itemId={selectedEspecialidadToDelete.id}
             isDelete={true}
+          />
+        </div>
+      )}
+
+      {selectedEspecialidadToEdit && (
+        <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <PopUpConfirmation 
+            isOpen={!!selectedEspecialidadToEdit}
+            onConfirm={() => submitEspecialidad}
+            onCancel={() => setSelectedEspecialidadToEdit(null)}
+            itemId={selectedEspecialidadToEdit.id}
+            isDelete={false}
           />
         </div>
       )}
@@ -295,14 +323,19 @@ const Medicos = () => {
                 </motion.article>
               ))
             ) : (
+              medicosFiltrados.length!==0 ?
               medicosFiltrados.map(medico => (
-        <CardMedico 
-          key={medico.id}
-          dataMedico={medico} 
-          onEdit={() => setSelectedMedicoToEdit(medico)}
-          onDelete={() => setSelectedMedicoToDelete(medico)} 
-        />
+                <CardMedico 
+                  key={medico.id}
+                  dataMedico={medico} 
+                  onEdit={() => setSelectedMedicoToEdit(medico)}
+                  onDelete={() => setSelectedMedicoToDelete(medico)} 
+                />
               ))
+              :
+              <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
+                <EmptyState type='medicos'/>
+              </div>
             )}
           
           </div>
@@ -383,7 +416,7 @@ const Medicos = () => {
                     className="relative z-10"
                   >
                     <motion.form
-                      onSubmit={submitEspecialidad}
+                      onSubmit={(e)=> {e.stopPropagation(); setSelectedEspecialidadToEdit(editingEspecialidad)}}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
@@ -459,7 +492,7 @@ const Medicos = () => {
                           className="p-1.5 rounded-full bg-white hover:bg-red-50 text-gray-600 hover:text-red-500 shadow-sm"
                           onClick={(e) => {
                             e.stopPropagation();
-                            deleteEspecialidad(especialidad);
+                            setSelectedEspecialidadToDelete(especialidad);
                           }}
                         >
                           <Trash2 size={16} />
