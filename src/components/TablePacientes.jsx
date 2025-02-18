@@ -1,20 +1,19 @@
-// PacientesTable.jsx
+// TablePacientes.jsx
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CircleCheck, X, Trash2, Edit3, ChevronRight, Search } from 'lucide-react';
 import PacienteDetails from './PacienteDetails';
 import LoadingIndicator from './LoadingIndicator';
-import { getDatos, deleteDatos } from '../api/crud'; // Asegúrate de tener estas funciones
+import { getDatos, deleteDatos } from '../api/crud';
 import EmptyState from './EmptyState';
 
-const TablePacientes = ({ consultas, onEditPaciente }) => {
+const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
   const [pacientes, setPacientes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [filterDNI, setFilterDNI] = useState('');
   const [selectedPaciente, setSelectedPaciente] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-
   const itemsPerPage = 8;
 
   // Función para obtener los pacientes
@@ -26,24 +25,21 @@ const TablePacientes = ({ consultas, onEditPaciente }) => {
     } catch (err) {
       setError(err.message);
     } finally {
-      // Para efectos de ver la animación de carga (puedes quitar el setTimeout)
       setTimeout(() => setLoading(false), 1000);
     }
   };
 
+  // Se llama a fetchPacientes cada vez que refreshKey cambie
   useEffect(() => {
     fetchPacientes();
-  }, []);
+  }, [refreshKey]);
 
   // Función para eliminar paciente
   const handleDelete = async (paciente) => {
     try {
       await deleteDatos(`/api/pacientes/${paciente.id}`, 'Error eliminando paciente');
-      // Filtramos el paciente eliminado
       const updatedPacientes = pacientes.filter((p) => p.id !== paciente.id);
       setPacientes(updatedPacientes);
-
-      // Ajustar la paginación si es necesario
       const filtered = updatedPacientes.filter(p => p.dni?.startsWith(filterDNI));
       const totalPages = Math.ceil(filtered.length / itemsPerPage);
       if (currentPage > totalPages) {
@@ -54,15 +50,19 @@ const TablePacientes = ({ consultas, onEditPaciente }) => {
     }
   };
 
-  // Filtrar pacientes por DNI
+  // Filtrar pacientes: por DNI y búsqueda global
   const safePacientes = Array.isArray(pacientes) ? pacientes : [];
-  const filteredPacientes = safePacientes.filter(paciente => paciente.dni?.startsWith(filterDNI));
+  const filteredPacientes = safePacientes.filter(paciente => {
+    const matchDNI = paciente.dni?.startsWith(filterDNI);
+    const matchGlobal = Object.values(paciente)
+      .some(value => value?.toString().toLowerCase().includes(searchTerm.toLowerCase()));
+    return matchDNI && matchGlobal;
+  });
 
   // Paginación
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredPacientes.slice(indexOfFirstItem, indexOfLastItem);
-
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const handleRowClick = (paciente) => setSelectedPaciente(paciente);
   const closeModal = () => setSelectedPaciente(null);
@@ -76,20 +76,18 @@ const TablePacientes = ({ consultas, onEditPaciente }) => {
   }
 
   return (
-    <div className="p-4 w-full h-full bg-white rounded-3xl shadow-sm flex flex-col ">
+    <div className="p-4 w-full h-full bg-white rounded-3xl shadow-sm flex flex-col">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col h-full"
       >
-        {/* Header */}
+        {/* Header interno de la tabla (buscador por DNI) */}
         <header className="flex w-full justify-between items-center mb-6">
           <div className="relative w-1/3">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
             <input
-              className="w-full h-10 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-xl 
-                       focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 
-                       transition-all duration-200"
+              className="w-full h-10 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
               placeholder="Buscar por DNI..."
               value={filterDNI}
               onChange={(e) => setFilterDNI(e.target.value)}
@@ -97,8 +95,8 @@ const TablePacientes = ({ consultas, onEditPaciente }) => {
           </div>
         </header>
 
-        {/* Table Container */}
-        <div className="flex-1 flex flex-col ">
+        {/* Contenedor de la tabla */}
+        <div className="flex-1 flex flex-col">
           <div className="rounded-xl border border-gray-100 flex-1 h-full">
             <div className="h-auto">
               <table className="w-full h-full table-fixed">
@@ -114,32 +112,17 @@ const TablePacientes = ({ consultas, onEditPaciente }) => {
                     <th className="w-24 px-6 py-4"></th>
                   </tr>
                 </thead>
-                <tbody className='relative w-full h-full'>
+                <tbody className="relative w-full h-full">
                   {loading ? (
-                    // Muestra skeletons mientras carga
                     Array.from({ length: 8 }).map((_, index) => (
                       <motion.tr key={index}>
-                        <td className="w-64 px-6 py-4">
-                          <LoadingIndicator width={"w-64"} />
-                        </td>
-                        <td className="w-32 px-6 py-4 text-gray-600 text-right">
-                          <LoadingIndicator width={"w-32"} />
-                        </td>
-                        <td className="w-40 px-6 py-4 text-gray-600">
-                          <LoadingIndicator width={"w-40"} />
-                        </td>
-                        <td className="w-64 px-6 py-4 text-gray-600 truncate">
-                          <LoadingIndicator width={"w-64"} />
-                        </td>
-                        <td className="w-40 px-6 py-4 text-gray-600">
-                          <LoadingIndicator width={"w-40"} />
-                        </td>
-                        <td className="w-64 px-6 py-4 text-gray-600 truncate">
-                          <LoadingIndicator width={"w-64"} />
-                        </td>
-                        <td className="w-32 px-6 py-4">
-                          <LoadingIndicator width={"w-32"} />
-                        </td>
+                        <td className="w-64 px-6 py-4"><LoadingIndicator width={"w-64"} /></td>
+                        <td className="w-32 px-6 py-4 text-gray-600 text-right"><LoadingIndicator width={"w-32"} /></td>
+                        <td className="w-40 px-6 py-4 text-gray-600"><LoadingIndicator width={"w-40"} /></td>
+                        <td className="w-64 px-6 py-4 text-gray-600 truncate"><LoadingIndicator width={"w-64"} /></td>
+                        <td className="w-40 px-6 py-4 text-gray-600"><LoadingIndicator width={"w-40"} /></td>
+                        <td className="w-64 px-6 py-4 text-gray-600 truncate"><LoadingIndicator width={"w-64"} /></td>
+                        <td className="w-32 px-6 py-4"><LoadingIndicator width={"w-32"} /></td>
                         <td className="w-24 px-6 py-4">
                           <div className="flex items-center justify-end gap-2 opacity-0">
                             <motion.button className="p-2 rounded-full hover:bg-white text-gray-600">
@@ -153,12 +136,10 @@ const TablePacientes = ({ consultas, onEditPaciente }) => {
                       </motion.tr>
                     ))
                   ) : filteredPacientes.length === 0 ? (
-                    // Estado vacío
-                    <tr className='absolute top-40 left-1/2 -translate-x-1/2'>
-                      <EmptyState type='pacientes'/>
+                    <tr className="absolute top-40 left-1/2 -translate-x-1/2">
+                      <EmptyState type="pacientes" />
                     </tr>
                   ) : (
-                    // Muestra datos
                     currentItems.map((paciente, index) => (
                       <motion.tr
                         key={paciente.id}
@@ -207,7 +188,7 @@ const TablePacientes = ({ consultas, onEditPaciente }) => {
                               whileHover={{ scale: 1.1 }}
                               whileTap={{ scale: 0.95 }}
                               className="p-2 rounded-full hover:bg-white text-gray-600 hover:shadow-sm transition-all"
-                              onClick={(e) => { e.stopPropagation(); onEditPaciente(paciente); }}
+                              onClick={(e) => { e.stopPropagation(); onEdit(paciente); }}
                             >
                               <Edit3 size={16} />
                             </motion.button>
@@ -253,7 +234,7 @@ const TablePacientes = ({ consultas, onEditPaciente }) => {
         )}
       </motion.div>
 
-      {/* Modal para detalles */}
+      {/* Modal de detalles (opcional) */}
       {selectedPaciente && (
         <PacienteDetails
           isOpen={!!selectedPaciente}
