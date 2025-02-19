@@ -4,40 +4,40 @@ import { Users, Plus, Search } from 'lucide-react';
 import TablePacientes from '../components/TablePacientes';
 import FormPersona from '../components/FormPersona';
 import { postDatos, putDatos } from '../api/crud';
+import Notification from '../components/Notification';
 
 const Pacientes = () => {
   const [showForm, setShowForm] = useState(false);
   const [pacienteToEdit, setPacienteToEdit] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [refreshKey, setRefreshKey] = useState(0); // Estado para refrescar la tabla
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [showNotification, setShowNotification] = useState(false);
+  const [messageNotification, setMessageNotification] = useState(null);
 
-  // Callback para editar desde la tabla
-  const handleEditPaciente = (paciente) => {
-    setPacienteToEdit(paciente);
-    setShowForm(true);
-  };
 
-  // Callback para agregar paciente
   const handleAddPaciente = () => {
     setPacienteToEdit(null);
     setShowForm(true);
   };
 
-  // Cierra el formulario
-  const closeForm = () => {
-    setShowForm(false);
-    setPacienteToEdit(null);
-  };
-
-  // Solo para creación
   const handleSubmitPaciente = async (pacienteData) => {
     try {
       await postDatos('/api/pacientes', pacienteData, 'Error creando paciente');
       setRefreshKey(prev => prev + 1);
-      setShowForm(false);
+
+      setMessageNotification({
+        type: 'success',
+        text: 'Paciente creado exitosamente'
+      });
+      setShowNotification(true)
     } catch (error) {
-      console.error(error.message);
-      throw error;
+      setMessageNotification({
+        type: 'error',
+        text: 'Error al crear el paciente'
+      });
+      setShowNotification(true)
+    }finally{
+      setShowForm(false);
     }
   };
 
@@ -92,6 +92,12 @@ const Pacientes = () => {
           />
         </div>
       )}
+
+      <Notification
+        message={messageNotification}
+        isVisible={showNotification}
+        onClose={() => setShowNotification(false)}
+      />
     </div>
   );
 };

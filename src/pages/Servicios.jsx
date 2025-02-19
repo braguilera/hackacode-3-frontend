@@ -8,6 +8,7 @@ import PopUpConfirmation from '../components/PopUpConfirmation';
 import LoadingIndicator from '../components/LoadingIndicator';
 import EditableCardService from '../components/EditableCardService';
 import CardPaqueteEdit from '../components/CardPaqueteEdit';
+import Notification from '../components/Notification';
 
 const Servicios = () => {
   const [servicios, setServicios] = useState([]);
@@ -43,7 +44,8 @@ const Servicios = () => {
     servicios: []
   });
   const [paqueteEditando, setPaqueteEditando] = useState(null);
-
+  const [showNotification, setShowNotification] = useState(false);
+  const [messageNotification, setMessageNotification] = useState(null);
 
 
 
@@ -86,9 +88,17 @@ const Servicios = () => {
         try {
           await deleteDatos(`/api/servicios/individuales/${e}`, 'Error eliminando servicio');
           await fetchServicios();
+          setMessageNotification({
+            type: 'success',
+            text: 'Servicio eliminado exitosamente'
+          });
+          setShowNotification(true)
         } catch (error) {
-          console.error(error.message);
-          throw error;
+          setMessageNotification({
+            type: 'error',
+            text: 'Error al eliminar el servicio'
+          });
+          setShowNotification(true)
         }
         finally{
           SetSelecteServicioToDelete(null)
@@ -103,20 +113,6 @@ const Servicios = () => {
           precio: servicio.precio
         });
       };
-
-      const handleSubmitEdit = async (e) => {
-        e.preventDefault();
-        try {
-          await putDatos(`/api/servicios/individuales/${editingService.codigo}`, servicioDataEdit, 'Error editando servicio');
-          await fetchServicios();
-          setEditingService(null);
-        } catch (error) {
-          console.error(error);
-        } finally {
-          setServicioDataEdit({ nombre: '', descripcion: '', precio: '' });
-        }
-      };
-      
 
       const handleChange = (e) => {
         const { name, value } = e.target;
@@ -134,8 +130,17 @@ const Servicios = () => {
           setServicioData({ nombre: '', descripcion: '', precio: '' });
       
           setOpenFormServicios(false);
+          setMessageNotification({
+            type: 'success',
+            text: 'Servicio creado exitosamente'
+          });
+          setShowNotification(true)
         } catch (error) {
-          console.error(error.message);
+          setMessageNotification({
+            type: 'error',
+            text: 'Error al crear el servicio'
+          });
+          setShowNotification(true)
         }
       };
 
@@ -181,8 +186,17 @@ const Servicios = () => {
           fetchPaquetes();
           setPaqueteData({ nombre: '', servicios: [] });
           setServiciosActuales([]);
+          setMessageNotification({
+            type: 'success',
+            text: 'Servicio creado exitosamente'
+          });
+          setShowNotification(true)
         } catch (error) {
-          console.error(error.message);
+          setMessageNotification({
+            type: 'error',
+            text: 'Error al crear el servicio'
+          });
+          setShowNotification(true)
         } finally {
           setTimeout(() => {
             setIsSubmitting(false);
@@ -214,8 +228,18 @@ const Servicios = () => {
           );
           await fetchServicios();
           setEditingService(null);
+          setMessageNotification({
+            type: 'success',
+            text: 'Servicio actualizado exitosamente'
+          });
+          setShowNotification(true)
+
         } catch (error) {
-          console.error(error);
+          setMessageNotification({
+            type: 'error',
+            text: 'Error al editar el servicio'
+          });
+          setShowNotification(true)
         } finally {
           setServicioDataEdit({ nombre: '', descripcion: '', precio: '' });
           setSelectedServicioToEdit(null);
@@ -230,8 +254,18 @@ const Servicios = () => {
             `/api/servicios/paquetes/${selectedPaqueteToEdit.codigo}`, selectedPaqueteToEdit, 'Error editando paquete'
           );
           await fetchPaquetes();
+          setMessageNotification({
+            type: 'success',
+            text: 'Paquete actualizado exitosamente'
+          });
+          setShowNotification(true)
         } catch (error) {
-          console.error(error);
+          setMessageNotification({
+            type: 'error',
+            text: 'Error al editar el paquete'
+          });
+          setShowNotification(true)
+
         } finally {
           setSelectedPaqueteToEdit(null);
           setPaqueteEditando(null);
@@ -242,9 +276,17 @@ const Servicios = () => {
         try {
           await deleteDatos(`/api/servicios/paquetes/${paqueteCodigo}`, 'Error eliminando servicio');
           await fetchPaquetes();
+          setMessageNotification({
+            type: 'success',
+            text: 'Paquete eliminado exitosamente'
+          });
+          setShowNotification(true)
         } catch (error) {
-          console.error(error.message);
-          throw error;
+          setMessageNotification({
+            type: 'error',
+            text: 'Error al eliminar el paquete'
+          });
+          setShowNotification(true)
         }
         
       }
@@ -719,6 +761,13 @@ const Servicios = () => {
           </article>
         </section>
       </div>
+
+      <Notification
+        message={messageNotification}
+        isVisible={showNotification}
+        onClose={() => setShowNotification(false)}
+      />
+    
     </main>
   );
 };

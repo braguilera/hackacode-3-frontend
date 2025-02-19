@@ -8,6 +8,7 @@ import { getDatos, deleteDatos, putDatos } from '../api/crud';
 import EmptyState from './EmptyState';
 import PopUpConfirmation from './PopUpConfirmation';
 import FormPersona from './FormPersona';
+import Notification from './Notification';
 
 const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
   const [pacientes, setPacientes] = useState([]);
@@ -20,8 +21,9 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
   const [showEditForm, setShowEditForm] = useState(false);
   const [pacienteToEdit, setPacienteToEdit] = useState(null);
   const [selectedToDelete, setSelectedToDelete] = useState(null);
+  const [showNotification, setShowNotification] = useState(false);
+  const [messageNotification, setMessageNotification] = useState(null);
 
-  // Fetch pacientes
   const fetchPacientes = async () => {
     try {
       const data = await getDatos('/api/pacientes');
@@ -35,7 +37,6 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
     fetchPacientes();
   }, [refreshKey]);
 
-  // Editar paciente
   const handleEditConfirm = async () => {
     try {
       await putDatos(
@@ -44,20 +45,37 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
         'Error actualizando paciente'
       );
       fetchPacientes();
+      setMessageNotification({
+        type: 'success',
+        text: 'Paciente actualizado exitosamente'
+      });
+      setShowNotification(true)
     } catch (error) {
-      console.error(error.message);
+      setMessageNotification({
+        type: 'error',
+        text: 'Error al editar el paciente'
+      });
+      setShowNotification(true)
     }finally{
       setPacienteToEdit(null);
     }
   };
 
-  // Eliminar paciente
   const handleDeleteConfirm = async () => {
     try {
       await deleteDatos(`/api/pacientes/${selectedToDelete.id}`);
       fetchPacientes();
-    } catch (err) {
-      console.error(err.message);
+      setMessageNotification({
+        type: 'success',
+        text: 'Paciente eliminado exitosamente'
+      });
+      setShowNotification(true)
+    } catch (error) {
+      setMessageNotification({
+        type: 'error',
+        text: 'Error al eliminar el paciente'
+      });
+      setShowNotification(true)
     }finally{
       setSelectedToDelete(null);
     }
@@ -291,6 +309,12 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
           consultas={consultas}
         />
       )}
+
+      <Notification
+        message={messageNotification}
+        isVisible={showNotification}
+        onClose={() => setShowNotification(false)}
+      />
     </div>
   );
 };
