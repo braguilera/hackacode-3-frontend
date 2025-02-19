@@ -268,10 +268,7 @@ const Medicos = () => {
         <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <PopUpConfirmation 
             isOpen={!!selectedMedicoToEdit}
-            onConfirm={() => {
-              handleSubmitMedico(selectedMedicoToEdit.formData);
-              setSelectedMedicoToEdit(null);
-            }}
+            onConfirm={() => { handleSubmitMedico(selectedMedicoToEdit.formData); setSelectedMedicoToEdit(null); }}
             onCancel={() => setSelectedMedicoToEdit(null)}
             itemId={selectedMedicoToEdit.id}
             isDelete={false}
@@ -389,7 +386,7 @@ const Medicos = () => {
                 <CardMedico 
                   key={medico.id}
                   dataMedico={medico} 
-                  onEdit={() => handleEditMedico(medico)} // Abre el formulario
+                  onEdit={() => handleEditMedico(medico)}
                   onDelete={() => setSelectedMedicoToDelete(medico)} 
                 />
               ))
@@ -595,10 +592,16 @@ const Medicos = () => {
               setShowForm(false);
             }}
             onSubmit={(formData) => {
-              setSelectedMedicoToEdit({
-                id: medicoToEdit?.id,
-                formData: formData
-              });
+              if (medicoToEdit) {
+                // Modo edición: mostrar popup de confirmación
+                setSelectedMedicoToEdit({
+                  id: medicoToEdit.id,
+                  formData: formData
+                });
+              } else {
+                // Modo creación: llamar directamente a handleSubmitMedico
+                handleSubmitMedico(formData);
+              }
               setShowForm(false);
             }}
             initialData={medicoToEdit}
@@ -606,6 +609,7 @@ const Medicos = () => {
           />
         </div>
       )}
+
 
       <Notification
         message={messageNotification}
