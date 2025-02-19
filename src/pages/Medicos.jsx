@@ -7,6 +7,7 @@ import { deleteDatos, getDatos, postDatos, putDatos } from '../api/crud';
 import LoadingIndicator from '../components/LoadingIndicator';
 import PopUpConfirmation from '../components/PopUpConfirmation';
 import EmptyState from '../components/EmptyState';
+import Notification from '../components/Notification';
 
 const Medicos = () => {
   const [medicos, setMedicos] = useState([]);
@@ -28,6 +29,8 @@ const Medicos = () => {
   const [medicosPorEspecialidad, setMedicosPorEspecialidad] = useState({});
   const [editingEspecialidadData, setEditingEspecialidadData] = useState({ nombre: '' });
   const [editingEspecialidad, setEditingEspecialidad] = useState(null);
+  const [showNotification, setShowNotification] = useState(false);
+  const [messageNotification, setMessageNotification] = useState(null);
 
   // Fetch functions
   const fetchMedicos = async () => {
@@ -77,10 +80,18 @@ const Medicos = () => {
       await deleteDatos(`/api/medicos/${medicoId}`, 'Error eliminando médico');
       await fetchMedicos();
       await fetchEspecialidades();
+      setMessageNotification({
+        type: 'success',
+        text: 'Médico eliminado exitosamente'
+      });
+      setShowNotification(true)
     } catch (error) {
-      throw error;
-    }
-    finally{
+      setMessageNotification({
+        type: 'error',
+        text: 'Error al eliminar el médico'
+      });
+      setShowNotification(true)
+    } finally{
       setSelectedMedicoToDelete(null);
     }
   };
@@ -98,13 +109,35 @@ const Medicos = () => {
     try {
       if (medicoData.id) {
         await putDatos(`/api/medicos/${medicoData.id}`, medicoData, 'Error actualizando medico');
+        setMessageNotification({
+          type: 'success',
+          text: 'Médico actualizado exitosamente'
+        });
       } else {
         await postDatos('/api/medicos', medicoData, 'Error creando médico');
+        setMessageNotification({
+          type: 'success',
+          text: 'Médico creado exitosamente'
+        });
       }
       await fetchMedicos();
       await fetchEspecialidades();
+
+      setShowNotification(true)
     } catch (error) {
-      setError(error.message);
+      if (medicoData.id){
+        setMessageNotification({
+          type: 'error',
+          text: 'Error al editar el médico'
+        });
+      } else {
+        setMessageNotification({
+          type: 'error',
+          text: 'Error al crear el médico'
+        });
+        
+      }
+      setShowNotification(true)
     } finally {
       setShowForm(false);
       setMedicoToEdit(null);
@@ -126,32 +159,48 @@ const Medicos = () => {
     }
   
     try {
-      if (editingEspecialidad) {
-        console.log('Ejecutando PUT con:', {
-          id: editingEspecialidad.id,
-          editingEspecialidadData: editingEspecialidadData
-        });
+      if (selectedEspecialidadToEdit) {
         
         await putDatos(
           `/api/especialidades/${editingEspecialidad.id}`, editingEspecialidadData, 'Error actualizando especialidad'
         );
+        setMessageNotification({
+          type: 'success',
+          text: 'Especialidad actualizada exitosamente'
+        });
       } else {
         await postDatos(
           '/api/especialidades', especialidadData, 'Error creando especialidad'
         );
+        setMessageNotification({
+          type: 'success',
+          text: 'Especialidad creada exitosamente'
+        });
       }
       
       await fetchEspecialidades();
       
+
+      setShowNotification(true)
     } catch (error) {
-      console.error('Error completo:', error.response?.data || error.message);
-      setError(error.message);
+      if (selectedEspecialidadToEdit){
+        setMessageNotification({
+          type: 'error',
+          text: 'Error al editar la especialidad'
+        });
+      } else {
+        setMessageNotification({
+          type: 'error',
+          text: 'Error al crear la especialidad'
+        });
+      }
+      setShowNotification(true)
     } finally {
-      console.log("finally")
       setEditingEspecialidad(null);
       setEspecialidadData({ nombre: '' });
       setEditingEspecialidadData({ nombre: '' });
       setShowEspecialidadForm(false);
+      setSelectedEspecialidadToEdit(null)
     }
   };
 
@@ -166,8 +215,17 @@ const Medicos = () => {
       await deleteDatos(`/api/especialidades/${especialidadId.id}`, 'Error eliminando especialidad');
       await fetchMedicos();
       await fetchEspecialidades();
+      setMessageNotification({
+        type: 'success',
+        text: 'Especialidad eliminada exitosamente'
+      });
+      setShowNotification(true)
     } catch (error) {
-      throw error;
+      setMessageNotification({
+        type: 'error',
+        text: 'Error al eliminar la especialidad'
+      });
+      setShowNotification(true)
     }
     finally{
       setSelectedMedicoToDelete(null);
@@ -234,33 +292,15 @@ const Medicos = () => {
       )}
 
       {selectedEspecialidadToEdit && (
-  <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-    <PopUpConfirmation 
-      isOpen={!!selectedEspecialidadToEdit}
-      onConfirm={async () => {
-        try {
-          await putDatos(
-            `/api/especialidades/${selectedEspecialidadToEdit.id}`,
-            selectedEspecialidadToEdit.newData,
-            'Error actualizando especialidad'
-          );
-          await fetchEspecialidades();
-        } catch (error) {
-          setError(error.message);
-        } finally {
-          setSelectedEspecialidadToEdit(null);
-          setEditingEspecialidad(null);
-          setEditingEspecialidadData({ nombre: '' });
-        }
-      }}
-      onCancel={() => {
-        setSelectedEspecialidadToEdit(null);
-        setEditingEspecialidad(null);
-      }}
-      itemId={selectedEspecialidadToEdit.id}
-      isDelete={false}
-    />
-  </div>
+      <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <PopUpConfirmation 
+          isOpen={!!selectedEspecialidadToEdit}
+          onConfirm={submitEspecialidad}
+          onCancel={() => setSelectedEspecialidadToEdit(null)}
+          itemId={selectedEspecialidadToEdit.id}
+          isDelete={false}
+        />
+      </div>
 )}
       
     
@@ -566,6 +606,12 @@ const Medicos = () => {
           />
         </div>
       )}
+
+      <Notification
+        message={messageNotification}
+        isVisible={showNotification}
+        onClose={() => setShowNotification(false)}
+      />
 
     </main>
   );

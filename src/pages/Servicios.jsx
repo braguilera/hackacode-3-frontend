@@ -248,29 +248,35 @@ const Servicios = () => {
       };
 
       const confirmSubmitPaqueteEdit = async () => {
-        console.log(selectedPaqueteToEdit)
+        console.log(selectedPaqueteToEdit);
         try {
+          const payload = {
+            nombre: selectedPaqueteToEdit.nombre,
+            servicios: selectedPaqueteToEdit.servicios.map(s => s.codigo) // Extrae solo los códigos
+          };
           await putDatos(
-            `/api/servicios/paquetes/${selectedPaqueteToEdit.codigo}`, selectedPaqueteToEdit, 'Error editando paquete'
+            `/api/servicios/paquetes/${selectedPaqueteToEdit.codigo}`,
+            payload,
+            'Error editando paquete'
           );
           await fetchPaquetes();
           setMessageNotification({
             type: 'success',
             text: 'Paquete actualizado exitosamente'
           });
-          setShowNotification(true)
+          setShowNotification(true);
         } catch (error) {
           setMessageNotification({
             type: 'error',
             text: 'Error al editar el paquete'
           });
-          setShowNotification(true)
-
+          setShowNotification(true);
         } finally {
           setSelectedPaqueteToEdit(null);
           setPaqueteEditando(null);
         }
       };
+      
       
       const deletePaquete = async (paqueteCodigo) => {
         try {
