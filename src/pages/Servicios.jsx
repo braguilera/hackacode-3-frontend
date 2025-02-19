@@ -17,6 +17,11 @@ const Servicios = () => {
   const [loadingServicios, setLoadingServicios] = useState(true);
   const [loadingPaquetes, setLoadingPaquetes] = useState(true);
   const [selecteServicioToDelete, SetSelecteServicioToDelete] = useState(null)
+  const [selecteServicioToEdit, SetSelecteServicioToEdit] = useState(null)
+  const [selectedPaqueteToDelete, setSelectedPaqueteToDelete] = useState(null);
+  const [selectedServicioToEdit, setSelectedServicioToEdit] = useState(null);
+  const [selectedPaqueteToEdit, setSelectedPaqueteToEdit] = useState(null);
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState(null);
   const [openFormServicios, setOpenFormServicios] = useState(false);
@@ -102,16 +107,16 @@ const Servicios = () => {
       const handleSubmitEdit = async (e) => {
         e.preventDefault();
         try {
-          console.log(editingService)
           await putDatos(`/api/servicios/individuales/${editingService.codigo}`, servicioDataEdit, 'Error editando servicio');
-          fetchServicios();
+          await fetchServicios();
           setEditingService(null);
         } catch (error) {
           console.error(error);
-        }finally{
+        } finally {
           setServicioDataEdit({ nombre: '', descripcion: '', precio: '' });
         }
       };
+      
 
       const handleChange = (e) => {
         const { name, value } = e.target;
@@ -121,7 +126,6 @@ const Servicios = () => {
 
       const handleSubmitServicio = async (e) => {
         e.preventDefault();
-        console.log(servicioData)
       
         try {
           await postDatos('/api/servicios/individuales', servicioData, 'Error creando servicio');
@@ -160,7 +164,6 @@ const Servicios = () => {
 
       const handleSubmitPaquete = async (e) => {
         e.preventDefault();
-        console.log(paqueteData)
 
         if (paqueteData.servicios.length === 0) {
           alert('Debe seleccionar al menos un servicio');
@@ -197,28 +200,44 @@ const Servicios = () => {
         setPaqueteEditando(null);
       };
       
-      const guardarEdicion = (paqueteActualizado) => {
-        editPaquete(paqueteActualizado);
-        setPaqueteEditando(null);
-      };
 
       const serviciosFiltrados = servicios.filter(servicio =>
         servicio.nombre?.toLowerCase().startsWith(searchTerm.toLowerCase())
       );
 
-      const editPaquete = async (paquete) => {
-        if (!paquete.nombre.trim()) {
-          alert('El nombre del paquete es requerido');
-          return;
-        }
+      const confirmSubmitServiceEdit = async () => {
         try {
-          await putDatos(`/api/servicios/paquetes/${paquete.codigo}`, paquete, 'Error editando servicio');
+          await putDatos(
+            `/api/servicios/individuales/${selectedServicioToEdit.codigo}`,
+            selectedServicioToEdit.data,
+            'Error editando servicio'
+          );
+          await fetchServicios();
+          setEditingService(null);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setServicioDataEdit({ nombre: '', descripcion: '', precio: '' });
+          setSelectedServicioToEdit(null);
+          setOpenFormPaquetes(false);
+        }
+      };
+
+      const confirmSubmitPaqueteEdit = async () => {
+        console.log(selectedPaqueteToEdit)
+        try {
+          await putDatos(
+            `/api/servicios/paquetes/${selectedPaqueteToEdit.codigo}`, selectedPaqueteToEdit, 'Error editando paquete'
+          );
           await fetchPaquetes();
         } catch (error) {
           console.error(error);
+        } finally {
+          setSelectedPaqueteToEdit(null);
+          setPaqueteEditando(null);
         }
-      }
-
+      };
+      
       const deletePaquete = async (paqueteCodigo) => {
         try {
           await deleteDatos(`/api/servicios/paquetes/${paqueteCodigo}`, 'Error eliminando servicio');
@@ -248,6 +267,48 @@ const Servicios = () => {
           />
         </div>
       )}
+
+      {selectedServicioToEdit && (
+  <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
+    <PopUpConfirmation
+      isOpen={!!selectedServicioToEdit}
+      onConfirm={confirmSubmitServiceEdit}
+      onCancel={() => setSelectedServicioToEdit(null)}
+      itemId={selectedServicioToEdit.codigo}
+      isDelete={false}
+    />
+  </div>
+)}
+
+
+      {selectedPaqueteToDelete && (
+        <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
+          <PopUpConfirmation 
+            isOpen={!!selectedPaqueteToDelete}
+            onConfirm={() => {
+              deletePaquete(selectedPaqueteToDelete.codigo);
+              setSelectedPaqueteToDelete(null);
+            }}
+            onCancel={() => setSelectedPaqueteToDelete(null)}
+            itemId={selectedPaqueteToDelete.codigo}
+            isDelete={true}
+          />
+        </div>
+      )}
+
+      {selectedPaqueteToEdit && (
+  <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
+    <PopUpConfirmation
+      isOpen={!!selectedPaqueteToEdit}
+      onConfirm={confirmSubmitPaqueteEdit}
+      onCancel={() => setSelectedPaqueteToEdit(null)}
+      itemId={selectedPaqueteToEdit.codigo}
+      isDelete={false}
+    />
+  </div>
+)}
+
+
 
         {/* Principal Container - Services */}
         <section className='flex-1 flex flex-col h-full pl-6'>
@@ -397,34 +458,41 @@ const Servicios = () => {
           )))
         :
         
-          (serviciosFiltrados.map((servicio) => (
-            <AnimatePresence mode="wait" key={servicio.codigo}>
-              {editingService?.codigo === servicio.codigo ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
-                  className="relative z-10"
-                >
-                  <EditableCardService
-                    servicioData={servicioDataEdit}
-                    setServicioData={setServicioDataEdit}
-                    onCancel={() => setEditingService(null)}
-                    onSubmit={handleSubmitEdit}
-                  />
-                </motion.div>
-              ) : (
-                <CardServicio
-                  key={servicio.codigo}
-                  dataServicio={servicio}
-                  onEdit={handleEditClick}
-                  onDelete={() => SetSelecteServicioToDelete(servicio)}
-                />
-              )}
-            </AnimatePresence>
-          )))
-        }
+      serviciosFiltrados.map((servicio) => (
+  <AnimatePresence mode="wait" key={servicio.codigo}>
+    {editingService?.codigo === servicio.codigo ? (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.2 }}
+        className="relative z-10"
+      >
+      <EditableCardService
+        servicioData={servicioDataEdit}
+        setServicioData={setServicioDataEdit}
+        onCancel={() => setEditingService(null)}
+        onSubmit={(e) => {
+          e.preventDefault();
+          // Al enviar, guardamos la info a editar
+          setSelectedServicioToEdit({
+            codigo: editingService.codigo,
+            data: servicioDataEdit
+          });
+        }}
+      />
+      </motion.div>
+    ) : (
+      <CardServicio
+        key={servicio.codigo}
+        dataServicio={servicio}
+        onEdit={handleEditClick}
+        onDelete={() => SetSelecteServicioToDelete(servicio)}
+      />
+    )}
+  </AnimatePresence>
+))}
+        
         </article>
         </section>
 
@@ -615,21 +683,20 @@ const Servicios = () => {
 ) : (
   paquetes.map((paquete) => (
   <div key={paquete.codigo} className="relative">
-    {/* Solo muestra el formulario de edición en el paquete seleccionado */}
     <AnimatePresence>
-      {paqueteEditando?.codigo === paquete.codigo ? ( // 👈 Comparación por ID
+      {paqueteEditando?.codigo === paquete.codigo ? (
         <motion.div
           className=" inset-0 z-10"
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
         >
-          <CardPaqueteEdit
-            paquete={paqueteEditando}
-            serviciosDisponibles={serviciosDisponibles}
-            onCancel={cancelarEdicion}
-            onSave={guardarEdicion}
-          />
+        <CardPaqueteEdit
+          paquete={paqueteEditando}
+          serviciosDisponibles={serviciosDisponibles}
+          onCancel={cancelarEdicion}
+          onSave={(paqueteActualizado) => setSelectedPaqueteToEdit(paqueteActualizado)}
+        />
         </motion.div>
       )
     
@@ -639,8 +706,8 @@ const Servicios = () => {
     >
       <CardPaquete
         dataPaquete={paquete}
-        onEdit={() => iniciarEdicion(paquete)} // 👈 Pasa el paquete completo
-        onDelete={() => deletePaquete(paquete.codigo)}
+        onEdit={() => iniciarEdicion(paquete)}
+        onDelete={() => setSelectedPaqueteToDelete(paquete)}
       />
     </motion.div>)}
     </AnimatePresence>

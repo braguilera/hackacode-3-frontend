@@ -29,19 +29,12 @@ const Pacientes = () => {
     setPacienteToEdit(null);
   };
 
-  // Al enviar el formulario, actualizamos o creamos el paciente y refrescamos la tabla
+  // Solo para creación
   const handleSubmitPaciente = async (pacienteData) => {
     try {
-      if (pacienteToEdit) {
-        // Por ejemplo, para editar:
-        await putDatos(`/api/pacientes/${pacienteToEdit.id}`, pacienteData, 'Error actualizando paciente');
-      } else {
-        // Para agregar:
-        await postDatos('/api/pacientes', pacienteData, 'Error creando paciente');
-      }
-      // Incrementamos la clave de refresco para que TablePacientes vuelva a llamar a su fetch
+      await postDatos('/api/pacientes', pacienteData, 'Error creando paciente');
       setRefreshKey(prev => prev + 1);
-      closeForm();
+      setShowForm(false);
     } catch (error) {
       console.error(error.message);
       throw error;
@@ -83,10 +76,9 @@ const Pacientes = () => {
       {/* Tabla de Pacientes, se le pasa el refreshKey */}
       <div className="p-6 h-full overflow-hidden">
         <TablePacientes 
-          consultas={[]} 
-          onEdit={handleEditPaciente} 
+          refreshKey={refreshKey}
           searchTerm={searchTerm}
-          refreshKey={refreshKey}  // <-- Prop para refrescar
+          onRefresh={() => setRefreshKey(prev => prev + 1)}
         />
       </div>
 
@@ -95,10 +87,8 @@ const Pacientes = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <FormPersona
             tipo="paciente"
-            onClose={closeForm}
+            onClose={() => setShowForm(false)}
             onSubmit={handleSubmitPaciente}
-            initialData={pacienteToEdit}
-            isEditing={!!pacienteToEdit}
           />
         </div>
       )}

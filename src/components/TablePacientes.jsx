@@ -4,8 +4,10 @@ import { motion } from 'framer-motion';
 import { CircleCheck, X, Trash2, Edit3, ChevronRight, Search } from 'lucide-react';
 import PacienteDetails from './PacienteDetails';
 import LoadingIndicator from './LoadingIndicator';
-import { getDatos, deleteDatos } from '../api/crud';
+import { getDatos, deleteDatos, putDatos } from '../api/crud';
 import EmptyState from './EmptyState';
+import PopUpConfirmation from './PopUpConfirmation';
+import FormPersona from './FormPersona';
 
 const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
   const [pacientes, setPacientes] = useState([]);
@@ -15,40 +17,52 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
   const [selectedPaciente, setSelectedPaciente] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [pacienteToEdit, setPacienteToEdit] = useState(null);
+  const [selectedToDelete, setSelectedToDelete] = useState(null);
 
-  // Función para obtener los pacientes
+  // Fetch pacientes
   const fetchPacientes = async () => {
-    setLoading(true);
     try {
-      const data = await getDatos('/api/pacientes', 'Error cargando pacientes');
+      const data = await getDatos('/api/pacientes');
       setPacientes(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setTimeout(() => setLoading(false), 1000);
-    }
-  };
-
-  // Se llama a fetchPacientes cada vez que refreshKey cambie
-  useEffect(() => {
-    fetchPacientes();
-  }, [refreshKey]);
-
-  // Función para eliminar paciente
-  const handleDelete = async (paciente) => {
-    try {
-      await deleteDatos(`/api/pacientes/${paciente.id}`, 'Error eliminando paciente');
-      const updatedPacientes = pacientes.filter((p) => p.id !== paciente.id);
-      setPacientes(updatedPacientes);
-      const filtered = updatedPacientes.filter(p => p.dni?.startsWith(filterDNI));
-      const totalPages = Math.ceil(filtered.length / itemsPerPage);
-      if (currentPage > totalPages) {
-        setCurrentPage(Math.max(totalPages, 1));
-      }
     } catch (err) {
       console.error(err.message);
     }
   };
+
+  useEffect(() => {
+    fetchPacientes();
+  }, [refreshKey]);
+
+  // Editar paciente
+  const handleEditConfirm = async () => {
+    try {
+      await putDatos(
+        `/api/pacientes/${pacienteToEdit.id}`, 
+        pacienteToEdit.formData,
+        'Error actualizando paciente'
+      );
+      fetchPacientes();
+    } catch (error) {
+      console.error(error.message);
+    }finally{
+      setPacienteToEdit(null);
+    }
+  };
+
+  // Eliminar paciente
+  const handleDeleteConfirm = async () => {
+    try {
+      await deleteDatos(`/api/pacientes/${selectedToDelete.id}`);
+      fetchPacientes();
+    } catch (err) {
+      console.error(err.message);
+    }finally{
+      setSelectedToDelete(null);
+    }
+  };
+
 
   // Filtrar pacientes: por DNI y búsqueda global
   const safePacientes = Array.isArray(pacientes) ? pacientes : [];
@@ -67,16 +81,33 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
   const handleRowClick = (paciente) => setSelectedPaciente(paciente);
   const closeModal = () => setSelectedPaciente(null);
 
-  //if (error) {
-  //  return (
-  //    <div className="mx-auto mt-4 max-w-2xl p-4 bg-red-50 border border-red-200 rounded-lg">
-  //      <p className="text-red-600">{error}</p>
-  //    </div>
-  //  );
-  //}
-
   return (
     <div className="p-4 w-full h-full bg-white rounded-3xl shadow-sm flex flex-col">
+
+{pacienteToEdit && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <PopUpConfirmation 
+            isOpen={true}
+            onConfirm={handleEditConfirm}
+            onCancel={() => setPacienteToEdit(null)}
+            itemId={pacienteToEdit.id}
+            isDelete={false}
+          />
+        </div>
+      )}
+
+      {selectedToDelete && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <PopUpConfirmation 
+            isOpen={true}
+            onConfirm={handleDeleteConfirm}
+            onCancel={() => setSelectedToDelete(null)}
+            itemId={selectedToDelete.id}
+            isDelete={true}
+          />
+        </div>
+      )}
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -184,22 +215,24 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
                         </td>
                         <td className="w-24 px-6 py-4">
                           <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <motion.button
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.95 }}
-                              className="p-2 rounded-full hover:bg-white text-gray-600 hover:shadow-sm transition-all"
-                              onClick={(e) => { e.stopPropagation(); onEdit(paciente); }}
-                            >
-                              <Edit3 size={16} />
-                            </motion.button>
-                            <motion.button
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.95 }}
-                              className="p-2 rounded-full hover:bg-white text-gray-600 hover:text-red-500 hover:shadow-sm transition-all"
-                              onClick={(e) => { e.stopPropagation(); handleDelete(paciente); }}
-                            >
-                              <Trash2 size={16} />
-                            </motion.button>
+                          <motion.button
+          onClick={(e) => {
+            e.stopPropagation();
+            setPacienteToEdit(paciente);
+            setShowEditForm(true);
+          }}
+        >
+          <Edit3 size={16} />
+        </motion.button>
+
+        <motion.button
+          onClick={(e) => {
+            e.stopPropagation();
+            setSelectedToDelete(paciente);
+          }}
+        >
+          <Trash2 size={16} />
+        </motion.button>
                             <ChevronRight size={16} className="text-gray-400 ml-2" />
                           </div>
                         </td>
@@ -233,6 +266,21 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
           </div>
         )}
       </motion.div>
+
+      {showEditForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <FormPersona
+            tipo="paciente"
+            onClose={() => setShowEditForm(false)}
+            onSubmit={(formData) => {
+              setPacienteToEdit(prev => ({ ...prev, formData }));
+              setShowEditForm(false);
+            }}
+            initialData={pacienteToEdit}
+            isEditing={true}
+          />
+        </div>
+      )}
 
       {/* Modal de detalles (opcional) */}
       {selectedPaciente && (
