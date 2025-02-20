@@ -32,6 +32,7 @@ const Consultas = () => {
     direccion: "",
     tieneObraSocial: false
   });
+  const [step, setStep] = useState(0);
 
   // Fetch de médicos, servicios y paquetes
   const fetchMedicos = async () => {
@@ -75,7 +76,6 @@ const Consultas = () => {
   const fetchTurnosMedicos = async () => {
     if (!formData.medicoId) return;
     try {
-      // new Date().getMonth() devuelve el mes en base 0 (0 = enero)
       const currentMonth = new Date().getMonth() + 1;
       const data = await getDatos(
         `/api/medicos/turnos-disponibles?medicoId=${formData.medicoId}&mes=${currentMonth}`,
@@ -190,6 +190,10 @@ const Consultas = () => {
     <main className="p-6 space-y-8 max-w-4xl mx-auto">
       
       {/* Sección 1: Seleccionar Servicio */}
+      {/* Sección 2: Seleccionar Médico (solo si es servicio especializado) */}
+      {step===0 &&       
+      <article>
+
       <section className="space-y-2">
         <label className="block text-lg font-semibold text-gray-700">Seleccione un servicio:</label>
         <select
@@ -209,7 +213,7 @@ const Consultas = () => {
         )}
       </section>
 
-      {/* Sección 2: Seleccionar Médico (solo si es servicio especializado) */}
+
       {isEspecializada && (
         <section className="space-y-2">
           <label className="block text-lg font-semibold text-gray-700">Seleccione un médico especializado:</label>
@@ -225,11 +229,16 @@ const Consultas = () => {
                 </option>
               ))}
           </select>
-        </section>
-      )}
+        </section>)}
+
+      <button onClick={()=> setStep(step+1)} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"> Next </button>
+      </article>
+      
+      }
 
       {/* Sección 3: Seleccionar Turno */}
-      {formData.medicoId && turnosMedico.length > 0 && (
+      {step===1 && (
+      formData.medicoId && turnosMedico.length > 0 && (
         <section className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-700">Turnos disponibles</h3>
           {Object.keys(groupedTurnos).map(fecha => (
@@ -253,10 +262,17 @@ const Consultas = () => {
               </div>
             </div>
           ))}
+
+          <footer>
+            <button onClick={()=> setStep(step-1)} className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"> Back </button>
+            <button onClick={()=> setStep(step+1)} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"> Next </button>
+          </footer>
         </section>
-      )}
+      ))}
 
       {/* Sección 4: Seleccionar o Crear Paciente */}
+      {step===2 && (
+
       <section className="space-y-4">
         <label className="block text-lg font-semibold text-gray-700">Ingrese el documento del paciente:</label>
         <input 
@@ -338,9 +354,17 @@ const Consultas = () => {
             </p>
           </div>
         ) : null}
+
+        <footer>
+          <button onClick={()=> setStep(step-1)} className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"> Back </button>
+          <button onClick={()=> setStep(step+1)} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"> Next </button>
+        </footer>
       </section>
+      )}
 
       {/* Sección 5: Previsualización y Confirmación de Consulta */}
+      {step===3 && (
+
       <section className="p-4 border border-gray-200 rounded bg-white shadow">
         <h3 className="text-lg font-semibold text-gray-800 mb-2">Previsualización de Consulta</h3>
         <p>
@@ -360,15 +384,16 @@ const Consultas = () => {
         <p>
           <strong>Paciente:</strong> {paciente ? `${paciente.nombre} ${paciente.apellido}` : newPacienteData.nombre || "-"}
         </p>
-        <button 
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          onClick={() => {
-            createConsulta()
-          }}
-        >
-          Confirmar Consulta
-        </button>
+        <footer>
+          <button onClick={()=> setStep(step-1)} className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"> Back </button>
+          <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={() => {createConsulta(); setStep(step+1)}}>
+            Confirmar Consulta
+          </button>
+        </footer>
       </section>
+      
+      )}
+      
       <Notification
         message={messageNotification}
         isVisible={showNotification}
