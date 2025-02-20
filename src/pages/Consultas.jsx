@@ -50,9 +50,32 @@ const Consultas = () => {
   });
   const [step, setStep] = useState(0);
 
+  const getAvailableDates = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth(); // 0-indexado
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    let dates = [];
+    for (let d = today.getDate(); d <= lastDay; d++) {
+      const date = new Date(year, month, d);
+      const day = date.getDay(); // 0: domingo, 6: sábado
+      if (day >= 1 && day <= 5) { // lunes a viernes
+        dates.push(date.toISOString().split('T')[0]);
+      }
+    }
+    return dates;
+  };
+  
+  // Array de horarios por defecto
+  const defaultTimeSlots = [
+    "08:00:00", "08:30:00", "09:00:00", "09:30:00",
+    "10:00:00", "10:30:00", "11:00:00", "11:30:00"
+  ];
+
+  const availableDates = getAvailableDates();
     
   const NavigationButtons = ({ onBack, onNext, step, isLastStep }) => (
-    <div className="flex justify-between gap-4 mt-6">
+    <div className=" w-full flex justify-between gap-4 mt-6 absolute bottom-0">
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
@@ -236,17 +259,16 @@ const Consultas = () => {
   }
 
   const fadeInUp = {
-    initial: { opacity: 0, y: 20 },
+    initial: { opacity: 0, y: 10 },
     animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -20 }
+    exit: { opacity: 0, y: -10 }
   };
 
   return (
-
       <motion.main 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="p-8 max-w-4xl mx-auto"
+        className="p-8 max-w-7xl mx-auto h-screen w-full"
       >
         <StepIndicator currentStep={step} totalSteps={4} />
   
@@ -254,10 +276,10 @@ const Consultas = () => {
           <motion.div
             key={step}
             {...fadeInUp}
-            className="bg-white rounded-xl shadow-lg p-6 space-y-6"
+            className="bg-white rounded-xl shadow-lg p-6 space-y-6 h-4/5 "
           >
             {step === 0 && (
-              <section className="space-y-6">
+              <section className="space-y-6 h-full relative">
                 <div className="flex items-center gap-2 mb-6">
                   <Stethoscope className="w-6 h-6 text-blue-500" />
                   <h2 className="text-xl font-semibold text-gray-800">Seleccionar Servicio</h2>
@@ -307,45 +329,242 @@ const Consultas = () => {
             )}
   
             {step === 1 && (
-              <section className="space-y-6">
-                <div className="flex items-center gap-2 mb-6">
-                  <CalendarCheck className="w-6 h-6 text-blue-500" />
-                  <h2 className="text-xl font-semibold text-gray-800">Seleccionar Turno</h2>
-                </div>
-  
-                <div className="space-y-4">
-                  {Object.keys(groupedTurnos).map(fecha => (
-                    <motion.div
-                      key={fecha}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="border border-gray-200 rounded-lg p-4"
-                    >
+              isEspecializada ? (
+                <section className="space-y-6 h-full relative">
+                  <div className="flex items-center gap-2 mb-6">
+                    <CalendarCheck className="w-6 h-6 text-blue-500" />
+                    <h2 className="text-xl font-semibold text-gray-800">Seleccionar Turno</h2>
+                  </div>
+                  <div className="space-y-4 h-[90%]">
+                    {Object.keys(groupedTurnos).map(fecha => (
+                      <motion.div
+                        key={fecha}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="border border-gray-200 rounded-lg p-4"
+                      >
+                        <h4 className="font-medium text-gray-800 mb-3 flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-gray-500" />
+                          {fecha}
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {groupedTurnos[fecha].map(turno => (
+                            <motion.button
+                              key={`${fecha}-${turno.hora}`}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all
+                                ${formData.fecha === fecha && formData.hora === turno.hora
+                                  ? 'bg-blue-500 text-white shadow-md'
+                                  : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                              onClick={() => setFormData(prev => ({ ...prev, fecha: fecha, hora: turno.hora }))}
+                            >
+                              <Clock className="w-4 h-4" />
+                              {turno.hora.slice(0, 5)}
+                            </motion.button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                  <NavigationButtons
+                    onNext={() => setStep(step + 1)}
+                    onBack={() => setStep(step - 1)}
+                    step={step}
+                    isLastStep={false}
+                  />
+                </section>
+              ) : (
+                <section className="space-y-6 h-full">
+                  <div className="flex items-center gap-2 mb-6">
+                    <Calendar className="w-6 h-6 text-blue-500" />
+                    <h2 className="text-xl font-semibold text-gray-800">Seleccione Fecha y Hora</h2>
+                  </div>
+                  <article className='h-3/4 grid grid-cols-4 gap-2'>
+                  {availableDates.map(date => (
+                    <div key={date} className="mb-4 border border-gray-200 rounded-lg p-4">
                       <h4 className="font-medium text-gray-800 mb-3 flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-gray-500" />
-                        {fecha}
+                        {date}
                       </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {groupedTurnos[fecha].map(turno => (
+                      <div className="grid grid-cols-3 gap-2">
+                        {defaultTimeSlots.map(time => (
                           <motion.button
-                            key={`${fecha}-${turno.hora}`}
+                            key={`${date}-${time}`}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all
-                              ${formData.fecha === fecha && formData.hora === turno.hora
+                              ${formData.fecha === date && formData.hora === time
                                 ? 'bg-blue-500 text-white shadow-md'
                                 : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
-                            onClick={() => setFormData(prev => ({ ...prev, fecha: fecha, hora: turno.hora }))}
+                            onClick={() => setFormData(prev => ({ ...prev, fecha: date, hora: time }))}
                           >
                             <Clock className="w-4 h-4" />
-                            {turno.hora.slice(0, 5)}
+                            {time.slice(0, 5)}
                           </motion.button>
                         ))}
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
-                </div>
+                  </article>
+                  <NavigationButtons
+                    onNext={() => setStep(step + 1)}
+                    onBack={() => setStep(step - 1)}
+                    step={step}
+                    isLastStep={false}
+                  />
+                </section>
+              )
+            )}
   
+            {step === 2 && (
+              <section className="space-y-6 h-full relative">
+                <div className="flex items-center gap-2 mb-6">
+                  <UserPlus className="w-6 h-6 text-blue-500" />
+                  <h2 className="text-xl font-semibold text-gray-800">Datos del Paciente</h2>
+                </div>
+
+                  <div className="relative">
+                    <input 
+                      type="text"
+                      placeholder="Documento del paciente"
+                      className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      value={formData.pacienteId}
+                      onChange={(e) => {
+                        const doc = e.target.value;
+                        setFormData(prev => ({ ...prev, pacienteId: doc }));
+                        setNewPacienteData(prev => ({ ...prev, dni: doc }));
+                      }}
+                    />
+                    <User className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
+                  </div>
+
+                  <AnimatePresence>
+                    {pacienteNotExist && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="border border-gray-200 rounded-lg p-6 space-y-4 bg-gray-50"
+                      >
+                        <p className="text-sm text-gray-600 flex items-center gap-2">
+                          <UserPlus className="w-4 h-4" />
+                          Complete los datos para crear el paciente
+                        </p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="relative">
+                            <input
+                              type="text"
+                              placeholder="Nombre"
+                              className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              value={newPacienteData.nombre}
+                              onChange={(e) => setNewPacienteData(prev => ({ ...prev, nombre: e.target.value }))}
+                              required
+                            />
+                            <User className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
+                          </div>
+
+                          <div className="relative">
+                            <input
+                              type="text"
+                              placeholder="Apellido"
+                              className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              value={newPacienteData.apellido}
+                              onChange={(e) => setNewPacienteData(prev => ({ ...prev, apellido: e.target.value }))}
+                              required
+                            />
+                            <User className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
+                          </div>
+                        </div>
+
+                        <div className="relative">
+                          <input
+                            type="date"
+                            className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            value={newPacienteData.fechaNac}
+                            onChange={(e) => setNewPacienteData(prev => ({ ...prev, fechaNac: e.target.value }))}
+                            required
+                          />
+                          <Calendar className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
+                        </div>
+
+                        <div className="relative">
+                          <input
+                            type="email"
+                            placeholder="Email"
+                            className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            value={newPacienteData.email}
+                            onChange={(e) => setNewPacienteData(prev => ({ ...prev, email: e.target.value }))}
+                            required
+                          />
+                          <Mail className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
+                        </div>
+
+                        <div className="relative">
+                          <input
+                            type="tel"
+                            placeholder="Teléfono"
+                            className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            value={newPacienteData.telefono}
+                            onChange={(e) => setNewPacienteData(prev => ({ ...prev, telefono: e.target.value }))}
+                            required
+                          />
+                          <Phone className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
+                        </div>
+
+                        <div className="relative">
+                          <input
+                            type="text"
+                            placeholder="Dirección"
+                            className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            value={newPacienteData.direccion}
+                            onChange={(e) => setNewPacienteData(prev => ({ ...prev, direccion: e.target.value }))}
+                            required
+                          />
+                          <MapPin className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            id="obraSocial"
+                            className="w-4 h-4 text-blue-500 border border-gray-300 rounded focus:ring-blue-500"
+                            checked={newPacienteData.tieneObraSocial}
+                            onChange={(e) => setNewPacienteData(prev => ({ ...prev, tieneObraSocial: e.target.checked }))}
+                          />
+                          <label htmlFor="obraSocial" className="text-sm text-gray-600">
+                            Tiene obra social
+                          </label>
+                        </div>
+
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={handleCreatePaciente}
+                          className="w-full px-4 py-3 bg-green-500 text-white rounded-lg flex items-center justify-center gap-2 hover:bg-green-600 transition-colors"
+                        >
+                          <UserPlus className="w-5 h-5" />
+                          Crear Paciente
+                        </motion.button>
+                      </motion.div>
+                    )}
+
+                    {paciente && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="p-4 bg-green-50 border border-green-100 rounded-lg flex items-center gap-3"
+                      >
+                        <Check className="w-5 h-5 text-green-500" />
+                        <p className="text-green-700">
+                          Paciente encontrado: {paciente.nombre} {paciente.apellido}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                
+
                 <NavigationButtons
                   onNext={() => setStep(step + 1)}
                   onBack={() => setStep(step - 1)}
@@ -354,167 +573,9 @@ const Consultas = () => {
                 />
               </section>
             )}
-  
-            {step === 2 && (
-  <section className="space-y-6">
-    <div className="flex items-center gap-2 mb-6">
-      <UserPlus className="w-6 h-6 text-blue-500" />
-      <h2 className="text-xl font-semibold text-gray-800">Datos del Paciente</h2>
-    </div>
-
-    <div className="space-y-4">
-      <div className="relative">
-        <input 
-          type="text"
-          placeholder="Documento del paciente"
-          className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          value={formData.pacienteId}
-          onChange={(e) => {
-            const doc = e.target.value;
-            setFormData(prev => ({ ...prev, pacienteId: doc }));
-            setNewPacienteData(prev => ({ ...prev, dni: doc }));
-          }}
-        />
-        <User className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
-      </div>
-
-      <AnimatePresence>
-        {pacienteNotExist && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="border border-gray-200 rounded-lg p-6 space-y-4 bg-gray-50"
-          >
-            <p className="text-sm text-gray-600 flex items-center gap-2">
-              <UserPlus className="w-4 h-4" />
-              Complete los datos para crear el paciente
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Nombre"
-                  className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={newPacienteData.nombre}
-                  onChange={(e) => setNewPacienteData(prev => ({ ...prev, nombre: e.target.value }))}
-                  required
-                />
-                <User className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
-              </div>
-
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Apellido"
-                  className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={newPacienteData.apellido}
-                  onChange={(e) => setNewPacienteData(prev => ({ ...prev, apellido: e.target.value }))}
-                  required
-                />
-                <User className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
-              </div>
-            </div>
-
-            <div className="relative">
-              <input
-                type="date"
-                className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                value={newPacienteData.fechaNac}
-                onChange={(e) => setNewPacienteData(prev => ({ ...prev, fechaNac: e.target.value }))}
-                required
-              />
-              <Calendar className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
-            </div>
-
-            <div className="relative">
-              <input
-                type="email"
-                placeholder="Email"
-                className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                value={newPacienteData.email}
-                onChange={(e) => setNewPacienteData(prev => ({ ...prev, email: e.target.value }))}
-                required
-              />
-              <Mail className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
-            </div>
-
-            <div className="relative">
-              <input
-                type="tel"
-                placeholder="Teléfono"
-                className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                value={newPacienteData.telefono}
-                onChange={(e) => setNewPacienteData(prev => ({ ...prev, telefono: e.target.value }))}
-                required
-              />
-              <Phone className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
-            </div>
-
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Dirección"
-                className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                value={newPacienteData.direccion}
-                onChange={(e) => setNewPacienteData(prev => ({ ...prev, direccion: e.target.value }))}
-                required
-              />
-              <MapPin className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="obraSocial"
-                className="w-4 h-4 text-blue-500 border border-gray-300 rounded focus:ring-blue-500"
-                checked={newPacienteData.tieneObraSocial}
-                onChange={(e) => setNewPacienteData(prev => ({ ...prev, tieneObraSocial: e.target.checked }))}
-              />
-              <label htmlFor="obraSocial" className="text-sm text-gray-600">
-                Tiene obra social
-              </label>
-            </div>
-
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleCreatePaciente}
-              className="w-full px-4 py-3 bg-green-500 text-white rounded-lg flex items-center justify-center gap-2 hover:bg-green-600 transition-colors"
-            >
-              <UserPlus className="w-5 h-5" />
-              Crear Paciente
-            </motion.button>
-          </motion.div>
-        )}
-
-        {paciente && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="p-4 bg-green-50 border border-green-100 rounded-lg flex items-center gap-3"
-          >
-            <Check className="w-5 h-5 text-green-500" />
-            <p className="text-green-700">
-              Paciente encontrado: {paciente.nombre} {paciente.apellido}
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-
-    <NavigationButtons
-      onNext={() => setStep(step + 1)}
-      onBack={() => setStep(step - 1)}
-      step={step}
-      isLastStep={false}
-    />
-  </section>
-)}
 
           {step === 3 && (
-            <section className="space-y-6">
+            <section className="space-y-6 h-full relative">
               <div className="flex items-center gap-2 mb-6">
                 <FileCheck className="w-6 h-6 text-blue-500" />
                 <h2 className="text-xl font-semibold text-gray-800">Confirmar Consulta</h2>
@@ -586,7 +647,7 @@ const Consultas = () => {
             <motion.section
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-center space-y-4 py-8"
+              className="text-center space-y-4 py-8 h-full relative"
             >
               <motion.div
                 initial={{ scale: 0 }}
