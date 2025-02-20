@@ -17,6 +17,7 @@ import {
   CalendarCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import StepIndicator from '../components/StepIndicator';
 
 const Consultas = () => {
   const [medicos, setMedicos] = useState([]);
@@ -49,33 +50,7 @@ const Consultas = () => {
   });
   const [step, setStep] = useState(0);
 
-  const StepIndicator = ({ currentStep, totalSteps }) => (
-    <div className="flex justify-center mb-8">
-      {[...Array(totalSteps)].map((_, index) => (
-        <div key={index} className="flex items-center">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className={`w-8 h-8 rounded-full flex items-center justify-center
-              ${index === currentStep ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-600'}`}
-          >
-            {index + 1}
-          </motion.div>
-          {index < totalSteps - 1 && (
-            <div className="w-16 h-0.5 bg-gray-200">
-              <motion.div
-                initial={{ width: '0%' }}
-                animate={{ width: currentStep > index ? '100%' : '0%' }}
-                className="h-full bg-blue-500"
-                transition={{ duration: 0.3 }}
-              />
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
-  );
-  
+    
   const NavigationButtons = ({ onBack, onNext, step, isLastStep }) => (
     <div className="flex justify-between gap-4 mt-6">
       <motion.button
