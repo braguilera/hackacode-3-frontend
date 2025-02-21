@@ -9,7 +9,8 @@ const EmptyState = ({ type = 'pacientes' }) => {
     paquetes: 'paquetes de servicios',
     medicos: 'médicos registrados',
     especialidades: 'especialidades disponibles',
-    consultas: 'consultas programadas'
+    consultas: 'consultas programadas',
+    serviciosInConsulta: 'servicios disponibles'
   };
 
   return (
@@ -38,14 +39,17 @@ const EmptyState = ({ type = 'pacientes' }) => {
         >
           No se encontraron {messages[type]}
         </motion.h3>
+        {type!=='serviciosInConsulta' &&
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
           className="text-gray-600"
         >
-          Puedes añadir nuevos {type} utilizando el botón de agregar
+          
+            Puedes añadir nuevos {type} utilizando el botón de agregar
         </motion.p>
+          }
       </div>
     </motion.div>
   );

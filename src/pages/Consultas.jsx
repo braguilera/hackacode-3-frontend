@@ -4,6 +4,7 @@ import Notification from '../components/Notification';
 import { Stethoscope, UserPlus, Calendar, Clock, ChevronRight, ChevronLeft, Check, User, Mail, Phone, MapPin, FileCheck, CalendarCheck, Package, DollarSign, CheckCircle, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StepIndicator from '../components/StepIndicator';
+import EmptyState from '../components/EmptyState';
 
 const Consultas = () => {
   const [medicos, setMedicos] = useState([]);
@@ -68,7 +69,7 @@ const Consultas = () => {
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={onBack}
-        className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors"
+        className={`flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-200 transition-colors ${step===0 && 'invisible'}`}
       >
         <ChevronLeft className="w-5 h-5" />
         Anterior
@@ -287,110 +288,123 @@ const Consultas = () => {
           <motion.div
             key={step}
             {...fadeInUp}
-            className="bg-white rounded-xl shadow-lg p-6 space-y-6 h-4/5 "
+            className="bg-white rounded-xl shadow-lg p-6 space-y-6 h-4/5"
           >
             {step === 0 && (
-              <section className="flex flex-col items-center space-y-8 h-full relative max-w-4xl mx-auto p-6">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-8 bg-blue-50 p-4 rounded-lg w-full">
-        <Stethoscope className="w-8 h-8 text-blue-600" />
-        <h2 className="text-2xl font-bold text-gray-800">Seleccionar Servicio</h2>
-      </div>
+              <section className="flex pt-32  h-full relative w-full gap-10">
+              
+              <main className='flex flex-col w-2/3 '>
 
-      {/* Service Selection */}
-      <div className="w-full space-y-4">
-        <div className="flex items-center gap-2 mb-2">
-          <Package className="w-5 h-5 text-blue-500" />
-          <label className="text-lg font-medium text-gray-700">Servicio Médico</label>
-        </div>
-        <select
-          className="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-          value={formData.servicioMedicoCodigo}
-          onChange={(e) => setFormData(prev => ({ ...prev, servicioMedicoCodigo: e.target.value }))}
-        >
-          <option value="">Seleccione un servicio</option>
-          {servicios.map(servicio => (
-            <option key={servicio.codigo} value={servicio.codigo}>
-              {servicio.nombre}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Doctor Selection */}
-
-        <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: 'auto', opacity: 1 }}
-          className="w-full space-y-4"
-        >
-          <div className="flex items-center gap-2 mb-2">
-            <User className="w-5 h-5 text-blue-500" />
-            <label className="text-lg font-medium text-gray-700">Médico Especialista</label>
-          </div>
-          <select
-            className="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            value={formData.medicoId}
-            onChange={(e) => setFormData(prev => ({ ...prev, medicoId: e.target.value }))}
-          >
-            <option value="">Seleccione un médico</option>
-            {medicos.map(medico => (
-              <option key={medico.id} value={medico.id}>
-                {medico.nombre} {medico.apellido} - {medico.especialidad.nombre}
-              </option>
-            ))}
-          </select>
-        </motion.div>
-
-
-      {/* Packages Section */}
-      <aside className="w-full bg-white rounded-lg shadow-lg divide-y divide-gray-100">
-        {serviciosInPaquete.map((paquete, index) => (
-          <article key={index} className="p-6 space-y-4">
-            <header className="flex items-center gap-3 mb-4">
-              <CheckCircle className="w-6 h-6 text-green-500" />
-              <h4 className="text-xl font-bold text-gray-800">{paquete.nombre}</h4>
-            </header>
-
-            <main className="space-y-3">
-              {paquete.servicios.map((servicio, sIndex) => (
-                <div key={sIndex} className="flex items-center justify-between bg-gray-50 p-3 rounded-md">
-                  <div className="flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-blue-500" />
-                    <h4 className="text-gray-700">{servicio.nombre}</h4>
-                  </div>
-                  <p className="font-medium text-gray-900">
-                    <DollarSign className="w-4 h-4 inline-block mr-1" />
-                    {servicio.precio}
-                  </p>
+              {/* Header */}
+                <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
+                  <Stethoscope className="w-8 h-8 text-blue-600" />
+                  <h2 className="text-2xl font-bold text-gray-800">Seleccionar Servicio</h2>
                 </div>
-              ))}
-            </main>
 
-            <footer className="mt-6 pt-4 border-t border-gray-100">
-              <div className="flex justify-end items-center gap-2">
-                <span className="text-gray-600">Precio Total:</span>
-                <span className="text-2xl font-bold text-blue-600">
-                  <DollarSign className="w-6 h-6 inline-block mr-1" />
-                  {paquete.precio}
-                </span>
-              </div>
-            </footer>
-          </article>
-        ))}
-      </aside>
+                {/* Service Selection */}
+                <div className="w-full space-y-4 mb-6">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Package className="w-5 h-5 text-blue-500" />
+                    <label className="text-lg font-medium text-gray-700">Servicio Médico</label>
+                  </div>
+                  <select
+                    className="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    value={formData.servicioMedicoCodigo}
+                    onChange={(e) => setFormData(prev => ({ ...prev, servicioMedicoCodigo: e.target.value }))}
+                  >
+                    <option value="">Seleccione un servicio</option>
+                    {servicios.map(servicio => (
+                      <option key={servicio.codigo} value={servicio.codigo}>
+                        {servicio.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-      <NavigationButtons
-        onNext={() => setStep(step + 1)}
-        onBack={() => null}
-        step={step}
-        isNextEnabled={!formData.servicioMedicoCodigo ? false : true }
-        isLastStep={false}
-      />
-    </section>
+              {/* Doctor Selection */}
+
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  className="w-full space-y-4"
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <User className="w-5 h-5 text-blue-500" />
+                    <label className="text-lg font-medium text-gray-700">Médico Especialista</label>
+                  </div>
+                  <select
+                    className="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    value={formData.medicoId}
+                    onChange={(e) => setFormData(prev => ({ ...prev, medicoId: e.target.value }))}
+                  >
+                    <option value="">Seleccione un médico</option>
+                    {medicos.map(medico => (
+                      <option key={medico.id} value={medico.id}>
+                        {medico.nombre} {medico.apellido} - {medico.especialidad.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </motion.div>
+
+              </main>
+
+              {/* Packages Section */}
+
+              {formData.servicioMedicoCodigo 
+              ? 
+
+              <aside className="w-full h-96 bg-white rounded-lg border divide-y divide-gray-100 overflow-y-scroll">
+                {serviciosInPaquete.map((paquete, index) => (
+                  <article key={index} className="p-6 space-y-4">
+                    <header className="flex items-center gap-3 mb-4">
+                      <CheckCircle className="w-6 h-6 text-green-500" />
+                      <h4 className="text-xl font-bold text-gray-800">{paquete.nombre}</h4>
+                    </header>
+
+                    <main className="space-y-3">
+                      {paquete.servicios.map((servicio, sIndex) => (
+                        <div key={sIndex} className="flex items-center justify-between bg-gray-50 p-3 rounded-md">
+                          <div className="flex items-center gap-2">
+                            <AlertCircle className="w-4 h-4 text-blue-500" />
+                            <h4 className="text-gray-700">{servicio.nombre}</h4>
+                          </div>
+                          <p className="font-medium text-gray-900">
+                            <DollarSign className="w-4 h-4 inline-block mr-1" />
+                            {servicio.precio}
+                          </p>
+                        </div>
+                      ))}
+                    </main>
+
+                    <footer className="mt-6 pt-4 border-t border-gray-100">
+                      <div className="flex justify-end items-center gap-2">
+                        <span className="text-gray-600">Precio Total:</span>
+                        <span className="text-2xl font-bold text-blue-600">
+                          <DollarSign className="w-6 h-6 inline-block mr-1" />
+                          {paquete.precio}
+                        </span>
+                      </div>
+                    </footer>
+                  </article>
+                ))}
+              </aside>
+              :
+              <aside className="w-full h-96 bg-white rounded-lg border divide-y divide-gray-100 justify-center">
+                <EmptyState type='serviciosInConsulta'></EmptyState>
+              </aside>
+            }
+
+              <NavigationButtons
+                onNext={() => setStep(step + 1)}
+                onBack={() => null}
+                step={step}
+                isNextEnabled={!formData.servicioMedicoCodigo ? false : true }
+                isLastStep={false}
+              />
+            </section>
             )}
   
-            {step === 1 && (
+          {step === 1 && (
   isEspecializada ? (
     <section className="space-y-6 h-full relative p-6 max-w-4xl mx-auto">
       <div className="flex items-center gap-3 mb-8 bg-white shadow-sm rounded-xl p-4 border-l-4 border-blue-500">
@@ -479,173 +493,174 @@ const Consultas = () => {
       />
     </section>
   )
-)}
+          )}
   
-{step === 2 && (
-  <section className="space-y-8 h-full relative p-6 max-w-4xl mx-auto">
-    <div className="flex items-center gap-3 bg-white shadow-sm rounded-xl p-4 border-l-4 border-blue-500">
-      <UserPlus className="w-7 h-7 text-blue-500" />
-      <h2 className="text-2xl font-bold text-gray-800">Datos del Paciente</h2>
-    </div>
+          {step === 2 && (
+              <section className="space-y-8 h-full relative p-6 max-w-4xl mx-auto">
+                <div className="flex items-center gap-3 bg-white shadow-sm rounded-xl p-4 border-l-4 border-blue-500">
+                  <UserPlus className="w-7 h-7 text-blue-500" />
+                  <h2 className="text-2xl font-bold text-gray-800">Datos del Paciente</h2>
+                </div>
 
-    <div className="relative">
-      <input 
-        type="text"
-        placeholder="Documento del paciente"
-        className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
-        value={newPacienteData.dni}
-        onChange={(e) => {
-          const doc = e.target.value;
-          setNewPacienteData(prev => ({ ...prev, dni: doc }));
-          // Si se borra o cambia, limpiamos el paciente y el formData
-          if (!doc) {
-            setPaciente(null);
-            setFormData(prev => ({ ...prev, pacienteId: "" }));
-            setPacienteNotExist(true);
-          }
-        }}
-      />
+                <div className="relative">
+                  <input 
+                    type="text"
+                    placeholder="Documento del paciente"
+                    className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
+                    value={newPacienteData.dni}
+                    onChange={(e) => {
+                      const doc = e.target.value;
+                      setNewPacienteData(prev => ({ ...prev, dni: doc }));
+                      // Si se borra o cambia, limpiamos el paciente y el formData
+                      if (!doc) {
+                        setPaciente(null);
+                        setFormData(prev => ({ ...prev, pacienteId: "" }));
+                        setPacienteNotExist(true);
+                      }
+                    }}
+                  />
 
-      <User className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-    </div>
+                  <User className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
+                </div>
 
-    <AnimatePresence>
-      {pacienteNotExist && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          className="border border-gray-200 rounded-xl p-8 space-y-6 bg-white shadow-sm"
-        >
-          <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg text-blue-700">
-            <UserPlus className="w-5 h-5 text-blue-500" />
-            <p className="text-sm font-medium">Complete los datos para crear el paciente</p>
-          </div>
+                <AnimatePresence>
+                  {pacienteNotExist && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="border border-gray-200 rounded-xl p-8 space-y-6 bg-white shadow-sm"
+                    >
+                      <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg text-blue-700">
+                        <UserPlus className="w-5 h-5 text-blue-500" />
+                        <p className="text-sm font-medium">Complete los datos para crear el paciente</p>
+                      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Nombre"
-                className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
-                value={newPacienteData.nombre}
-                onChange={(e) => setNewPacienteData(prev => ({ ...prev, nombre: e.target.value }))}
-                required
-              />
-              <User className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-            </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="relative">
+                          <input
+                            type="text"
+                            placeholder="Nombre"
+                            className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
+                            value={newPacienteData.nombre}
+                            onChange={(e) => setNewPacienteData(prev => ({ ...prev, nombre: e.target.value }))}
+                            required
+                          />
+                          <User className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
+                        </div>
 
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Apellido"
-                className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
-                value={newPacienteData.apellido}
-                onChange={(e) => setNewPacienteData(prev => ({ ...prev, apellido: e.target.value }))}
-                required
-              />
-              <User className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-            </div>
-          </div>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            placeholder="Apellido"
+                            className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
+                            value={newPacienteData.apellido}
+                            onChange={(e) => setNewPacienteData(prev => ({ ...prev, apellido: e.target.value }))}
+                            required
+                          />
+                          <User className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
+                        </div>
+                      </div>
 
-          <div className="relative">
-            <input
-              type="date"
-              className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
-              value={newPacienteData.fechaNac}
-              onChange={(e) => setNewPacienteData(prev => ({ ...prev, fechaNac: e.target.value }))}
-              required
-            />
-            <Calendar className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-          </div>
+                      <div className="relative">
+                        <input
+                          type="date"
+                          className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
+                          value={newPacienteData.fechaNac}
+                          onChange={(e) => setNewPacienteData(prev => ({ ...prev, fechaNac: e.target.value }))}
+                          required
+                        />
+                        <Calendar className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
+                      </div>
 
-          <div className="relative">
-            <input
-              type="email"
-              placeholder="Email"
-              className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
-              value={newPacienteData.email}
-              onChange={(e) => setNewPacienteData(prev => ({ ...prev, email: e.target.value }))}
-              required
-            />
-            <Mail className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-          </div>
+                      <div className="relative">
+                        <input
+                          type="email"
+                          placeholder="Email"
+                          className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
+                          value={newPacienteData.email}
+                          onChange={(e) => setNewPacienteData(prev => ({ ...prev, email: e.target.value }))}
+                          required
+                        />
+                        <Mail className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
+                      </div>
 
-          <div className="relative">
-            <input
-              type="tel"
-              placeholder="Teléfono"
-              className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
-              value={newPacienteData.telefono}
-              onChange={(e) => setNewPacienteData(prev => ({ ...prev, telefono: e.target.value }))}
-              required
-            />
-            <Phone className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-          </div>
+                      <div className="relative">
+                        <input
+                          type="tel"
+                          placeholder="Teléfono"
+                          className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
+                          value={newPacienteData.telefono}
+                          onChange={(e) => setNewPacienteData(prev => ({ ...prev, telefono: e.target.value }))}
+                          required
+                        />
+                        <Phone className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
+                      </div>
 
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Dirección"
-              className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
-              value={newPacienteData.direccion}
-              onChange={(e) => setNewPacienteData(prev => ({ ...prev, direccion: e.target.value }))}
-              required
-            />
-            <MapPin className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-          </div>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="Dirección"
+                          className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
+                          value={newPacienteData.direccion}
+                          onChange={(e) => setNewPacienteData(prev => ({ ...prev, direccion: e.target.value }))}
+                          required
+                        />
+                        <MapPin className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
+                      </div>
 
-          <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-            <input
-              type="checkbox"
-              id="obraSocial"
-              className="w-5 h-5 text-blue-500 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-0"
-              checked={newPacienteData.tieneObraSocial}
-              onChange={(e) => setNewPacienteData(prev => ({ ...prev, tieneObraSocial: e.target.checked }))}
-            />
-            <label htmlFor="obraSocial" className="text-sm font-medium text-gray-700">
-              Tiene obra social
-            </label>
-          </div>
+                      <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                        <input
+                          type="checkbox"
+                          id="obraSocial"
+                          className="w-5 h-5 text-blue-500 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-0"
+                          checked={newPacienteData.tieneObraSocial}
+                          onChange={(e) => setNewPacienteData(prev => ({ ...prev, tieneObraSocial: e.target.checked }))}
+                        />
+                        <label htmlFor="obraSocial" className="text-sm font-medium text-gray-700">
+                          Tiene obra social
+                        </label>
+                      </div>
 
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleCreatePaciente}
-            className="w-full px-6 py-4 bg-green-500 text-white rounded-xl flex items-center justify-center gap-3 hover:bg-green-600 transition-colors shadow-sm font-medium"
-          >
-            <UserPlus className="w-5 h-5" />
-            Crear Paciente
-          </motion.button>
-        </motion.div>
-      )}
+                      <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleCreatePaciente}
+                        className="w-full px-6 py-4 bg-green-500 text-white rounded-xl flex items-center justify-center gap-3 hover:bg-green-600 transition-colors shadow-sm font-medium"
+                      >
+                        <UserPlus className="w-5 h-5" />
+                        Crear Paciente
+                      </motion.button>
+                    </motion.div>
+                  )}
 
-      {paciente && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="p-6 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3 shadow-sm"
-        >
-          <div className="bg-green-100 p-2 rounded-full">
-            <Check className="w-6 h-6 text-green-600" />
-          </div>
-          <p className="text-green-800 font-medium">
-            Paciente encontrado: {paciente.nombre} {paciente.apellido}
-          </p>
-        </motion.div>
-      )}
-    </AnimatePresence>
+                  {paciente && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="p-6 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3 shadow-sm"
+                    >
+                      <div className="bg-green-100 p-2 rounded-full">
+                        <Check className="w-6 h-6 text-green-600" />
+                      </div>
+                      <p className="text-green-800 font-medium">
+                        Paciente encontrado: {paciente.nombre} {paciente.apellido}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-    <NavigationButtons
-      onNext={() => setStep(step + 1)}
-      onBack={() => setStep(step - 1)}
-      step={step}
-      isNextEnabled={!formData.pacienteId ? false : true }
-      isLastStep={false}
-    />
-  </section>
-)}
-            {step === 3 && (
+                <NavigationButtons
+                  onNext={() => setStep(step + 1)}
+                  onBack={() => setStep(step - 1)}
+                  step={step}
+                  isNextEnabled={!formData.pacienteId ? false : true }
+                  isLastStep={false}
+                />
+              </section>
+          )}
+
+          {step === 3 && (
   <section className="space-y-8 h-full relative p-6 max-w-4xl mx-auto">
     <div className="flex items-center gap-3 bg-white shadow-sm rounded-xl p-4 border-l-4 border-green-500">
       <FileCheck className="w-7 h-7 text-green-500" />
@@ -718,7 +733,8 @@ const Consultas = () => {
       isLastStep={true}
     />
   </section>
-)}
+          )}
+
           {step === 4 && (
             <motion.section
               initial={{ opacity: 0, scale: 0.95 }}
@@ -763,6 +779,7 @@ const Consultas = () => {
               </motion.button>
             </motion.section>
           )}
+
         </motion.div>
       </AnimatePresence>
       <Notification
