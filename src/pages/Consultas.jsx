@@ -1,21 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getDatos, postDatos } from '../api/crud';
 import Notification from '../components/Notification';
-import { 
-  Stethoscope, 
-  UserPlus, 
-  Calendar,
-  Clock,
-  ChevronRight,
-  ChevronLeft,
-  Check,
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  FileCheck,
-  CalendarCheck
-} from 'lucide-react';
+import { Stethoscope, UserPlus, Calendar, Clock, ChevronRight, ChevronLeft, Check, User, Mail, Phone, MapPin, FileCheck, CalendarCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StepIndicator from '../components/StepIndicator';
 
@@ -30,13 +16,14 @@ const Consultas = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [messageNotification, setMessageNotification] = useState(null);
   const [formData, setFormData] = useState({
-    pacienteId: "",              // Documento ingresado
+    pacienteId: "",              
     medicoId: "",
     servicioMedicoCodigo: "",
     fecha: "",
     hora: "",
     estado: "activo"
   });
+
   // Estado para los datos del nuevo paciente a crear
   const [newPacienteData, setNewPacienteData] = useState({
     nombre: "",
@@ -53,13 +40,13 @@ const Consultas = () => {
   const getAvailableDates = () => {
     const today = new Date();
     const year = today.getFullYear();
-    const month = today.getMonth(); // 0-indexado
+    const month = today.getMonth(); 
     const lastDay = new Date(year, month + 1, 0).getDate();
     let dates = [];
     for (let d = today.getDate(); d <= lastDay; d++) {
       const date = new Date(year, month, d);
-      const day = date.getDay(); // 0: domingo, 6: sábado
-      if (day >= 1 && day <= 5) { // lunes a viernes
+      const day = date.getDay(); 
+      if (day >= 1 && day <= 5) { 
         dates.push(date.toISOString().split('T')[0]);
       }
     }
@@ -149,25 +136,27 @@ const Consultas = () => {
     if (!formData.medicoId) return;
     try {
       const currentMonth = new Date().getMonth() + 1;
+      const currentYear = new Date().getFullYear();
       const data = await getDatos(
-        `/api/medicos/turnos-disponibles?medicoId=${formData.medicoId}&mes=${currentMonth}`,
+        `/api/medicos/turnos-disponibles?medicoId=${formData.medicoId}&mes=${currentMonth}&anio=${currentYear}`,
         'Error obteniendo los turnos'
       );
       setTurnosMedico(data);
-      console.log(data)
     } catch (err) {
       console.log(err.message);
     }
   };
-  
 
   // Buscar paciente por documento
   const fetchPaciente = async () => {
     if (!formData.pacienteId) return;
     try {
-      const data = await getDatos(`/api/pacientes/${formData.pacienteId}`);
+      const data = await getDatos(`/api/pacientes/dni/${newPacienteData.dni}`);
       setPaciente(data);
       setPacienteNotExist(false);
+      setFormData(prev => ({ ...prev, pacienteId: data.id }));
+      console.log('data',data.id)
+      console.log('formData',formData)
     } catch (err) {
       setPaciente(null);
       setPacienteNotExist(true);
@@ -211,7 +200,7 @@ const Consultas = () => {
 
   useEffect(() => {
     fetchPaciente();
-  }, [formData.pacienteId]);
+  }, [newPacienteData.dni]);
 
   // Función para agrupar turnos por fecha
   const groupTurnosByFecha = () => {
@@ -429,10 +418,10 @@ const Consultas = () => {
                       type="text"
                       placeholder="Documento del paciente"
                       className="w-full p-3 pl-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      value={formData.pacienteId}
+                      value={newPacienteData.dni}
                       onChange={(e) => {
                         const doc = e.target.value;
-                        setFormData(prev => ({ ...prev, pacienteId: doc }));
+                        
                         setNewPacienteData(prev => ({ ...prev, dni: doc }));
                       }}
                     />
