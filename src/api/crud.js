@@ -6,7 +6,6 @@ const handleResponse = async (response, errorMessage) => {
         throw new Error(errorMessage || errorData.message || 'Error desconocido');
     }
 
-    // Verificar si hay contenido en la respuesta
     const text = await response.text();
     if (!text) {
         return []; 
@@ -18,7 +17,6 @@ const handleResponse = async (response, errorMessage) => {
         return text; 
     }
 };
-
 
 export const getDatos = async (endpoint, errorMessage = 'Error al obtener datos') => {
     try {
