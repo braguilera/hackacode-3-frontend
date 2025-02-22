@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getDatos, postDatos } from '../api/crud';
 import Notification from '../components/Notification';
-import { Stethoscope, UserPlus, Calendar, Clock, ChevronRight, ChevronLeft, Check, User, Mail, Phone, MapPin, FileCheck, CalendarCheck, Package, DollarSign, CheckCircle, AlertCircle, FileText } from 'lucide-react';
+import { Stethoscope, UserPlus, Calendar, Clock, ChevronRight, ChevronLeft, Check, User, Mail, Phone, MapPin, FileCheck, CalendarCheck, Package, DollarSign, CheckCircle, AlertCircle, FileText, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StepIndicator from '../components/StepIndicator';
 import EmptyState from '../components/EmptyState';
@@ -353,14 +353,25 @@ const Consultas = () => {
 
                 {/* Packages Section */}
                 {formData.servicioMedicoCodigo ? (
-                  <aside className="w-full h-96 bg-gray-50/50 overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 rounded-lg">
+                  <aside className="w-full h-96 border overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 rounded-lg">
+                  {serviciosInPaquete && (
+                    <div className="sticky top-0 bg-gradient-to-l from-blue-50 to-white p-4 border-b border-gray-100 z-10">
+                      <div className="flex items-center gap-3">
+                        <Sparkles className="w-5 h-5 text-blue-500" />
+                        <div>
+                          <h4 className="text-lg font-semibold text-gray-800">Paquetes Recomendados</h4>
+                          <p className="text-sm text-gray-600">Descubre paquetes que incluyen este servicio y mucho más</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                     {serviciosInPaquete.map((paquete, index) => {
                       const isSelected = selectedPaquete && selectedPaquete.codigo === paquete.codigo;
                       return (
                         <article
                           key={index}
                           className={`p-6 space-y-4 cursor-pointer transition-all duration-200 hover:bg-blue-50 m-4 rounded-lg ${
-                            isSelected ? "bg-blue-50 shadow-lg transform scale-[0.99]" : "hover:transform hover:scale-[0.99] hover:border-none border border-gray-200 "
+                            isSelected ? "bg-blue-50 shadow-lg transform scale-[1.01]" : "hover:transform hover:scale-[1.01] hover:border-none border border-gray-200 "
                           }`}
                           onClick={() => {
                             if (isSelected) {
