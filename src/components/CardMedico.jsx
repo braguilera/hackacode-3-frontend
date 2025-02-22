@@ -44,7 +44,7 @@ const CardMedico = ({ dataMedico, onEdit, onDelete }) => {
           className="p-2 rounded-full bg-white/90 hover:bg-red-50 text-gray-600 hover:text-red-500 shadow-sm"
           onClick={(e) => {
             e.stopPropagation();
-            onDelete(dataMedico); // Ahora solo activa el popup
+            onDelete(dataMedico);
           }}
         >
           <Trash2 size={16} />
@@ -53,17 +53,17 @@ const CardMedico = ({ dataMedico, onEdit, onDelete }) => {
 
         <header className="p-4 flex items-start gap-4">
             <motion.div
-            className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-semibold shadow-sm`}
+            className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-semibold border`}
             >
-                <span className={{/*colors.textDark*/}}>{getInitials(dataMedico.nombre, dataMedico.apellido)}</span>
+                <span>{getInitials(dataMedico.nombre, dataMedico.apellido)}</span>
             </motion.div>
 
             <div className="flex-1">
                 <h2 className="text-lg font-semibold text-gray-800">
                     {dataMedico.nombre} {dataMedico.apellido}
                 </h2>
-                <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium mt-1 {/*colors.badge*/}`}>
-                    {/*especialidad*/}
+                <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium mt-1 bg-slate-100 text-slate-600`}>
+                  {dataMedico.especialidad.nombre}
                 </div>
             </div>
         </header>

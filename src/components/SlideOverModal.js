@@ -18,7 +18,7 @@ const SlideOverModal = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.3 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black z-40"
+            className="fixed inset-0 bg-black z-40 "
             onClick={onClose}
           />
 
@@ -28,7 +28,7 @@ const SlideOverModal = ({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className={`fixed inset-y-0 right-0 w-full ${width} m-4 rounded-2xl bg-white shadow-xl z-50 overflow-hidden flex flex-col`}
+            className={`fixed inset-y-0 right-0 w-full ${width} m-4 rounded-2xl bg-white shadow-xl z-50 overflow-hidden flex flex-col `}
           >
             {/* Header */}
             <header className="sticky top-0 bg-white border-b">
@@ -48,7 +48,7 @@ const SlideOverModal = ({
             </header>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50">
               <div className="p-6">
                 {children}
               </div>
