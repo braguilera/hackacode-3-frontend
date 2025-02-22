@@ -80,26 +80,12 @@ const Pacientes = () => {
               <p className='text-gray-500 mt-1'>Gestiona la información de tus pacientes</p>
             <button 
               onClick={handleAddPaciente}
-              className="flex items-center justify-end space-x-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors absolute right-0 top-1/2"
+              className="flex items-center justify-end space-x-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors absolute right-0 top-0"
             >
               <Plus className="h-4 w-4" />
               <span>Agregar Paciente</span>
             </button>
           </header>
-
-        </div>
-        {/* Input de búsqueda global */}
-        <div className="flex items-center w-full justify-between space-x-2 mt-4">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Buscar pacientes..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
         </div>
       </div>
 

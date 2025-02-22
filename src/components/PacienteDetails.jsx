@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, Phone, Calendar, MapPin, Award, Check, X, Package, FileText, ClipboardList, CalendarDays, Clock, CalendarX } from 'lucide-react';
+import { Mail, Phone, Calendar, MapPin, Award, Check, X, Package, FileText, ClipboardList, CalendarDays, Clock, CalendarX, IdCard } from 'lucide-react';
 import SlideOverModal from './SlideOverModal';
 
 const DetailRow = ({ icon: Icon, label, value }) => (
@@ -63,7 +63,7 @@ const PacienteDetails = ({ isOpen, onClose, paciente, consultas, colors }) => {
             value={new Date(paciente.fechaNac).toLocaleDateString()} 
             />
             <DetailRow 
-            icon={Award} 
+            icon={IdCard} 
             label="DNI" 
             value={paciente.dni} 
             />

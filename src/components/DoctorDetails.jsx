@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Phone, Mail, Calendar, MapPin, Clock, Award, Package, FileText, DollarSign, CalendarX, User, CalendarDays, ClipboardList } from 'lucide-react';
+import { Phone, Mail, Calendar, MapPin, Clock, Award, Package, FileText, DollarSign, CalendarX, User, CalendarDays, ClipboardList, IdCard } from 'lucide-react';
 import SlideOverModal from './SlideOverModal';
 import { getDatos } from '../api/crud';
 
@@ -88,7 +88,7 @@ const DoctorDetails = ({ isOpen, onClose, doctor }) => {
           value={new Date(doctor.fechaNac).toLocaleDateString()} 
         />
         <DetailRow 
-          icon={Award} 
+          icon={IdCard} 
           label="DNI" 
           value={doctor.dni} 
         />

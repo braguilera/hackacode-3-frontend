@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getDatos, postDatos } from '../api/crud';
 import Notification from '../components/Notification';
-import { Stethoscope, UserPlus, Calendar, Clock, ChevronRight, ChevronLeft, Check, User, Mail, Phone, MapPin, FileCheck, CalendarCheck, Package, DollarSign, CheckCircle, AlertCircle, FileText, Sparkles } from 'lucide-react';
+import { Stethoscope, UserPlus, Calendar, Clock, ChevronRight, ChevronLeft, Check, User, Mail, Phone, MapPin, FileCheck, CalendarCheck, Package, DollarSign, CheckCircle, AlertCircle, FileText, Sparkles, IdCard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StepIndicator from '../components/StepIndicator';
 import EmptyState from '../components/EmptyState';
@@ -238,13 +238,11 @@ const Consultas = () => {
 
   const groupedTurnos = groupTurnosByFecha();
 
-  // Función para manejar la creación del paciente cuando no existe
   const handleCreatePaciente = async (e) => {
     e.preventDefault();
     
     try {
       const createdPaciente = await createPaciente(newPacienteData);
-      // Actualizamos el formData con el id (o documento) del paciente creado
       setFormData(prev => ({ ...prev, pacienteId: createdPaciente.id }));
       setPaciente(createdPaciente);
       setPacienteNotExist(false);
@@ -255,7 +253,6 @@ const Consultas = () => {
 
   const createConsulta = async () => {
     try {
-      // Si se seleccionó un paquete, usamos su código en lugar del del servicio
       const consultaData = { ...formData };
       if (selectedPaquete) {
         consultaData.servicioMedicoCodigo = selectedPaquete.codigo;
@@ -646,19 +643,34 @@ const Consultas = () => {
                           </div>
 
                         </div>
-                        <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-                          <input
-                            type="checkbox"
-                            id="obraSocial"
-                            className="w-5 h-5 text-blue-500 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-0"
-                            checked={newPacienteData.tieneObraSocial}
-                            onChange={(e) => setNewPacienteData(prev => ({ ...prev, tieneObraSocial: e.target.checked }))}
-                          />
-                          <label htmlFor="obraSocial" className="text-sm font-medium text-gray-700">
-                            Tiene obra social
-                          </label>
-                        </div>
 
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="relative">
+                            <input
+                              type="text"
+                              placeholder="DNI"
+                              className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
+                              value={newPacienteData.dni}
+                              onChange={(e) => setNewPacienteData(prev => ({ ...prev, dni: e.target.value }))}
+                              required
+                            />
+                            <IdCard className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
+                          </div>
+
+                          <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl relative">
+                            <input
+                              type="checkbox"
+                              id="obraSocial"
+                              className="w-5 h-5 text-blue-500 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-0"
+                              checked={newPacienteData.tieneObraSocial}
+                              onChange={(e) => setNewPacienteData(prev => ({ ...prev, tieneObraSocial: e.target.checked }))}
+                            />
+                            <label htmlFor="obraSocial" className="text-sm font-medium text-gray-700">
+                              Tiene obra social
+                            </label>
+                          </div>
+                        </div>
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
