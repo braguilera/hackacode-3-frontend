@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, Check, X, Edit2 } from 'lucide-react';
 
-const PopUpConfirmation = ({ isOpen, onConfirm, onCancel, itemId, isDelete = true }) => {
+const PopUpConfirmation = ({ isOpen, onConfirm, onCancel, itemId, isDelete = true, paquetes }) => {
 
   const styles = {
     delete: {
@@ -61,11 +61,27 @@ const PopUpConfirmation = ({ isOpen, onConfirm, onCancel, itemId, isDelete = tru
               <h2 className="text-xl font-semibold text-gray-800">{currentStyle.title}</h2>
               <p className="text-gray-600">
                 {currentStyle.message} #{itemId}?
+              </p>
+
+              {paquetes && 
+              <section className='w-full flex flex-col'>
+                <p className="text-gray-700">Se eliminaran los siguientes paquetes</p>
+                <article  className='grid grid-cols-3 gap-4 w-full p-4 items-center'>
+                  {paquetes.map(paquete => (
+                      <h2 key={paquete.codigo} className='bg-gray-100 rounded-md p-2 h-full w-full  content-center'>
+                        {paquete.nombre}
+                      </h2>
+                  ))}
+                </article>
+              </section>
+              }
+              <p className="text-gray-600">
                 {isDelete && (
-                  <><br />Esta acción no se puede deshacer.</>
+                  'Esta acción no se puede deshacer.'
                 )}
               </p>
             </div>
+
 
             <footer className="flex gap-3 w-full mt-2">
               <motion.button

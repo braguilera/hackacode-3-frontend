@@ -26,8 +26,6 @@ const Consultas = () => {
     hora: "",
     estado: "activo"
   });
-
-  // Estado para los datos del nuevo paciente a crear
   const [newPacienteData, setNewPacienteData] = useState({
     nombre: "",
     apellido: "",
@@ -56,7 +54,7 @@ const Consultas = () => {
     return dates;
   };
   
-  // Array de horarios por defecto
+
   const defaultTimeSlots = [
     "08:00:00", "08:30:00", "09:00:00", "09:30:00",
     "10:00:00", "10:30:00", "11:00:00", "11:30:00"
@@ -101,8 +99,6 @@ const Consultas = () => {
     </div>
   );
   
-
-  // Fetch de médicos, servicios y paquetes
   const fetchMedicos = async () => {
     try {
       const data = await getDatos('/api/medicos', 'Error cargando medicos');
@@ -140,7 +136,6 @@ const Consultas = () => {
     }
   };
 
-  // Fetch de turnos para el médico seleccionado
   const fetchTurnosMedicos = async () => {
     if (!formData.medicoId) return;
     try {
@@ -156,34 +151,30 @@ const Consultas = () => {
     }
   };
 
-
-
   useEffect(() => {
     fetchMedicos();
     fetchServicios();
     fetchPaquetes();
   }, []);
 
-      // Se ejecuta cuando cambia el código del servicio
-      const fetchServicioEspecializado = async () => {
-        if (!formData.servicioMedicoCodigo) {
-          setIsEspecializada(null);
-          return;
-        }
-        try {
-          const data = await getDatos(
-            `/api/servicios/individuales/${formData.servicioMedicoCodigo}`, 'Error cargando servicio especializado'
-          );
-          // Si el servicio se llama "Consulta Especializada", se considera especializado
-          if (data.nombre === 'Consulta Especializada') {
-            setIsEspecializada(data);
-          } else {
-            setIsEspecializada(null);
-          }
-        } catch (err) {
-          console.log(err.message);
-        }
-      };
+  const fetchServicioEspecializado = async () => {
+    if (!formData.servicioMedicoCodigo) {
+      setIsEspecializada(null);
+      return;
+    }
+    try {
+      const data = await getDatos(
+        `/api/servicios/individuales/${formData.servicioMedicoCodigo}`, 'Error cargando servicio especializado'
+      );
+      if (data.nombre === 'Consulta Especializada') {
+        setIsEspecializada(data);
+      } else {
+        setIsEspecializada(null);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
   const isServiciosInPaquete = async () => {
     if (!formData.servicioMedicoCodigo) {
@@ -217,14 +208,12 @@ const Consultas = () => {
       } catch (err) {
         setPaciente(null);
         setPacienteNotExist(true);
-        // Aseguramos limpiar el formData
         setFormData(prev => ({ ...prev, pacienteId: "" }));
       }
     };
     fetchPaciente();
   }, [newPacienteData.dni]);
 
-  // Función para agrupar turnos por fecha
   const groupTurnosByFecha = () => {
     const groups = {};
     turnosMedico.forEach(turno => {

@@ -19,7 +19,6 @@ const Servicios = () => {
   const [loadingServicios, setLoadingServicios] = useState(true);
   const [loadingPaquetes, setLoadingPaquetes] = useState(true);
   const [selecteServicioToDelete, SetSelecteServicioToDelete] = useState(null)
-  const [selecteServicioToEdit, SetSelecteServicioToEdit] = useState(null)
   const [selectedPaqueteToDelete, setSelectedPaqueteToDelete] = useState(null);
   const [selectedServicioToEdit, setSelectedServicioToEdit] = useState(null);
   const [selectedPaqueteToEdit, setSelectedPaqueteToEdit] = useState(null);
@@ -47,7 +46,7 @@ const Servicios = () => {
   const [paqueteEditando, setPaqueteEditando] = useState(null);
   const [showNotification, setShowNotification] = useState(false);
   const [messageNotification, setMessageNotification] = useState(null);
-
+  const [packageWithService, setPackageWithService] = useState([]);
 
 
       const fetchServicios = async () => {
@@ -81,10 +80,30 @@ const Servicios = () => {
         fetchPaquetes();
       }, []);
 
+      const serviceInPackage = async () => {
+        try {
+          const data = await getDatos(`/api/servicios/paquetes?servicioIndividualId=${selecteServicioToDelete.codigo}`, 'Error cargando medicos');
+          console.log(selecteServicioToDelete)
+          setPackageWithService(data);
+        } catch (err) {
+          setError(err.message);
+        }
+      } 
+
+      useEffect(() => {
+        serviceInPackage();
+      }, [selecteServicioToDelete]);
+
       const deleteService = async (e) => {
         try {
           await deleteDatos(`/api/servicios/individuales/${e}`, 'Error eliminando servicio');
-          await fetchServicios();
+
+          {packageWithService &&
+          packageWithService.map(paquete => (
+            deleteServiceInPackage(paquete)
+          ))}
+          
+
           setMessageNotification({
             type: 'success',
             text: 'Servicio eliminado exitosamente'
@@ -99,8 +118,20 @@ const Servicios = () => {
         }
         finally{
           SetSelecteServicioToDelete(null)
+
+          await fetchServicios();
+
         }
       };
+
+      const deleteServiceInPackage = async (paquete) => {
+        try {
+          await deleteDatos(`/api/servicios/paquetes/${paquete.codigo}`, 'Error eliminando servicio');
+          await fetchPaquetes();
+        } catch (error) {
+          console.log(error)
+        }
+      }
 
       const handleEditClick = (servicio) => {
         setEditingService(servicio);
@@ -249,7 +280,7 @@ const Servicios = () => {
         try {
           const payload = {
             nombre: selectedPaqueteToEdit.nombre,
-            servicios: selectedPaqueteToEdit.servicios.map(s => s.codigo) // Extrae solo los códigos
+            servicios: selectedPaqueteToEdit.servicios.map(s => s.codigo)
           };
           await putDatos(
             `/api/servicios/paquetes/${selectedPaqueteToEdit.codigo}`,
@@ -295,7 +326,7 @@ const Servicios = () => {
       }
 
   return (
-<main className='w-full h-full flex flex-col gap-6 p-6 '>
+    <main className='w-full h-full flex flex-col gap-6 p-6 '>
 
       {/* Main Content */}
       <div className='flex gap-6 h-full'>
@@ -309,21 +340,22 @@ const Servicios = () => {
             onCancel={() => SetSelecteServicioToDelete(null)}
             itemId={selecteServicioToDelete.codigo}
             isDelete={true}
+            paquetes={packageWithService}
           />
         </div>
       )}
 
       {selectedServicioToEdit && (
-  <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
-    <PopUpConfirmation
-      isOpen={!!selectedServicioToEdit}
-      onConfirm={confirmSubmitServiceEdit}
-      onCancel={() => setSelectedServicioToEdit(null)}
-      itemId={selectedServicioToEdit.codigo}
-      isDelete={false}
-    />
-  </div>
-)}
+        <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
+          <PopUpConfirmation
+            isOpen={!!selectedServicioToEdit}
+            onConfirm={confirmSubmitServiceEdit}
+            onCancel={() => setSelectedServicioToEdit(null)}
+            itemId={selectedServicioToEdit.codigo}
+            isDelete={false}
+          />
+        </div>
+      )}
 
 
       {selectedPaqueteToDelete && (
@@ -337,23 +369,22 @@ const Servicios = () => {
             onCancel={() => setSelectedPaqueteToDelete(null)}
             itemId={selectedPaqueteToDelete.codigo}
             isDelete={true}
+
           />
         </div>
       )}
 
       {selectedPaqueteToEdit && (
-  <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
-    <PopUpConfirmation
-      isOpen={!!selectedPaqueteToEdit}
-      onConfirm={confirmSubmitPaqueteEdit}
-      onCancel={() => setSelectedPaqueteToEdit(null)}
-      itemId={selectedPaqueteToEdit.codigo}
-      isDelete={false}
-    />
-  </div>
-)}
-
-
+        <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
+          <PopUpConfirmation
+            isOpen={!!selectedPaqueteToEdit}
+            onConfirm={confirmSubmitPaqueteEdit}
+            onCancel={() => setSelectedPaqueteToEdit(null)}
+            itemId={selectedPaqueteToEdit.codigo}
+            isDelete={false}
+          />
+        </div>
+      )}
 
         {/* Principal Container - Services */}
         <section className='flex-1 flex flex-col h-full pl-6'>
@@ -365,12 +396,7 @@ const Servicios = () => {
               </h2>
               <p className='text-gray-500 mt-1'>Gestiona los servicios individuales disponibles para los pacientes</p>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Valor total de servicios:</span>
-              <span className="text-lg font-semibold text-gray-800">1</span>
-            </div>
           </header>
-                    {/* Search Bar */}
 
             <div className="relative max-w-md">
               <input
@@ -386,92 +412,92 @@ const Servicios = () => {
           
           <article className=' grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pr-4 pt-6  scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50'>
         <aside className="h-40 w-full">
-      <AnimatePresence mode="wait">
-        {openFormServicios ? (
-          <motion.main
-            key="service-form"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className="w-full flex flex-col h-40 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden relative group"
-          >
-            {/* Header with Icon */}
-            <header className="absolute top-0 left-0 w-full flex items-center gap-2 p-4 bg-white">
-              <aside className="p-2 bg-blue-100 rounded-lg">
-                <HeartPulse  size={20} className="text-blue-600" />
-              </aside>
-              <input
-                type="text"
-                name="nombre"
-                maxLength={50}
+        <AnimatePresence mode="wait">
+          {openFormServicios ? (
+            <motion.main
+              key="service-form"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="w-full flex flex-col h-40 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden relative group"
+            >
+              {/* Header with Icon */}
+              <header className="absolute top-0 left-0 w-full flex items-center gap-2 p-4 bg-white">
+                <aside className="p-2 bg-blue-100 rounded-lg">
+                  <HeartPulse  size={20} className="text-blue-600" />
+                </aside>
+                <input
+                  type="text"
+                  name="nombre"
+                  maxLength={50}
 
-                value={servicioData.nombre}
-                onChange={handleChange}
-                placeholder="Nombre del servicio"
-                required
-                className="flex-1 text-lg w-full font-semibold text-gray-800 bg-transparent border-0 focus:ring-0 outline-none placeholder:text-gray-400"
-              />
-              <button
-                onClick={() => setOpenFormServicios(false)}
-                className=" p-1.5 rounded-full hover:bg-gray-50 text-gray-600"
-              >
-                <X size={16} />
-              </button>
-            </header>
+                  value={servicioData.nombre}
+                  onChange={handleChange}
+                  placeholder="Nombre del servicio"
+                  required
+                  className="flex-1 text-lg w-full font-semibold text-gray-800 bg-transparent border-0 focus:ring-0 outline-none placeholder:text-gray-400"
+                />
+                <button
+                  onClick={() => setOpenFormServicios(false)}
+                  className=" p-1.5 rounded-full hover:bg-gray-50 text-gray-600"
+                >
+                  <X size={16} />
+                </button>
+              </header>
 
-            {/* Form Content */}
-            <form onSubmit={handleSubmitServicio} className="h-full pt-16 px-4 pb-2">
-              <article className="flex flex-col justify-between h-full">
-                <div className="space-y-2">
-                  <textarea
-                    name="descripcion"
-                    value={servicioData.descripcion}
-                    onChange={handleChange}
-                    placeholder="Descripción breve del servicio"
-                    required
-                    maxLength={50}
-                    className="w-full text-base text-gray-600 bg-transparent border-0 focus:ring-0 outline-none resize-none placeholder:text-gray-400 line-clamp-2"
-                    rows={2}
-                  />
-                </div>
-
-                <footer className="flex items-center justify-between pt-2 border-t border-gray-100">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-500">Precio:</span>
-                    <input
-                      type="number"
-                      name="precio"
-                      value={servicioData.precio}
+              {/* Form Content */}
+              <form onSubmit={handleSubmitServicio} className="h-full pt-16 px-4 pb-2">
+                <article className="flex flex-col justify-between h-full">
+                  <div className="space-y-2">
+                    <textarea
+                      name="descripcion"
+                      value={servicioData.descripcion}
                       onChange={handleChange}
-                      placeholder="0.00"
+                      placeholder="Descripción breve del servicio"
                       required
                       maxLength={50}
-                      className="w-24 text-xl font-semibold text-slate-600 bg-transparent border-0 focus:ring-0 outline-none placeholder:text-gray-400"
+                      className="w-full text-base text-gray-600 bg-transparent border-0 focus:ring-0 outline-none resize-none placeholder:text-gray-400 line-clamp-2"
+                      rows={2}
                     />
                   </div>
-                  <button
-                    type="submit"
-                    className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors shadow-sm"
-                  >
-                    <ArrowRight size={18} />
-                  </button>
-                </footer>
-              </article>
-            </form>
-          </motion.main>
-        ) : (
-          <motion.button
-            key="open-button"
-            className="border-gray-300 h-full w-full border-2 border-dashed rounded-xl flex justify-center items-center p-6 group hover:bg-blue-50 hover:border-blue-400"
-            onClick={() => setOpenFormServicios(true)}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Plus size={48} className="text-gray-400 group-hover:text-blue-500 transition-all duration-300" />
-          </motion.button>
-        )}
-      </AnimatePresence>
+
+                  <footer className="flex items-center justify-between pt-2 border-t border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-500">Precio:</span>
+                      <input
+                        type="number"
+                        name="precio"
+                        value={servicioData.precio}
+                        onChange={handleChange}
+                        placeholder="0.00"
+                        required
+                        maxLength={50}
+                        className="w-24 text-xl font-semibold text-slate-600 bg-transparent border-0 focus:ring-0 outline-none placeholder:text-gray-400"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors shadow-sm"
+                    >
+                      <ArrowRight size={18} />
+                    </button>
+                  </footer>
+                </article>
+              </form>
+            </motion.main>
+          ) : (
+            <motion.button
+              key="open-button"
+              className="border-gray-300 h-full w-full border-2 border-dashed rounded-xl flex justify-center items-center p-6 group hover:bg-blue-50 hover:border-blue-400"
+              onClick={() => setOpenFormServicios(true)}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Plus size={48} className="text-gray-400 group-hover:text-blue-500 transition-all duration-300" />
+            </motion.button>
+          )}
+        </AnimatePresence>
     </aside>
 
         {loadingServicios 
