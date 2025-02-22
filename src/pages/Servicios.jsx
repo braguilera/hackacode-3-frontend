@@ -9,6 +9,7 @@ import LoadingIndicator from '../components/LoadingIndicator';
 import EditableCardService from '../components/EditableCardService';
 import CardPaqueteEdit from '../components/CardPaqueteEdit';
 import Notification from '../components/Notification';
+import EmptyState from '../components/EmptyState';
 
 const Servicios = () => {
   const [servicios, setServicios] = useState([]);
@@ -505,42 +506,46 @@ const Servicios = () => {
             </motion.main>
           )))
         :
-        
-      serviciosFiltrados.map((servicio) => (
-  <AnimatePresence mode="wait" key={servicio.codigo}>
-    {editingService?.codigo === servicio.codigo ? (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.2 }}
-        className="relative z-10"
-      >
-      <EditableCardService
-        servicioData={servicioDataEdit}
-        setServicioData={setServicioDataEdit}
-        onCancel={() => setEditingService(null)}
-        onSubmit={(e) => {
-          e.preventDefault();
-          // Al enviar, guardamos la info a editar
-          setSelectedServicioToEdit({
-            codigo: editingService.codigo,
-            data: servicioDataEdit
-          });
-        }}
-      />
-      </motion.div>
-    ) : (
-      <CardServicio
-        key={servicio.codigo}
-        dataServicio={servicio}
-        onEdit={handleEditClick}
-        onDelete={() => SetSelecteServicioToDelete(servicio)}
-      />
-    )}
-  </AnimatePresence>
-))}
-        
+        serviciosFiltrados!==0 
+        ?
+        serviciosFiltrados.map((servicio) => (
+          <AnimatePresence mode="wait" key={servicio.codigo}>
+            {editingService?.codigo === servicio.codigo ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="relative z-10"
+              >
+              <EditableCardService
+                servicioData={servicioDataEdit}
+                setServicioData={setServicioDataEdit}
+                onCancel={() => setEditingService(null)}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setSelectedServicioToEdit({
+                    codigo: editingService.codigo,
+                    data: servicioDataEdit
+                  });
+                }}
+              />
+              </motion.div>
+            ) : (
+              <CardServicio
+                key={servicio.codigo}
+                dataServicio={servicio}
+                onEdit={handleEditClick}
+                onDelete={() => SetSelecteServicioToDelete(servicio)}
+              />
+            )}
+          </AnimatePresence>
+        ))
+        :
+        <div className='absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2'>
+          <EmptyState type='servicios'/>
+        </div>
+        }
         </article>
         </section>
 
@@ -643,7 +648,7 @@ const Servicios = () => {
                           {serviciosDisponibles.map((servicio) => (
                             <motion.button
                               key={servicio.codigo}
-                              type="button" // <- Esto es crucial para evitar el submit automático
+                              type="button"
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -10 }}
@@ -667,7 +672,7 @@ const Servicios = () => {
                 <footer className="p-4 border-t border-gray-100 flex justify-end">
                   <button
                     type="submit"
-                    disabled={paqueteData.servicios.length === 0} // Deshabilitar si no hay servicios
+                    disabled={paqueteData.servicios.length === 0}
                     className="w-full justify-center bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
                   >
                   {isSubmitting ? (
@@ -698,75 +703,83 @@ const Servicios = () => {
       </aside>
   
       {loadingPaquetes ? (
-  Array.from({ length: 5 }).map((_, index) => (
-    <motion.main
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            key={index}
-            transition={{ duration: 0.02 }}
-            className='relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-4 border border-gray-100 group cursor-pointer select-none'
-        >
-            <header className="flex items-center gap-2 mb-2">
-                <aside className="p-2 bg-blue-100 rounded-lg">
-                    <Package size={20} className="text-blue-600" />
-                </aside>
-                <LoadingIndicator height={'h-6'}/>
-            </header>
+        Array.from({ length: 5 }).map((_, index) => (
+          <motion.main
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  key={index}
+                  transition={{ duration: 0.02 }}
+                  className='relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-4 border border-gray-100 group cursor-pointer select-none'
+              >
+                  <header className="flex items-center gap-2 mb-2">
+                      <aside className="p-2 bg-blue-100 rounded-lg">
+                          <Package size={20} className="text-blue-600" />
+                      </aside>
+                      <LoadingIndicator height={'h-6'}/>
+                  </header>
 
-            <article className="space-y-2 mb-3">
-                    <div className="flex justify-between items-center text-sm bg-gray-100 rounded-lg">
-                <LoadingIndicator height={'h-20'}/>
-                    </div>
+                  <article className="space-y-2 mb-3">
+                          <div className="flex justify-between items-center text-sm bg-gray-100 rounded-lg">
+                      <LoadingIndicator height={'h-20'}/>
+                          </div>
 
-            </article>
+                  </article>
 
-            <footer className="pt-2 border-t border-gray-200">
-                <div className="flex justify-between items-center mt-2">
+                  <footer className="pt-2 border-t border-gray-200">
+                      <div className="flex justify-between items-center mt-2">
 
-                <LoadingIndicator height={'h-6'}/>
-                </div>
-            </footer>
-        </motion.main>
-  ))
-) : (
-  paquetes.map((paquete) => (
-  <div key={paquete.codigo} className="relative">
-    <AnimatePresence>
-      {paqueteEditando?.codigo === paquete.codigo ? (
-        <motion.div
-          className=" inset-0 z-10"
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-        >
-        <CardPaqueteEdit
-          paquete={paqueteEditando}
-          serviciosDisponibles={serviciosDisponibles}
-          onCancel={cancelarEdicion}
-          onSave={(paqueteActualizado) => setSelectedPaqueteToEdit(paqueteActualizado)}
-        />
-        </motion.div>
-      )
-    
-    :
+                      <LoadingIndicator height={'h-6'}/>
+                      </div>
+                  </footer>
+              </motion.main>
+        ))
+        ) : (
+          paquetes.length!==0 
+          ?
+            paquetes.map((paquete) => (
+              <div key={paquete.codigo} className="relative">
+                <AnimatePresence>
+                  {paqueteEditando?.codigo === paquete.codigo ? (
+                    <motion.div
+                      className=" inset-0 z-10"
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.9, opacity: 0 }}
+                    >
+                    <CardPaqueteEdit
+                      paquete={paqueteEditando}
+                      serviciosDisponibles={serviciosDisponibles}
+                      onCancel={cancelarEdicion}
+                      onSave={(paqueteActualizado) => setSelectedPaqueteToEdit(paqueteActualizado)}
+                    />
+                    </motion.div>
+                  )
+                
+                :
 
-    (<motion.div layout
-    >
-      <CardPaquete
-        dataPaquete={paquete}
-        onEdit={() => iniciarEdicion(paquete)}
-        onDelete={() => setSelectedPaqueteToDelete(paquete)}
-      />
-    </motion.div>)}
-    </AnimatePresence>
-  </div>
-))
-)}
+                (<motion.div layout
+                >
+                  <CardPaquete
+                    dataPaquete={paquete}
+                    onEdit={() => iniciarEdicion(paquete)}
+                    onDelete={() => setSelectedPaqueteToDelete(paquete)}
+                  />
+                </motion.div>)}
+                </AnimatePresence>
+              </div>
+            ))
+            :
+            <div>
+                <EmptyState type='paquetes'/>
+            </div>
+      )}
 
             
           </article>
         </section>
       </div>
+
+
 
       <Notification
         message={messageNotification}

@@ -51,7 +51,7 @@ const DoctorDetails = ({ isOpen, onClose, doctor }) => {
       {/* Avatar and name */}
       <div className="flex items-center gap-4 mb-6">
         <div className={`w-16 h-16 rounded-full flex items-center justify-center text-xl font-semibold`}>
-          <span className={{/*colors.textDark*/}}>
+          <span >
             {`${doctor.nombre.charAt(0)}${doctor.apellido.charAt(0)}`.toUpperCase()}
           </span>
         </div>
@@ -60,7 +60,7 @@ const DoctorDetails = ({ isOpen, onClose, doctor }) => {
             {doctor.nombre} {doctor.apellido}
           </h2>
           <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium mt-1 `}>
-            {/*doctor.especialidades[0].nombre*/}
+            {doctor.especialidad.nombre}
           </div>
         </div>
       </div>
