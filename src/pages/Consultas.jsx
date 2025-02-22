@@ -286,15 +286,16 @@ const Consultas = () => {
       <motion.main 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="p-8 max-w-7xl mx-auto h-screen w-full"
+        className="flex flex-col justify-center items-center p-8 relative mx-auto h-screen w-full"
       >
+
         <StepIndicator currentStep={step} totalSteps={4} />
   
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
             {...fadeInUp}
-            className="bg-white rounded-xl shadow-lg p-6 space-y-6 h-4/5"
+            className="bg-white rounded-xl shadow-lg p-6 w-4/5 space-y-6 h-4/5"
           >
             {step === 0 && (
               <section className="flex pt-32 h-full relative w-full gap-10">
@@ -425,7 +426,7 @@ const Consultas = () => {
                 />
               </section>
             )}
-                
+            
             {step === 1 && (
               isEspecializada ? (
                 <section className="h-full relative w-full mx-auto">
@@ -457,7 +458,7 @@ const Consultas = () => {
                                   : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
                               onClick={() => setFormData(prev => ({ ...prev, fecha: fecha, hora: turno.hora }))}
                             >
-                              <Clock className="w-4 h-4" />
+
                               {turno.hora.slice(0, 5)}
                             </motion.button>
                           ))}
@@ -492,7 +493,7 @@ const Consultas = () => {
                               key={`${date}-${time}`}
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
-                              className={`px-4 py-2 rounded-lg flex items-center gap-0 transition-all shadow-sm
+                              className={`px-4 py-2 rounded-lg flex justify-center items-center gap-0 transition-all shadow-sm
                                 ${formData.fecha === date && formData.hora === time
                                   ? 'bg-blue-500 text-white ring-2 ring-blue-300'
                                   : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
@@ -717,7 +718,7 @@ const Consultas = () => {
                     <p className="text-gray-900 flex items-center gap-2 text-lg">
                       {selectedPaquete 
                           ? <Package className="w-5 h-5 text-blue-500" />
-                          : <Stethoscope className="w-5 h-5 text-blue-500" />
+                          : <FileText className="w-5 h-5 text-blue-500" />
                       }
                       
                       {selectedPaquete 

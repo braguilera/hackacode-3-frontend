@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, Phone, Calendar, MapPin, Award, Check, X } from 'lucide-react';
+import { Mail, Phone, Calendar, MapPin, Award, Check, X, Package, FileText } from 'lucide-react';
 import SlideOverModal from './SlideOverModal';
 
 const DetailRow = ({ icon: Icon, label, value }) => (
@@ -15,6 +15,8 @@ const DetailRow = ({ icon: Icon, label, value }) => (
 const PacienteDetails = ({ isOpen, onClose, paciente, consultas, colors }) => {
     if (!paciente) return null;
 
+    console.log(consultas)
+
     return (
     <SlideOverModal
         isOpen={isOpen}
@@ -23,8 +25,8 @@ const PacienteDetails = ({ isOpen, onClose, paciente, consultas, colors }) => {
     >
       {/* Avatar and name */}
         <div className="flex items-center gap-4 mb-6">
-            <div className={`w-16 h-16 rounded-full flex items-center justify-center text-xl font-semibold ${colors.bgLight}`}>
-                <span className={colors.textDark}>
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center text-xl font-semibold}`}>
+                <span className='text-black'>
                     {`${paciente.nombre.charAt(0)}${paciente.apellido.charAt(0)}`.toUpperCase()}
                 </span>
             </div>
@@ -73,20 +75,31 @@ const PacienteDetails = ({ isOpen, onClose, paciente, consultas, colors }) => {
         </div>
 
         {/* Medical Consultations */}
-        {/*<div className="mt-6">
+        <div className="mt-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
                 Consultas
             </h3>
-            {consultas.filter(consulta => consulta.paciente === paciente.id).map((consulta, index) => (
+            {consultas.filter(consulta => consulta.pacienteId === paciente.id).map((consulta, index) => (
                 <div key={index} className="bg-gray-50 rounded-lg p-4 mb-3">
                     <p className="font-medium text-gray-900">
                         {new Date(consulta.fecha).toLocaleDateString()} - {consulta.hora}
                     </p>
-                    <p className="text-gray-600">{consulta.servicio.nombre}</p>
+                    {consulta.servicioMedico.tipoServicio==="PAQUETE"
+                        ? 
+                        <div className='flex gap-2 items-center'>
+                            <Package className="h-4 w-4 text-blue-500" ></Package> 
+                            <p className="text-gray-600">Paquete</p>
+                        </div>
+                        : 
+                        <div className='flex gap-2 items-center'>
+                            <FileText className="h-4 w-4 text-blue-500" ></FileText>
+                            <p className="text-gray-600">Servicio</p>
+                        </div>}
+                    <p className="text-gray-600">{consulta.servicioMedico.nombre}</p>
                     <p className="text-gray-600">{consulta.estado}</p>
                 </div>
             ))}
-        </div>*/}
+        </div>
     </SlideOverModal>
 );
 };

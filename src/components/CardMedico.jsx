@@ -4,47 +4,14 @@ import { Trash2, Edit3, User, DollarSign } from 'lucide-react';
 import DoctorDetails from '../components/DoctorDetails'
 import LoadingIndicator from './LoadingIndicator';
 
-const getInitials = (nombre, apellido) => {
-  return `${nombre.charAt(0)}${apellido.charAt(0)}`.toUpperCase();
-};
 
-const especialidadColors = {
-  'Cardiología': {
-    bgLight: 'bg-red-100',
-    textDark: 'text-red-800',
-    badge: 'bg-red-50 text-red-700'
-  },
-  'Pediatría': {
-    bgLight: 'bg-blue-100',
-    textDark: 'text-blue-800',
-    badge: 'bg-blue-50 text-blue-700'
-  },
-  'Neurología': {
-    bgLight: 'bg-purple-100',
-    textDark: 'text-purple-800',
-    badge: 'bg-purple-50 text-purple-700'
-  },
-  'Dermatología': {
-    bgLight: 'bg-pink-100',
-    textDark: 'text-pink-800',
-    badge: 'bg-pink-50 text-pink-700'
-  },
-  'Oftalmología': {
-    bgLight: 'bg-teal-100',
-    textDark: 'text-teal-800',
-    badge: 'bg-teal-50 text-teal-700'
-  }
-};
-
-const CardMedico = ({ dataMedico, onEdit, onDelete, isLoading }) => {
-  //const especialidad = dataMedico.especialidades[0].nombre;
-  //const colors = especialidadColors[especialidad] || {
-  //  bgLight: 'bg-gray-100',
-  //  textDark: 'text-gray-800',
-  //  badge: 'bg-gray-50 text-gray-700'
-  //};
-
+const CardMedico = ({ dataMedico, onEdit, onDelete }) => {
   const [isOpen, setIsOpen] = useState(false);
+  
+  const getInitials = (nombre, apellido) => {
+    return `${nombre.charAt(0)}${apellido.charAt(0)}`.toUpperCase();
+  };
+
 
   return (
     <>
@@ -128,7 +95,6 @@ const CardMedico = ({ dataMedico, onEdit, onDelete, isLoading }) => {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         doctor={dataMedico}
-        //colors={colors}
     />    
     }    
     </>

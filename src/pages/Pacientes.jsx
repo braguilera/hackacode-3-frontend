@@ -1,9 +1,9 @@
 // Pacientes.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Users, Plus, Search } from 'lucide-react';
 import TablePacientes from '../components/TablePacientes';
 import FormPersona from '../components/FormPersona';
-import { postDatos, putDatos } from '../api/crud';
+import { getDatos, postDatos, putDatos } from '../api/crud';
 import Notification from '../components/Notification';
 
 const Pacientes = () => {
@@ -13,7 +13,31 @@ const Pacientes = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [showNotification, setShowNotification] = useState(false);
   const [messageNotification, setMessageNotification] = useState(null);
+  const [pacientes, setPacientes] = useState([]);
+  const [consultas, setConsultas] = useState([]);
 
+  const fetchPacientes = async () => {
+    try {
+      const data = await getDatos('/api/pacientes');
+      setPacientes(data);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  const fetchConsultas = async () => {
+    try {
+      const data = await getDatos('/api/consultas');
+      setConsultas(data);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchPacientes();
+    fetchConsultas();
+  }, []);
 
   const handleAddPaciente = () => {
     setPacienteToEdit(null);
@@ -42,21 +66,27 @@ const Pacientes = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col p-6">
+    <div className="w-full h-full flex flex-col p-6 ">
       {/* Header Section */}
-      <div className="border-gray-200 px-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Users className="h-6 w-6 text-blue-500" />
-            <h2 className="text-2xl font-bold text-gray-800">Pacientes</h2>
-          </div>
-          <button 
-            onClick={handleAddPaciente}
-            className="flex items-center justify-end space-x-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Agregar Paciente</span>
-          </button>
+      <div className="border-gray-200 px-6 ">
+        <div className="flex items-center justify-between relative">
+          <header className='flex flex-col justify-between mb-6'>
+            <div className='flex gap-2'>
+
+              <h2 className="text-2xl font-bold text-gray-800">Pacientes
+                <span className='text-gray-400 font-normal ml-2 text-lg'>({pacientes.length} registrados)</span>
+              </h2>
+            </div>
+              <p className='text-gray-500 mt-1'>Gestiona la información de tus pacientes</p>
+            <button 
+              onClick={handleAddPaciente}
+              className="flex items-center justify-end space-x-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors absolute right-0 top-1/2"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Agregar Paciente</span>
+            </button>
+          </header>
+
         </div>
         {/* Input de búsqueda global */}
         <div className="flex items-center w-full justify-between space-x-2 mt-4">
@@ -79,6 +109,7 @@ const Pacientes = () => {
           refreshKey={refreshKey}
           searchTerm={searchTerm}
           onRefresh={() => setRefreshKey(prev => prev + 1)}
+          consultas={consultas}
         />
       </div>
 
@@ -89,6 +120,7 @@ const Pacientes = () => {
             tipo="paciente"
             onClose={() => setShowForm(false)}
             onSubmit={handleSubmitPaciente}
+            
           />
         </div>
       )}

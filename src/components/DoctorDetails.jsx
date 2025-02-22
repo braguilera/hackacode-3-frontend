@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Phone, Mail, Calendar, MapPin, Clock, Award } from 'lucide-react';
 import SlideOverModal from './SlideOverModal';
+import { getDatos } from '../api/crud';
 
 const DetailRow = ({ icon: Icon, label, value }) => (
   <div className="flex items-center gap-3 py-3">
@@ -12,7 +13,25 @@ const DetailRow = ({ icon: Icon, label, value }) => (
   </div>
 );
 
-const DoctorDetails = ({ isOpen, onClose, doctor, colors }) => {
+const DoctorDetails = ({ isOpen, onClose, doctor }) => {
+
+
+  const [consultas, setConsultas] = useState([]);
+
+  const fetchConsultas = async () => {
+    try {
+      const data = await getDatos(`/api/consultas?medicoId=${doctor.id}`);
+      setConsultas(data);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  
+  useEffect(() => {
+    fetchConsultas();
+  }, []);
+
   if (!doctor) return null;
 
   return (
@@ -72,7 +91,7 @@ const DoctorDetails = ({ isOpen, onClose, doctor, colors }) => {
       <div className="mt-6">
         <h3 className="text-lg font-medium text-gray-900 mb-4">
           Disponibilidad
-        </h3>{/*
+        </h3>
         {doctor.disponibilidades.map((disp, index) => (
           <div key={index} className="bg-gray-50 rounded-lg p-4 mb-3">
             <div className="flex items-center gap-2 text-gray-700">
@@ -83,25 +102,24 @@ const DoctorDetails = ({ isOpen, onClose, doctor, colors }) => {
               {disp.cubreTurno} ({disp.horaInicio} - {disp.horaFin})
             </p>
           </div>
-        ))}*/}
+        ))}
       </div>
 
       {/* Next turns */}
-      {/*
+      
       <div className="mt-6">
         <h3 className="text-lg font-medium text-gray-900 mb-4">
-          Próximos turnos
+          Consultas del mes
         </h3>
-        {doctor.turnos.map((turno) => (
-          <div key={turno.codigo} className="bg-gray-50 rounded-lg p-4 mb-3">
+        {consultas.map((consulta) => (
+          <div key={consulta.codigo} className="bg-gray-50 rounded-lg p-4 mb-3">
             <p className="font-medium text-gray-900">
-              {new Date(turno.fecha).toLocaleDateString()}
+              {new Date(consulta.fecha).toLocaleDateString()} - {consulta.hora}
             </p>
-            <p className="text-gray-600">{turno.hora}</p>
           </div>
         ))}
       </div>
-      */}
+      
     </SlideOverModal>
   );
 };

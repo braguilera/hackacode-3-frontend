@@ -47,6 +47,7 @@ const Medicos = () => {
     }
   };
 
+
   const fetchEspecialidades = async () => {
     try {
       const data = await getDatos('/api/especialidades', 'Error cargando especialidades');
