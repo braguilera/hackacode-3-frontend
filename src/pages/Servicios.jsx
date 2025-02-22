@@ -59,9 +59,7 @@ const Servicios = () => {
         } catch (err) {
           setError(err.message);
         } finally {
-          setTimeout(() => {
-            setLoadingServicios(false);
-          }, 1000);
+          setLoadingServicios(false);
         }
       };
 
@@ -73,9 +71,7 @@ const Servicios = () => {
         } catch (err) {
           setError(err.message);
         }finally{
-          setTimeout(() => {
-            setLoadingPaquetes(false)
-          }, 1000);
+          setLoadingPaquetes(false);
         }
 
       };
@@ -506,7 +502,8 @@ const Servicios = () => {
             </motion.main>
           )))
         :
-        serviciosFiltrados!==0 
+        (
+        serviciosFiltrados.length!==0 
         ?
         serviciosFiltrados.map((servicio) => (
           <AnimatePresence mode="wait" key={servicio.codigo}>
@@ -542,10 +539,10 @@ const Servicios = () => {
           </AnimatePresence>
         ))
         :
-        <div className='absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2'>
+        <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
           <EmptyState type='servicios'/>
         </div>
-        }
+        )}
         </article>
         </section>
 
@@ -709,7 +706,7 @@ const Servicios = () => {
                   animate={{ opacity: 1, y: 0 }}
                   key={index}
                   transition={{ duration: 0.02 }}
-                  className='relative bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 p-4 border border-gray-100 group cursor-pointer select-none'
+                  className='relative bg-white rounded-xl shadow-sm p-4 border border-gray-100 group select-none'
               >
                   <header className="flex items-center gap-2 mb-2">
                       <aside className="p-2 bg-blue-100 rounded-lg">

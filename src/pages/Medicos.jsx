@@ -41,12 +41,9 @@ const Medicos = () => {
     } catch (err) {
       setError(err.message);
     }finally {
-      setTimeout(() => {
-        setLoadingMedico(false);
-      }, 1000);
+      setLoadingMedico(false);
     }
   };
-
 
   const fetchEspecialidades = async () => {
     try {
@@ -301,8 +298,6 @@ const Medicos = () => {
       </div>
 )}
       
-    
-    
       {/* Main Content */}
       <div className='flex gap-6 h-full'>
         {/* Médicos Section */}
@@ -463,8 +458,11 @@ const Medicos = () => {
                 </motion.button>
               )}
             </AnimatePresence>
+            
+            {especialidades.length!==0 
+            ?
 
-            {especialidades.map((especialidad) => (
+            especialidades.map((especialidad) => (
               <AnimatePresence mode="wait" key={especialidad.id}>
                 {editingEspecialidad?.id === especialidad.id ? (
                   <motion.div
@@ -525,7 +523,7 @@ const Medicos = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     whileHover={{ y: -5 }}
-                    className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md shadow-sm transition-shadow group"
+                    className={`bg-white border border-gray-200 rounded-lg p-4 ${!loadingMedico && 'hover:shadow-md'} shadow-sm transition-shadow group`}
                   >
                     <div className="flex items-start justify-between relative">
                       <div>
@@ -578,7 +576,12 @@ const Medicos = () => {
                   </motion.div>
                 )}
               </AnimatePresence>
-            ))}
+            ))
+            :
+            <div>
+              <EmptyState type='especialidades'></EmptyState>
+            </div>
+            }
           </div>
         </section>
       </div>
@@ -594,13 +597,11 @@ const Medicos = () => {
             }}
             onSubmit={(formData) => {
               if (medicoToEdit) {
-                // Modo edición: mostrar popup de confirmación
                 setSelectedMedicoToEdit({
                   id: medicoToEdit.id,
                   formData: formData
                 });
               } else {
-                // Modo creación: llamar directamente a handleSubmitMedico
                 handleSubmitMedico(formData);
               }
               setShowForm(false);
