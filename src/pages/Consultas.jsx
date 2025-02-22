@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getDatos, postDatos } from '../api/crud';
 import Notification from '../components/Notification';
-import { Stethoscope, UserPlus, Calendar, Clock, ChevronRight, ChevronLeft, Check, User, Mail, Phone, MapPin, FileCheck, CalendarCheck, Package, DollarSign, CheckCircle, AlertCircle } from 'lucide-react';
+import { Stethoscope, UserPlus, Calendar, Clock, ChevronRight, ChevronLeft, Check, User, Mail, Phone, MapPin, FileCheck, CalendarCheck, Package, DollarSign, CheckCircle, AlertCircle, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StepIndicator from '../components/StepIndicator';
 import EmptyState from '../components/EmptyState';
@@ -17,6 +17,7 @@ const Consultas = () => {
   const [showNotification, setShowNotification] = useState(false);
   const [messageNotification, setMessageNotification] = useState(null);
   const [serviciosInPaquete, setServiciosInPaquete] = useState([]);
+  const [selectedPaquete, setSelectedPaquete] = useState(null);
   const [formData, setFormData] = useState({
     pacienteId: "",              
     medicoId: "",
@@ -254,21 +255,26 @@ const Consultas = () => {
 
   const createConsulta = async () => {
     try {
-      await postDatos('/api/consultas', formData, 'Error creando paciente');
+      // Si se seleccionó un paquete, usamos su código en lugar del del servicio
+      const consultaData = { ...formData };
+      if (selectedPaquete) {
+        consultaData.servicioMedicoCodigo = selectedPaquete.codigo;
+      }
+      await postDatos('/api/consultas', consultaData, 'Error creando consulta');
       setMessageNotification({
         type: 'success',
         text: 'Consulta creada exitosamente'
       });
-      setShowNotification(true)
+      setShowNotification(true);
       setStep(step + 1);
     } catch (error) {
       setMessageNotification({
         type: 'error',
         text: 'Error al crear la consulta'
       });
-      setShowNotification(true)
+      setShowNotification(true);
     }
-  }
+  };
 
   const fadeInUp = {
     initial: { opacity: 0, y: 10 },
@@ -291,497 +297,551 @@ const Consultas = () => {
             className="bg-white rounded-xl shadow-lg p-6 space-y-6 h-4/5"
           >
             {step === 0 && (
-              <section className="flex pt-32  h-full relative w-full gap-10">
-              
-              <main className='flex flex-col w-2/3 '>
-
-              {/* Header */}
-                <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
-                  <Stethoscope className="w-8 h-8 text-blue-600" />
-                  <h2 className="text-2xl font-bold text-gray-800">Seleccionar Servicio</h2>
-                </div>
-
-                {/* Service Selection */}
-                <div className="w-full space-y-4 mb-6">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Package className="w-5 h-5 text-blue-500" />
-                    <label className="text-lg font-medium text-gray-700">Servicio Médico</label>
+              <section className="flex pt-32 h-full relative w-full gap-10">
+                <main className="flex flex-col w-2/3">
+                  {/* Header */}
+                  <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
+                    <Stethoscope className="w-8 h-8 text-blue-600" />
+                    <h2 className="text-2xl font-bold text-gray-800">Seleccionar Servicio</h2>
                   </div>
-                  <select
-                    className="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    value={formData.servicioMedicoCodigo}
-                    onChange={(e) => setFormData(prev => ({ ...prev, servicioMedicoCodigo: e.target.value }))}
-                  >
-                    <option value="">Seleccione un servicio</option>
-                    {servicios.map(servicio => (
-                      <option key={servicio.codigo} value={servicio.codigo}>
-                        {servicio.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
 
-              {/* Doctor Selection */}
-
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  className="w-full space-y-4"
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <User className="w-5 h-5 text-blue-500" />
-                    <label className="text-lg font-medium text-gray-700">Médico Especialista</label>
-                  </div>
-                  <select
-                    className="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    value={formData.medicoId}
-                    onChange={(e) => setFormData(prev => ({ ...prev, medicoId: e.target.value }))}
-                  >
-                    <option value="">Seleccione un médico</option>
-                    {medicos.map(medico => (
-                      <option key={medico.id} value={medico.id}>
-                        {medico.nombre} {medico.apellido} - {medico.especialidad.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </motion.div>
-
-              </main>
-
-              {/* Packages Section */}
-
-              {formData.servicioMedicoCodigo 
-              ? 
-
-              <aside className="w-full h-96 bg-white rounded-lg border divide-y divide-gray-100 overflow-y-scroll">
-                {serviciosInPaquete.map((paquete, index) => (
-                  <article key={index} className="p-6 space-y-4">
-                    <header className="flex items-center gap-3 mb-4">
-                      <CheckCircle className="w-6 h-6 text-green-500" />
-                      <h4 className="text-xl font-bold text-gray-800">{paquete.nombre}</h4>
-                    </header>
-
-                    <main className="space-y-3">
-                      {paquete.servicios.map((servicio, sIndex) => (
-                        <div key={sIndex} className="flex items-center justify-between bg-gray-50 p-3 rounded-md">
-                          <div className="flex items-center gap-2">
-                            <AlertCircle className="w-4 h-4 text-blue-500" />
-                            <h4 className="text-gray-700">{servicio.nombre}</h4>
-                          </div>
-                          <p className="font-medium text-gray-900">
-                            <DollarSign className="w-4 h-4 inline-block mr-1" />
-                            {servicio.precio}
-                          </p>
-                        </div>
+                  {/* Service Selection */}
+                  <div className="w-full space-y-4 mb-6">
+                    <div className="flex items-center gap-2 mb-2">
+                      <FileText className="w-5 h-5 text-blue-500" />
+                      <label className="text-lg font-medium text-gray-700">Servicio Médico</label>
+                    </div>
+                    <select
+                      className="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      value={formData.servicioMedicoCodigo}
+                      onChange={(e) => setFormData(prev => ({ ...prev, servicioMedicoCodigo: e.target.value }))}
+                    >
+                      <option value="">Seleccione un servicio</option>
+                      {servicios.map(servicio => (
+                        <option key={servicio.codigo} value={servicio.codigo}>
+                          {servicio.nombre}
+                        </option>
                       ))}
-                    </main>
+                    </select>
+                  </div>
 
-                    <footer className="mt-6 pt-4 border-t border-gray-100">
-                      <div className="flex justify-end items-center gap-2">
-                        <span className="text-gray-600">Precio Total:</span>
-                        <span className="text-2xl font-bold text-blue-600">
-                          <DollarSign className="w-6 h-6 inline-block mr-1" />
-                          {paquete.precio}
-                        </span>
-                      </div>
-                    </footer>
-                  </article>
-                ))}
-              </aside>
-              :
-              <aside className="w-full h-96 bg-white rounded-lg border divide-y divide-gray-100 justify-center">
-                <EmptyState type='serviciosInConsulta'></EmptyState>
-              </aside>
-            }
-
-              <NavigationButtons
-                onNext={() => setStep(step + 1)}
-                onBack={() => null}
-                step={step}
-                isNextEnabled={!formData.servicioMedicoCodigo ? false : true }
-                isLastStep={false}
-              />
-            </section>
-            )}
-  
-          {step === 1 && (
-  isEspecializada ? (
-    <section className="space-y-6 h-full relative p-6 max-w-4xl mx-auto">
-      <div className="flex items-center gap-3 mb-8 bg-white shadow-sm rounded-xl p-4 border-l-4 border-blue-500">
-        <CalendarCheck className="w-7 h-7 text-blue-500" />
-        <h2 className="text-2xl font-bold text-gray-800">Seleccionar Turno</h2>
-      </div>
-      <div className="space-y-4 h-[90%] overflow-y-auto">
-        {Object.keys(groupedTurnos).map(fecha => (
-          <motion.div
-            key={fecha}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-xl shadow-sm p-6 border border-gray-100"
-          >
-            <h4 className="font-medium text-gray-800 mb-4 flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-              <Calendar className="w-5 h-5 text-blue-500" />
-              {fecha}
-            </h4>
-            <div className="flex flex-wrap gap-3">
-              {groupedTurnos[fecha].map(turno => (
-                <motion.button
-                  key={`${fecha}-${turno.hora}`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-sm
-                    ${formData.fecha === fecha && formData.hora === turno.hora
-                      ? 'bg-blue-500 text-white ring-2 ring-blue-300'
-                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
-                  onClick={() => setFormData(prev => ({ ...prev, fecha: fecha, hora: turno.hora }))}
-                >
-                  <Clock className="w-4 h-4" />
-                  {turno.hora.slice(0, 5)}
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-        ))}
-      </div>
-      <NavigationButtons
-        onNext={() => setStep(step + 1)}
-        onBack={() => setStep(step - 1)}
-        step={step}
-        isNextEnabled={!formData.fecha ? false : true }
-        isLastStep={false}
-      />
-    </section>
-  ) : (
-    <section className="space-y-6 h-full relative p-6 max-w-6xl mx-auto">
-      <div className="flex items-center gap-3 mb-8 bg-white shadow-sm rounded-xl p-4 border-l-4 border-blue-500">
-        <Calendar className="w-7 h-7 text-blue-500" />
-        <h2 className="text-2xl font-bold text-gray-800">Seleccione Fecha y Hora</h2>
-      </div>
-      <article className='h-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-        {availableDates.map(date => (
-          <div key={date} className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <h4 className="font-medium text-gray-800 mb-4 flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-              <Calendar className="w-5 h-5 text-blue-500" />
-              {date}
-            </h4>
-            <div className="grid grid-cols-3 gap-3">
-              {defaultTimeSlots.map(time => (
-                <motion.button
-                  key={`${date}-${time}`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-sm
-                    ${formData.fecha === date && formData.hora === time
-                      ? 'bg-blue-500 text-white ring-2 ring-blue-300'
-                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
-                  onClick={() => setFormData(prev => ({ ...prev, fecha: date, hora: time }))}
-                >
-                  <Clock className="w-4 h-4" />
-                  {time.slice(0, 5)}
-                </motion.button>
-              ))}
-            </div>
-          </div>
-        ))}
-      </article>
-      <NavigationButtons
-        onNext={() => setStep(step + 1)}
-        onBack={() => setStep(step - 1)}
-        step={step}
-        isNextEnabled={!formData.fecha ? false : true }
-        isLastStep={false}
-      />
-    </section>
-  )
-          )}
-  
-          {step === 2 && (
-              <section className="space-y-8 h-full relative p-6 max-w-4xl mx-auto">
-                <div className="flex items-center gap-3 bg-white shadow-sm rounded-xl p-4 border-l-4 border-blue-500">
-                  <UserPlus className="w-7 h-7 text-blue-500" />
-                  <h2 className="text-2xl font-bold text-gray-800">Datos del Paciente</h2>
-                </div>
-
-                <div className="relative">
-                  <input 
-                    type="text"
-                    placeholder="Documento del paciente"
-                    className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
-                    value={newPacienteData.dni}
-                    onChange={(e) => {
-                      const doc = e.target.value;
-                      setNewPacienteData(prev => ({ ...prev, dni: doc }));
-                      // Si se borra o cambia, limpiamos el paciente y el formData
-                      if (!doc) {
-                        setPaciente(null);
-                        setFormData(prev => ({ ...prev, pacienteId: "" }));
-                        setPacienteNotExist(true);
-                      }
-                    }}
-                  />
-
-                  <User className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-                </div>
-
-                <AnimatePresence>
-                  {pacienteNotExist && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="border border-gray-200 rounded-xl p-8 space-y-6 bg-white shadow-sm"
+                  {/* Doctor Selection */}
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    className="w-full space-y-4"
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <User className="w-5 h-5 text-blue-500" />
+                      <label className="text-lg font-medium text-gray-700">Médico Especialista</label>
+                    </div>
+                    <select
+                      className="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      value={formData.medicoId}
+                      onChange={(e) => setFormData(prev => ({ ...prev, medicoId: e.target.value }))}
                     >
-                      <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg text-blue-700">
-                        <UserPlus className="w-5 h-5 text-blue-500" />
-                        <p className="text-sm font-medium">Complete los datos para crear el paciente</p>
-                      </div>
+                      <option value="">Seleccione un médico</option>
+                      {medicos.map(medico => (
+                        <option key={medico.id} value={medico.id}>
+                          {medico.nombre} {medico.apellido} - {medico.especialidad.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </motion.div>
+                </main>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="relative">
-                          <input
-                            type="text"
-                            placeholder="Nombre"
-                            className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
-                            value={newPacienteData.nombre}
-                            onChange={(e) => setNewPacienteData(prev => ({ ...prev, nombre: e.target.value }))}
-                            required
-                          />
-                          <User className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-                        </div>
-
-                        <div className="relative">
-                          <input
-                            type="text"
-                            placeholder="Apellido"
-                            className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
-                            value={newPacienteData.apellido}
-                            onChange={(e) => setNewPacienteData(prev => ({ ...prev, apellido: e.target.value }))}
-                            required
-                          />
-                          <User className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-                        </div>
-                      </div>
-
-                      <div className="relative">
-                        <input
-                          type="date"
-                          className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
-                          value={newPacienteData.fechaNac}
-                          onChange={(e) => setNewPacienteData(prev => ({ ...prev, fechaNac: e.target.value }))}
-                          required
-                        />
-                        <Calendar className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-                      </div>
-
-                      <div className="relative">
-                        <input
-                          type="email"
-                          placeholder="Email"
-                          className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
-                          value={newPacienteData.email}
-                          onChange={(e) => setNewPacienteData(prev => ({ ...prev, email: e.target.value }))}
-                          required
-                        />
-                        <Mail className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-                      </div>
-
-                      <div className="relative">
-                        <input
-                          type="tel"
-                          placeholder="Teléfono"
-                          className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
-                          value={newPacienteData.telefono}
-                          onChange={(e) => setNewPacienteData(prev => ({ ...prev, telefono: e.target.value }))}
-                          required
-                        />
-                        <Phone className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-                      </div>
-
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="Dirección"
-                          className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
-                          value={newPacienteData.direccion}
-                          onChange={(e) => setNewPacienteData(prev => ({ ...prev, direccion: e.target.value }))}
-                          required
-                        />
-                        <MapPin className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-                      </div>
-
-                      <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-                        <input
-                          type="checkbox"
-                          id="obraSocial"
-                          className="w-5 h-5 text-blue-500 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-0"
-                          checked={newPacienteData.tieneObraSocial}
-                          onChange={(e) => setNewPacienteData(prev => ({ ...prev, tieneObraSocial: e.target.checked }))}
-                        />
-                        <label htmlFor="obraSocial" className="text-sm font-medium text-gray-700">
-                          Tiene obra social
-                        </label>
-                      </div>
-
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={handleCreatePaciente}
-                        className="w-full px-6 py-4 bg-green-500 text-white rounded-xl flex items-center justify-center gap-3 hover:bg-green-600 transition-colors shadow-sm font-medium"
-                      >
-                        <UserPlus className="w-5 h-5" />
-                        Crear Paciente
-                      </motion.button>
-                    </motion.div>
-                  )}
-
-                  {paciente && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="p-6 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3 shadow-sm"
-                    >
-                      <div className="bg-green-100 p-2 rounded-full">
-                        <Check className="w-6 h-6 text-green-600" />
-                      </div>
-                      <p className="text-green-800 font-medium">
-                        Paciente encontrado: {paciente.nombre} {paciente.apellido}
-                      </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {/* Packages Section */}
+                {formData.servicioMedicoCodigo ? (
+                  <aside className="w-full h-96 bg-gray-50/50 overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 rounded-lg">
+                    {serviciosInPaquete.map((paquete, index) => {
+                      const isSelected = selectedPaquete && selectedPaquete.codigo === paquete.codigo;
+                      return (
+                        <article
+                          key={index}
+                          className={`p-6 space-y-4 cursor-pointer transition-all duration-200 hover:bg-blue-50 m-4 rounded-lg ${
+                            isSelected ? "bg-blue-50 shadow-lg transform scale-[0.99]" : "hover:transform hover:scale-[0.99] hover:border-none border border-gray-200 "
+                          }`}
+                          onClick={() => {
+                            if (isSelected) {
+                              setSelectedPaquete(null);
+                            } else {
+                              setSelectedPaquete(paquete);
+                            }
+                          }}
+                        >
+                          <header className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                              <Package className='w-6 h-6 text-blue-500'/>
+                              <h4 className="text-xl font-bold text-gray-800">{paquete.nombre}</h4>
+                            </div>
+                            {isSelected && (
+                              <span className="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">
+                                Seleccionado
+                              </span>
+                            )}
+                          </header>
+                          <main className="space-y-3">
+                            {paquete.servicios.map((servicio, sIndex) => (
+                              <div 
+                                key={sIndex} 
+                                className={`flex items-center justify-between p-3 rounded-md ${isSelected ? 'bg-white' : 'bg-gray-50'}`}
+                              >
+                                <div className="flex items-center gap-2">
+                                  <AlertCircle className={`w-4 h-4 ${isSelected ? 'text-blue-500' : 'text-gray-400'}`} />
+                                  <h4 className="text-gray-700">{servicio.nombre}</h4>
+                                </div>
+                                <p className="font-medium text-gray-900">
+                                  <DollarSign className="w-4 h-4 inline-block mr-1" />
+                                  {servicio.precio}
+                                </p>
+                              </div>
+                            ))}
+                          </main>
+                          <footer className="mt-6 pt-4 border-t border-gray-100">
+                            <div className="flex justify-end items-center gap-2">
+                              <span className="text-gray-600">Precio Total:</span>
+                              <span className={`text-2xl font-bold ${isSelected ? 'text-blue-600' : 'text-gray-700'}`}>
+                                <DollarSign className="w-6 h-6 inline-block mr-1" />
+                                {paquete.precio}
+                              </span>
+                            </div>
+                          </footer>
+                        </article>
+                      );
+                    })}
+                  </aside>
+                ) : (
+                  <aside className="w-full h-96 bg-white rounded-lg border divide-y divide-gray-100 justify-center">
+                    <EmptyState type='serviciosInConsulta' />
+                  </aside>
+                )}
 
                 <NavigationButtons
                   onNext={() => setStep(step + 1)}
-                  onBack={() => setStep(step - 1)}
+                  onBack={() => null}
                   step={step}
-                  isNextEnabled={!formData.pacienteId ? false : true }
+                  isNextEnabled={(formData.servicioMedicoCodigo && formData.medicoId) ? true : false}
                   isLastStep={false}
                 />
               </section>
-          )}
+            )}
+                
+            {step === 1 && (
+              isEspecializada ? (
+                <section className="h-full relative w-full mx-auto">
+                  <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
+                    <CalendarCheck className="w-7 h-7 text-blue-500" />
+                    <h2 className="text-2xl font-bold text-gray-800">Seleccionar Turno</h2>
+                  </div>
+                  <div className="h-[90%] pt-20 gap-4 grid grid-cols-2">
+                    {Object.keys(groupedTurnos).map(fecha => (
+                      <motion.div
+                        key={fecha}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-white rounded-xl shadow-sm p-4 border border-gray-100"
+                      >
+                        <h4 className="font-medium text-gray-800 mb-4 flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                          <Calendar className="w-5 h-5 text-blue-500" />
+                          {fecha}
+                        </h4>
+                        <div className="flex flex-wrap gap-3">
+                          {groupedTurnos[fecha].map(turno => (
+                            <motion.button
+                              key={`${fecha}-${turno.hora}`}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-sm
+                                ${formData.fecha === fecha && formData.hora === turno.hora
+                                  ? 'bg-blue-500 text-white ring-2 ring-blue-300'
+                                  : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                              onClick={() => setFormData(prev => ({ ...prev, fecha: fecha, hora: turno.hora }))}
+                            >
+                              <Clock className="w-4 h-4" />
+                              {turno.hora.slice(0, 5)}
+                            </motion.button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                  <NavigationButtons
+                    onNext={() => setStep(step + 1)}
+                    onBack={() => setStep(step - 1)}
+                    step={step}
+                    isNextEnabled={!formData.fecha ? false : true }
+                    isLastStep={false}
+                  />
+                </section>
+              ) : (
+                <section className=" h-full relative w-full mx-auto">
+                  <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
+                    <Calendar className="w-7 h-7 text-blue-500" />
+                    <h2 className="text-2xl font-bold text-gray-800">Seleccione Fecha y Hora</h2>
+                  </div>
+                  <article className='h-3/4 pt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+                    {availableDates.map(date => (
+                      <div key={date} className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                        <h4 className="font-medium text-gray-800 mb-4 flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                          <Calendar className="w-5 h-5 text-blue-500" />
+                          {date}
+                        </h4>
+                        <div className="grid grid-cols-3 gap-3">
+                          {defaultTimeSlots.map(time => (
+                            <motion.button
+                              key={`${date}-${time}`}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className={`px-4 py-2 rounded-lg flex items-center gap-0 transition-all shadow-sm
+                                ${formData.fecha === date && formData.hora === time
+                                  ? 'bg-blue-500 text-white ring-2 ring-blue-300'
+                                  : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                              onClick={() => setFormData(prev => ({ ...prev, fecha: date, hora: time }))}
+                            >
+                              {time.slice(0, 5)}
+                            </motion.button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </article>
+                  <NavigationButtons
+                    onNext={() => setStep(step + 1)}
+                    onBack={() => setStep(step - 1)}
+                    step={step}
+                    isNextEnabled={!formData.fecha ? false : true }
+                    isLastStep={false}
+                  />
+                </section>
+              )
+            )}
+    
+            {step === 2 && (
+                <section className="w-full h-full relative mx-auto">
+                  <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
+                    <UserPlus className="w-7 h-7 text-blue-500" />
+                    <h2 className="text-2xl font-bold text-gray-800">Datos del Paciente</h2>
+                  </div>
 
-          {step === 3 && (
-  <section className="space-y-8 h-full relative p-6 max-w-4xl mx-auto">
-    <div className="flex items-center gap-3 bg-white shadow-sm rounded-xl p-4 border-l-4 border-green-500">
-      <FileCheck className="w-7 h-7 text-green-500" />
-      <h2 className="text-2xl font-bold text-gray-800">Confirmar Consulta</h2>
-    </div>
+                  <div className=" pt-20 relative">
+                    <input 
+                      type="text"
+                      placeholder="Documento del paciente"
+                      className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
+                      value={newPacienteData.dni}
+                      onChange={(e) => {
+                        const doc = e.target.value;
+                        setNewPacienteData(prev => ({ ...prev, dni: doc }));
+                        if (!doc) {
+                          setPaciente(null);
+                          setFormData(prev => ({ ...prev, pacienteId: "" }));
+                          setPacienteNotExist(true);
+                        }
+                      }}
+                    />
 
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-6 bg-white p-6 rounded-xl shadow-sm border border-gray-100"
-    >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">Servicio</h3>
-          <p className="text-gray-900 flex items-center gap-2 text-lg">
-            <Stethoscope className="w-5 h-5 text-blue-500" />
-            {servicios.find(s => s.codigo === Number(formData.servicioMedicoCodigo))?.nombre || "-"}
-          </p>
-        </div>
+                    <User className="w-5 h-5 text-blue-500 absolute left-4 top-24" />
+                  </div>
 
-        {isEspecializada && (
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-sm font-medium text-gray-500 mb-2">Médico</h3>
-            <p className="text-gray-900 flex items-center gap-2 text-lg">
-              <User className="w-5 h-5 text-blue-500" />
-              {medicos.find(m => m.id === Number(formData.medicoId))?.nombre || "-"}
-            </p>
-          </div>
-        )}
+                  <AnimatePresence>
+                    {pacienteNotExist && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="border border-gray-200 rounded-xl p-4 space-y-3 bg-white shadow-sm mt-4"
+                      >
+                        <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg text-blue-700">
+                          <UserPlus className="w-5 h-5 text-blue-500" />
+                          <p className="text-sm font-medium">Complete los datos para crear el paciente</p>
+                        </div>
 
-        <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">Fecha</h3>
-          <p className="text-gray-900 flex items-center gap-2 text-lg">
-            <Calendar className="w-5 h-5 text-blue-500" />
-            {formData.fecha || "-"}
-          </p>
-        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="relative">
+                            <input
+                              type="text"
+                              placeholder="Nombre"
+                              className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
+                              value={newPacienteData.nombre}
+                              onChange={(e) => setNewPacienteData(prev => ({ ...prev, nombre: e.target.value }))}
+                              required
+                            />
+                            <User className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
+                          </div>
 
-        <div className="bg-gray-50 rounded-lg p-4">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">Hora</h3>
-          <p className="text-gray-900 flex items-center gap-2 text-lg">
-            <Clock className="w-5 h-5 text-blue-500" />
-            {formData.hora ? formData.hora.slice(0, 5) : "-"}
-          </p>
-        </div>
+                          <div className="relative">
+                            <input
+                              type="text"
+                              placeholder="Apellido"
+                              className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
+                              value={newPacienteData.apellido}
+                              onChange={(e) => setNewPacienteData(prev => ({ ...prev, apellido: e.target.value }))}
+                              required
+                            />
+                            <User className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
+                          </div>
+                        </div>
 
-        <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">Paciente</h3>
-          <p className="text-gray-900 flex items-center gap-2 text-lg">
-            <User className="w-5 h-5 text-blue-500" />
-            {paciente ? `${paciente.nombre} ${paciente.apellido}` : (newPacienteData.nombre ? `${newPacienteData.nombre} ${newPacienteData.apellido}` : "-")}
-          </p>
-        </div>
-      </div>
-    </motion.div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-    <NavigationButtons
-      onNext={() => {
-        createConsulta();
-        
-      }}
-      onBack={() => setStep(step - 1)}
-      step={step}
-      isNextEnabled={
-        (
-          !formData.servicioMedicoCodigo &&
-          !formData.pacienteId &&
-          !formData.fecha
-        )  ? false : true }
-      isLastStep={true}
-    />
-  </section>
-          )}
+                          <div className="relative">
+                            <input
+                              type="date"
+                              className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
+                              value={newPacienteData.fechaNac}
+                              onChange={(e) => setNewPacienteData(prev => ({ ...prev, fechaNac: e.target.value }))}
+                              required
+                            />
+                            <Calendar className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
+                          </div>
 
-          {step === 4 && (
-            <motion.section
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center space-y-4 py-8 h-full relative"
-            >
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center"
+                          <div className="relative">
+                            <input
+                              type="email"
+                              placeholder="Email"
+                              className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
+                              value={newPacienteData.email}
+                              onChange={(e) => setNewPacienteData(prev => ({ ...prev, email: e.target.value }))}
+                              required
+                            />
+                            <Mail className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="relative">
+                            <input
+                              type="tel"
+                              placeholder="Teléfono"
+                              className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
+                              value={newPacienteData.telefono}
+                              onChange={(e) => setNewPacienteData(prev => ({ ...prev, telefono: e.target.value }))}
+                              required
+                            />
+                            <Phone className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
+                          </div>
+
+                          <div className="relative">
+                            <input
+                              type="text"
+                              placeholder="Dirección"
+                              className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
+                              value={newPacienteData.direccion}
+                              onChange={(e) => setNewPacienteData(prev => ({ ...prev, direccion: e.target.value }))}
+                              required
+                            />
+                            <MapPin className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
+                          </div>
+
+                        </div>
+                        <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                          <input
+                            type="checkbox"
+                            id="obraSocial"
+                            className="w-5 h-5 text-blue-500 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-0"
+                            checked={newPacienteData.tieneObraSocial}
+                            onChange={(e) => setNewPacienteData(prev => ({ ...prev, tieneObraSocial: e.target.checked }))}
+                          />
+                          <label htmlFor="obraSocial" className="text-sm font-medium text-gray-700">
+                            Tiene obra social
+                          </label>
+                        </div>
+
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={handleCreatePaciente}
+                          className="w-full px-6 py-4 bg-green-500 text-white rounded-xl flex items-center justify-center gap-3 hover:bg-green-600 transition-colors shadow-sm font-medium"
+                        >
+                          <UserPlus className="w-5 h-5" />
+                          Crear Paciente
+                        </motion.button>
+                      </motion.div>
+                    )}
+
+                    {paciente && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="p-6 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3 shadow-sm mt-6"
+                      >
+                        <div className="bg-green-100 p-2 rounded-full">
+                          <Check className="w-6 h-6 text-green-600" />
+                        </div>
+                        <aside className='flex flex-col gap-4'>
+
+                          <p className="text-green-800 font-medium">
+                            Paciente encontrado: 
+                          </p>
+                          <p className="text-green-800 font-medium">
+                            Nombre y apellido: {paciente.nombre} {paciente.apellido}
+                          </p>
+                          <p className="text-green-800 font-medium">
+                            DNI: {paciente.dni}
+                          </p>
+                        </aside>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <NavigationButtons
+                    onNext={() => setStep(step + 1)}
+                    onBack={() => setStep(step - 1)}
+                    step={step}
+                    isNextEnabled={!formData.pacienteId ? false : true }
+                    isLastStep={false}
+                  />
+                </section>
+            )}
+
+            {step === 3 && (
+              <section className="h-full relative pt-20 w-full mx-auto">
+                <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
+                  <FileCheck className="w-7 h-7 text-blue-500" />
+                  <h2 className="text-2xl font-bold text-gray-800">Confirmar Consulta</h2>
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-6 bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h3 className="text-sm font-medium text-gray-500 mb-2">
+                      {selectedPaquete 
+                          ? 'Paquete'
+                          : 'Servicio'
+                      }
+                    </h3>
+                    <p className="text-gray-900 flex items-center gap-2 text-lg">
+                      {selectedPaquete 
+                          ? <Package className="w-5 h-5 text-blue-500" />
+                          : <Stethoscope className="w-5 h-5 text-blue-500" />
+                      }
+                      
+                      {selectedPaquete 
+                        ? selectedPaquete.nombre 
+                        : (servicios.find(s => s.codigo === Number(formData.servicioMedicoCodigo))?.nombre || "-")
+                      }
+                    </p>
+                  </div>
+
+                    
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      {isEspecializada 
+                      ? 
+                        <h3 className="text-sm font-medium text-gray-500 mb-2">Médico Asistente</h3>
+                      :
+                        <h3 className="text-sm font-medium text-gray-500 mb-2">Médico Referente</h3>
+                      }
+                      <p className="text-gray-900 flex items-center gap-2 text-lg">
+                        <User className="w-5 h-5 text-blue-500" />
+                        {(() => {
+                          const medico = medicos.find(m => m.id === Number(formData.medicoId));
+                          return medico ? `${medico.nombre} ${medico.apellido}` : "-";
+                        })()}
+                      </p>
+
+                    </div>
+                    
+
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h3 className="text-sm font-medium text-gray-500 mb-2">Fecha</h3>
+                      <p className="text-gray-900 flex items-center gap-2 text-lg">
+                        <Calendar className="w-5 h-5 text-blue-500" />
+                        {formData.fecha || "-"}
+                      </p>
+                    </div>
+
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h3 className="text-sm font-medium text-gray-500 mb-2">Hora</h3>
+                      <p className="text-gray-900 flex items-center gap-2 text-lg">
+                        <Clock className="w-5 h-5 text-blue-500" />
+                        {formData.hora ? formData.hora.slice(0, 5) : "-"}
+                      </p>
+                    </div>
+
+                    <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
+                      <h3 className="text-sm font-medium text-gray-500 mb-2">Paciente</h3>
+                      <p className="text-gray-900 flex items-center gap-2 text-lg">
+                        <User className="w-5 h-5 text-blue-500" />
+                        {paciente ? `${paciente.nombre} ${paciente.apellido}` : (newPacienteData.nombre ? `${newPacienteData.nombre} ${newPacienteData.apellido}` : "-")}
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+
+                <NavigationButtons
+                  onNext={() => {
+                    createConsulta();
+                    
+                  }}
+                  onBack={() => setStep(step - 1)}
+                  step={step}
+                  isNextEnabled={
+                    (
+                      !formData.servicioMedicoCodigo &&
+                      !formData.pacienteId &&
+                      !formData.fecha
+                    )  ? false : true }
+                  isLastStep={true}
+                />
+              </section>
+            )}
+
+            {step === 4 && (
+              <motion.section
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="max-w-3xl mx-auto h-full relative p-6 flex flex-col items-center justify-center space-y-8"
               >
-                <Check className="w-8 h-8 text-green-500" />
-              </motion.div>
-              
-              <h2 className="text-2xl font-semibold text-gray-800">
-                ¡Consulta Creada Exitosamente!
-              </h2>
-              
-              <p className="text-gray-600">
-                La consulta ha sido programada correctamente.
-              </p>
+                <div className="w-full bg-white rounded-xl p-8 space-y-8">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center ring-8 ring-green-50"
+                  >
+                    <Check className="w-10 h-10 text-green-600" />
+                  </motion.div>
+                  
+                  <div className="space-y-4 text-center">
+                    <h2 className="text-2xl font-bold text-gray-800">
+                      ¡Consulta Creada Exitosamente!
+                    </h2>
+                    
+                    <div className="bg-green-50 rounded-lg p-4 border border-green-100">
+                      <p className="text-green-800">
+                        La consulta ha sido programada correctamente.
+                      </p>
+                    </div>
+                  </div>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => {
-                  // Reset form and go back to first step
-                  setFormData({
-                    pacienteId: "",
-                    medicoId: "",
-                    servicioMedicoCodigo: "",
-                    fecha: "",
-                    hora: "",
-                    estado: "activo"
-                  });
-                  setStep(0);
-                }}
-                className="mt-6 px-6 py-3 bg-blue-500 text-white rounded-lg inline-flex items-center gap-2 hover:bg-blue-600 transition-colors"
-              >
-                <ChevronLeft className="w-5 h-5" />
-                Nueva Consulta
-              </motion.button>
-            </motion.section>
-          )}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => {
+                      setFormData({
+                        pacienteId: "",
+                        medicoId: "",
+                        servicioMedicoCodigo: "",
+                        fecha: "",
+                        hora: "",
+                        estado: "activo"
+                      });
+                      setStep(0);
+                    }}
+                    className="w-full px-6 py-4 bg-blue-500 text-white rounded-xl inline-flex items-center justify-center gap-3 hover:bg-blue-600 transition-colors shadow-sm font-medium"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                    Nueva Consulta
+                  </motion.button>
+                </div>
+              </motion.section>
+            )}
 
-        </motion.div>
-      </AnimatePresence>
+          </motion.div>
+        </AnimatePresence>
       <Notification
         message={messageNotification}
         isVisible={showNotification}

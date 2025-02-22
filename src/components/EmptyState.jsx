@@ -10,7 +10,7 @@ const EmptyState = ({ type = 'pacientes' }) => {
     medicos: 'médicos registrados',
     especialidades: 'especialidades disponibles',
     consultas: 'consultas programadas',
-    serviciosInConsulta: 'servicios disponibles'
+    serviciosInConsulta: 'paquetes de servicios disponibles'
   };
 
   return (
