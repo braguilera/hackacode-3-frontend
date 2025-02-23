@@ -198,13 +198,11 @@ const Servicios = () => {
       const handleSubmitPaquete = async (e) => {
         e.preventDefault();
 
-        if (paqueteData.servicios.length === 0) {
-          alert('Debe seleccionar al menos un servicio');
+        if (paqueteData.servicios.length < 2) {
           return;
         }
       
         if (!paqueteData.nombre.trim()) {
-          alert('El nombre del paquete es requerido');
           return;
         }
         try {
@@ -421,6 +419,12 @@ const Servicios = () => {
               exit={{ opacity: 0, y: 20 }}
               className="w-full flex flex-col h-40 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden relative group"
             >
+
+
+              {/* Form Content */}
+              <form onSubmit={handleSubmitServicio} className="h-full pt-16 px-4 pb-2">
+                <article className="flex flex-col justify-between h-full">
+
               {/* Header with Icon */}
               <header className="absolute top-0 left-0 w-full flex items-center gap-2 p-4 bg-white">
                 <aside className="p-2 bg-blue-100 rounded-lg">
@@ -429,12 +433,11 @@ const Servicios = () => {
                 <input
                   type="text"
                   name="nombre"
-                  maxLength={50}
-
                   value={servicioData.nombre}
                   onChange={handleChange}
                   placeholder="Nombre del servicio"
                   required
+                  maxLength={50}
                   className="flex-1 text-lg w-full font-semibold text-gray-800 bg-transparent border-0 focus:ring-0 outline-none placeholder:text-gray-400"
                 />
                 <button
@@ -444,10 +447,6 @@ const Servicios = () => {
                   <X size={16} />
                 </button>
               </header>
-
-              {/* Form Content */}
-              <form onSubmit={handleSubmitServicio} className="h-full pt-16 px-4 pb-2">
-                <article className="flex flex-col justify-between h-full">
                   <div className="space-y-2">
                     <textarea
                       name="descripcion"
@@ -600,6 +599,7 @@ const Servicios = () => {
               exit={{ y: 50, opacity: 0, scale: 0.8, transition: { duration: 0.2 } }}
               layout
             >
+            <form onSubmit={handleSubmitPaquete} className="flex flex-col">
               <header className="flex items-center gap-2 p-4 border-b border-gray-100">
                 <aside className="p-2 bg-blue-100 rounded-lg">
                   <Package size={20} className="text-blue-600" />
@@ -627,37 +627,35 @@ const Servicios = () => {
                 </button>
               </header>
               
-              <form onSubmit={handleSubmitPaquete} className="flex flex-col">
+
                 <div className="p-4 grid grid-rows-[auto_1fr] gap-4" style={{ height: '460px' }}>
                   {/* Selected Services */}
                   <article className="h-[180px]">
                     <h2 className="text-sm font-semibold text-gray-800 mb-2">Servicios Seleccionados</h2>
                     <div className="h-[150px] overflow-y-auto pr-2 space-y-1.5">
                       <AnimatePresence>
-                        {serviciosActuales.length === 0 ? (
-                          <p className="text-sm text-gray-400 italic p-2">No hay servicios seleccionados</p>
-                        ) : (
-                          serviciosActuales.map((servicio) => (
-                            <motion.div
-                              key={servicio.codigo}
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, x: 20 }}
-                              className="flex justify-between items-center text-sm py-2 px-3 bg-gray-100 rounded-lg group"
-                            >
-                              <span className="text-gray-700">{servicio.nombre}</span>
-                              <div className="flex items-center gap-2">
-                                <span className="text-gray-700 font-semibold">${servicio.precio}</span>
-                                <button
-                                  onClick={() => handleQuitarServicio(servicio)}
-                                  className="p-1 rounded-full hover:bg-white text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
-                                >
-                                  <X size={14} />
-                                </button>
-                              </div>
-                            </motion.div>
-                          ))
-                        )}
+                        {serviciosActuales.length < 2 && <p className="text-sm text-gray-400 italic p-2">Debes seleccionar al menos 2 servicios</p>}
+                        
+                        {serviciosActuales.map((servicio) => (
+                          <motion.div
+                            key={servicio.codigo}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            className="flex justify-between items-center text-sm py-2 px-3 bg-gray-100 rounded-lg group"
+                          >
+                            <span className="text-gray-700">{servicio.nombre}</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-gray-700 font-semibold">${servicio.precio}</span>
+                              <button
+                                onClick={() => handleQuitarServicio(servicio)}
+                                className="p-1 rounded-full hover:bg-white text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+                              >
+                                <X size={14} />
+                              </button>
+                            </div>
+                          </motion.div>
+                        ))}
                       </AnimatePresence>
                     </div>
                   </article>
