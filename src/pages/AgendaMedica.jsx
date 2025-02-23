@@ -185,21 +185,19 @@ const AgendaMedica = () => {
   const [filterStatus, setFilterStatus] = useState('TODAS');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Cargar consultas del mes
   useEffect(() => {
     const mesKey = format(currentDate, 'yyyy-MM');
     const consultasMes = consultasFicticias[mesKey] || [];
     setConsultas(consultasMes);
   }, [currentDate]);
 
-  // Cargar detalle del día
   const cargarDetalleDia = (fecha) => {
     const diaKey = format(fecha, 'yyyy-MM-dd');
     const consultasDia = detalleConsultasFicticio[diaKey] || [];
     setDetalleConsultas(consultasDia);
   };
 
-// Modificar la generación de días
+
 const daysInMonth = eachDayOfInterval({
     start: startOfMonth(currentDate),
     end: endOfMonth(currentDate)
@@ -210,7 +208,7 @@ const daysInMonth = eachDayOfInterval({
 
   const handleDayClick = async (day) => {
     setSelectedDay(day);
-    await cargarDetalleDia(day); // Eliminar la validación de fecha pasada
+    await cargarDetalleDia(day);
   };
 
   const filteredConsultas = detalleConsultas.filter(consulta => 
