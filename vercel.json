@@ -2,7 +2,7 @@
     "rewrites": [
         {
             "source": "/api/:path*",
-            "destination": "http://vps-4708078-x.dattaweb.com:8080/api/:path"
+            "destination": "http://vps-4708078-x.dattaweb.com:8080/api/:path*"
         }
     ]
 }

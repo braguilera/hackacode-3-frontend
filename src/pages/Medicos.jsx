@@ -31,8 +31,8 @@ const Medicos = () => {
   const [editingEspecialidad, setEditingEspecialidad] = useState(null);
   const [showNotification, setShowNotification] = useState(false);
   const [messageNotification, setMessageNotification] = useState(null);
+  const [isEspecialidadesWithMedicos, setIsEspecialidadesWithMedicos] = useState(null);
 
-  // Fetch functions
   const fetchMedicos = async () => {
     setLoadingMedico(true)
     try {
@@ -101,7 +101,6 @@ const Medicos = () => {
     });
     setShowForm(true);
   };
-
 
   const handleSubmitMedico = async (medicoData) => {
     try {
@@ -245,6 +244,20 @@ const Medicos = () => {
     medico.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     medico.apellido?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const especialidadesWithMedicos = async () => {
+    try {
+      const data = await getDatos(`/api/medicos?especialidadId=${selectedEspecialidadToDelete.id}`);
+      setIsEspecialidadesWithMedicos(data);
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  useEffect(() => {
+    especialidadesWithMedicos();
+  }, [selectedEspecialidadToDelete]);
+
 
   return (
     <main className='w-full h-full flex flex-col gap-6 p-6'>
