@@ -75,10 +75,11 @@ const PacienteDetails = ({ isOpen, onClose, paciente, consultas, colors }) => {
         </div>
 
         {/* Pacient's Medical Consultations */}
-        <div className="mt-6">
-            <div className="flex items-center gap-3 mb-6 bg-gradient-to-r from-gray-50 to-white p-4 rounded-lg">
-                <ClipboardList className="w-6 h-6 text-blue-600" />
-                <h3 className="text-xl font-bold text-gray-800">Consultas</h3>
+        <div>
+            <div className="flex items-center justify-between py-4 rounded-lg">
+                <div className="flex gap-3 items-center justify-center">
+                    <h3 className="text-lg font-medium text-gray-900">Consultas</h3>
+                </div>
             </div>
 
             {consultas.filter(consulta => consulta.pacienteId === paciente.id).length > 0 ? (
@@ -86,18 +87,18 @@ const PacienteDetails = ({ isOpen, onClose, paciente, consultas, colors }) => {
                 {consultas.filter(consulta => consulta.pacienteId === paciente.id).map((consulta, index) => (
                     <div 
                     key={index} 
-                    className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200"
+                    className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm"
                     >
                     <div className="flex justify-between items-start mb-3">
                         <div className="flex items-center gap-2 text-gray-600">
                         <CalendarDays className="h-4 w-4" />
                         <span>{new Date(consulta.fecha).toLocaleDateString()}</span>
                         <Clock className="h-4 w-4 ml-2" />
-                        <span>{consulta.hora}</span>
+                        <span>{consulta.hora.slice(0, 5)}</span>
                         </div>
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        consulta.estado === 'COMPLETADA' ? 'bg-green-50 text-green-700' :
-                        consulta.estado === 'PENDIENTE' ? 'bg-yellow-50 text-yellow-700' :
+                        consulta.estado === 'finalizado' ? 'bg-green-50 text-green-700' :
+                        consulta.estado === 'pendiente' ? 'bg-yellow-50 text-yellow-700' :
                         'bg-gray-50 text-gray-700'
                         }`}>
                         {consulta.estado}

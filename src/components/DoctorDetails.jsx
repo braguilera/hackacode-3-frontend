@@ -115,7 +115,7 @@ const DoctorDetails = ({ isOpen, onClose, doctor }) => {
       {/* Consultas */}
       
       <div className="mt-6 border-t">
-        <div className="flex items-center justify-between mb-6 p-4 rounded-lg">
+        <div className="flex items-center justify-between py-4 rounded-lg">
           <div className="flex gap-3 items-center justify-center">
             <h3 className="text-lg font-medium text-gray-900">Consultas</h3>
             <select
@@ -162,8 +162,8 @@ const DoctorDetails = ({ isOpen, onClose, doctor }) => {
                     Consulta #{consulta.codigo}
                   </p>
                   <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    consulta.estado === 'pendiente' ? 'bg-green-50 text-green-700' :
-                    consulta.estado === 'activo' ? 'bg-yellow-50 text-yellow-700' :
+                    consulta.estado === 'finalizado' ? 'bg-green-50 text-green-700' :
+                    consulta.estado === 'pendiente' ? 'bg-yellow-50 text-yellow-700' :
                     'bg-gray-50 text-gray-700'
                   }`}>
                     {consulta.estado}

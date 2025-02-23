@@ -24,7 +24,7 @@ const Consultas = () => {
     servicioMedicoCodigo: "",
     fecha: "",
     hora: "",
-    estado: "activo"
+    estado: "pendiente"
   });
   const [newPacienteData, setNewPacienteData] = useState({
     nombre: "",
@@ -840,7 +840,7 @@ const Consultas = () => {
                         servicioMedicoCodigo: "",
                         fecha: "",
                         hora: "",
-                        estado: "activo"
+                        estado: "pendiente"
                       });
                       setStep(0);
                     }}

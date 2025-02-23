@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isBefore } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, addDays, isBefore } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { 
   ChevronLeft, 
@@ -9,9 +9,12 @@ import {
   Clock, 
   User, 
   Stethoscope,
-  Calendar
+  Calendar,
+  Edit3,
+  Trash2
 } from 'lucide-react';
-import { getDatos } from '../api/crud';
+import { deleteDatos, getDatos, putDatos } from '../api/crud';
+import Notification from '../components/Notification';
 
 
 const AgendaMedica = () => {
@@ -24,6 +27,8 @@ const AgendaMedica = () => {
   const [error, setError] = useState(null);
   const [consultasDetalladas, setConsultasDetalladas] = useState([]);
   const currentDate = new Date(selectedYear, selectedMonth - 1, 1);
+  const [showNotification, setShowNotification] = useState(false);
+  const [messageNotification, setMessageNotification] = useState(null);
 
   const daysInMonth = eachDayOfInterval({
     start: startOfMonth(currentDate),
@@ -42,43 +47,99 @@ const AgendaMedica = () => {
     }
   };
 
+  const editConsulta = async (consultaActualizada) => {
+    try {
+      // Crear payload con la estructura correcta
+      const payload = {
+        pacienteId: consultaActualizada.pacienteId,
+        medicoId: consultaActualizada.medicoId,
+        servicioMedicoCodigo: consultaActualizada.servicioMedico.codigo,
+        fecha: consultaActualizada.fecha,
+        hora: consultaActualizada.hora,
+        estado: consultaActualizada.estado
+      };
+
+      console.log("ID:",consultaActualizada.codigo,payload)
+  
+      await putDatos(`/api/consultas/${consultaActualizada.codigo}`, payload,'Error editando consulta');
+      
+      await fetchConsultas();
+      setMessageNotification({
+        type: 'success',
+        text: 'Estado actualizado exitosamente'
+      });
+      setShowNotification(true)
+    } catch (error) {
+      setMessageNotification({
+        type: 'error',
+        text: 'Error al actualizar el estado'
+      });
+      setShowNotification(true)
+    }
+  };
+
+  const deleteConsulta = async (consulta) => {
+    console.log('Delete:',consulta)
+    try {
+      await deleteDatos(`/api/consultas/${consulta.codigo}`, 'Error eliminando consulta');
+      fetchConsultas();
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
   useEffect(() => {
     fetchConsultas();
   }, []);
 
 
   useEffect(() => {
-    const fetchDetailsForConsultas = async () => {
+    const fetchDetails = async () => {
+      if (!selectedDay) return;
+      
       try {
-        if (detalleConsultas.length > 0 && detalleConsultas.some(c => !c.paciente || !c.medico)) {
-          const detailed = await Promise.all(
-            detalleConsultas.map(async (consulta) => {
-              let paciente = consulta.paciente;
-              let medico = consulta.medico;
-              if (!paciente) {
-                paciente = await getDatos(`/api/pacientes/${consulta.pacienteId}`, 'Error fetching paciente');
-              }
-              if (!medico) {
-                medico = await getDatos(`/api/medicos/${consulta.medicoId}`, 'Error fetching medico');
-              }
-              return { ...consulta, paciente, medico };
-            })
-          );
-          setConsultasDetalladas(detailed);
-        } else {
-          setConsultasDetalladas(detalleConsultas);
-        }
+        const dayKey = format(selectedDay, 'yyyy-MM-dd');
+        const consultasDia = consultas.filter(c => 
+          format(new Date(c.fecha), 'yyyy-MM-dd') === dayKey
+        );
+        
+        const detailed = await Promise.all(
+          consultasDia.map(async (consulta) => {
+            try {
+              const [paciente, medico] = await Promise.all([
+                consulta.pacienteId 
+                  ? getDatos(`/api/pacientes/${consulta.pacienteId}`, 'Error fetching paciente')
+                      .catch(() => null) // Devuelve null si falla
+                  : null,
+                consulta.medicoId 
+                  ? getDatos(`/api/medicos/${consulta.medicoId}`, 'Error fetching medico')
+                      .catch(() => null) // Devuelve null si falla
+                  : null
+              ]);
+              return { 
+                ...consulta,
+                paciente: paciente || { nombre: 'No encontrado', apellido: '' },
+                medico: medico || { nombre: 'No encontrado', apellido: '' }
+              };
+            } catch (error) {
+              console.error('Error cargando detalles:', error);
+              return { 
+                ...consulta,
+                paciente: { nombre: 'Error cargando', apellido: '' },
+                medico: { nombre: 'Error cargando', apellido: '' }
+              };
+            }
+          })
+        );
+        
+        setConsultasDetalladas(detailed);
       } catch (err) {
         console.error(err);
       }
     };
   
-    if (detalleConsultas.length > 0) {
-      fetchDetailsForConsultas();
-    } else {
-      setConsultasDetalladas([]);
-    }
-  }, [detalleConsultas]);
+    fetchDetails();
+  }, [selectedDay, consultas]);
   
 
   useEffect(() => {
@@ -86,14 +147,15 @@ const AgendaMedica = () => {
   }, [selectedMonth, selectedYear]);
 
   const handleDayClick = (day) => {
+    setConsultasDetalladas([]);
     setSelectedDay(day);
-    const dayKey = format(day, 'yyyy-MM-dd');
-    const consultasDia = consultas.filter(consulta => 
-      format(new Date(consulta.fecha), 'yyyy-MM-dd') === dayKey
-    );
-    setDetalleConsultas(consultasDia);
   };
-  
+
+  useEffect(() => {
+    setSelectedDay(null);
+    setConsultasDetalladas([]);
+  }, [selectedMonth, selectedYear]);
+
 
   const monthOptions = Array.from({ length: 12 }).map((_, i) => {
     const monthNumber = i + 1;
@@ -138,20 +200,24 @@ const AgendaMedica = () => {
             </button>
           </header>
           <div className="p-6">
-            {consultasDetalladas.length > 0 ? (
+            {consultasDetalladas.length === 0 ? (
+              <p className="text-center py-8 text-gray-500">
+                No hay consultas programadas para este día
+              </p>
+              ) : (
               consultasDetalladas.map(consulta => (
                 <motion.div
                   key={consulta.codigo}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-4 border rounded-lg mb-4 hover:border-blue-200 transition-all"
+                  className="p-4 border rounded-lg mb-4 hover:border-blue-200 transition-all group relative"
                 >
                   <div className="flex items-center gap-3 mb-3">
                     <Clock size={18} className="text-gray-500" />
                     <span className="text-lg font-medium">{consulta.hora.slice(0, 5)}</span>
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      consulta.estado === 'CONFIRMADO' ? 'bg-green-100 text-green-700' :
-                      consulta.estado === 'CANCELADO' ? 'bg-red-100 text-red-700' :
+                      consulta.estado === 'finalizado' ? 'bg-green-100 text-green-700' :
+                      consulta.estado === 'pendiente' ? 'bg-red-100 text-red-700' :
                       'bg-yellow-100 text-yellow-700'
                     }`}>
                       {consulta.estado}
@@ -161,29 +227,49 @@ const AgendaMedica = () => {
                     <div className="flex items-center gap-2">
                       <User size={18} />
                       <span>
-                        {consulta.paciente
+                        {consulta.paciente 
                           ? `${consulta.paciente.nombre} ${consulta.paciente.apellido}`
-                          : "Cargando paciente..."}
+                          : "Paciente no encontrado"}
                       </span>
                     </div>
+
                     <div className="flex items-center gap-2">
                       <Stethoscope size={18} />
                       <span>
                         {consulta.medico
                           ? `Dr. ${consulta.medico.nombre} ${consulta.medico.apellido}`
-                          : "Cargando médico..."}
+                          : "Médico no encontrado"}
                       </span>
                     </div>
                     <div className="pl-6 text-sm text-gray-500">
                       {consulta.servicioMedico.nombre}
                     </div>
                   </div>
+                  {/* Edit and Delete */}
+                  <aside className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <select
+                      value={consulta.estado}
+                      onChange={(e) => {
+                        const nuevoEstado = e.target.value;
+                        const consultaActualizada = { ...consulta, estado: nuevoEstado };
+                        editConsulta(consultaActualizada);
+                      }}
+                      className="px-2 py-1 rounded border border-gray-200 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    >
+                      <option value="pendiente">Pendiente</option>
+                      <option value="finalizado">Finalizado</option>
+                    </select>
+                    
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      className="p-1.5 rounded-full bg-white hover:bg-red-50 text-gray-600 hover:text-red-500 shadow-sm"
+                      onClick={(e) => { e.stopPropagation(); deleteConsulta(consulta); }}
+                    >
+                      <Trash2 size={16} />
+                    </motion.button>
+                  </aside>
                 </motion.div>
               ))
-            ) : (
-              <p className="text-center py-8 text-gray-500">
-                No hay consultas programadas para este día
-              </p>
             )}
           </div>
         </motion.div>
@@ -278,52 +364,62 @@ const AgendaMedica = () => {
         </div>
 
         <div className="grid grid-cols-7 gap-4">
-          {daysInMonth.map(day => {
-            const dayKey = format(day, 'yyyy-MM-dd');
-            const consultasDia = consultas.filter(c => 
-              format(new Date(c.fecha), 'yyyy-MM-dd') === dayKey
-            );
-            return (
-              <motion.button
-                key={day.toString()}
-                onClick={() => handleDayClick(day)}
-                className={`
-                  h-28 p-3 rounded-lg border transition-all
-                  ${dayKey === format(new Date(), 'yyyy-MM-dd') ? 'border-blue-500 border-2' : 'border-gray-200'}
-                  ${isBefore(day, new Date()) ? 'bg-gray-50' : 'bg-white hover:border-blue-300'}
-                `}
-                whileHover={{ scale: 1.02 }}
-              >
-                <div className="flex justify-between items-start">
-                  <span className={`text-lg font-semibold ${dayKey === format(new Date(), 'yyyy-MM-dd') ? 'text-blue-600' : 'text-gray-700'}`}>
-                    {format(day, 'd')}
-                  </span>
-                  {consultasDia.length > 0 && (
-                    <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-medium">
-                      {consultasDia.length}
-                    </span>
-                  )}
-                </div>
-                <div className="mt-2 space-y-1">
-                  {consultasDia.slice(0, 2).map(consulta => (
-                    <div key={consulta.codigo} className="text-xs text-gray-600 truncate flex items-center">
-                      <Clock size={10} className="mr-1 flex-shrink-0" />
-                      <span>{consulta.hora.slice(0, 5)} - {consulta.paciente?.nombre}</span>
-                    </div>
-                  ))}
-                  {consultasDia.length > 2 && (
-                    <div className="text-xs text-gray-500">+ {consultasDia.length - 2} más</div>
-                  )}
-                </div>
-              </motion.button>
-            );
-          })}
-        </div>
+  {daysInMonth.map(day => {
+    // Añadimos 1 día a la fecha del calendario
+    const adjustedDay = addDays(day, -1);
+    const adjustedDayKey = format(adjustedDay, 'yyyy-MM-dd');
+    
+    const consultasDia = consultas.filter(c => 
+      format(new Date(c.fecha), 'yyyy-MM-dd') === adjustedDayKey
+    );
 
+    return (
+      <motion.button
+        key={day.toString()}
+        onClick={() => handleDayClick(adjustedDay)} // Pasamos el día ajustado
+        className={`
+          h-28 p-3 rounded-lg border transition-all
+          ${adjustedDayKey === format(new Date(), 'yyyy-MM-dd') ? 'border-blue-500 border-2' : 'border-gray-200'}
+          ${isBefore(adjustedDay, new Date()) ? 'bg-gray-50' : 'bg-white hover:border-blue-300'}
+        `}
+        whileHover={{ scale: 1.02 }}
+      >
+        <div className="flex justify-between items-start">
+          {/* Mantenemos la visualización del día original */}
+          <span className={`text-lg font-semibold ${adjustedDayKey === format(new Date(), 'yyyy-MM-dd') ? 'text-blue-600' : 'text-gray-700'}`}>
+            {format(day, 'd')}
+          </span>
+          {consultasDia.length > 0 && (
+            <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-medium">
+              {consultasDia.length}
+            </span>
+          )}
+        </div>
+        <div className="mt-2 space-y-1">
+          {consultasDia.slice(0, 2).map(consulta => (
+            <div key={consulta.codigo} className="text-xs text-gray-600 truncate flex items-center">
+              <Clock size={10} className="mr-1 flex-shrink-0" />
+              <span>{consulta.hora.slice(0, 5)} - {consulta.paciente?.nombre}</span>
+            </div>
+          ))}
+          {consultasDia.length > 2 && (
+            <div className="text-xs text-gray-500">+ {consultasDia.length - 2} más</div>
+          )}
+        </div>
+      </motion.button>
+    );
+  })}
+</div>
       </section>
       
       {/* Modal for Day Details */}
       {renderDayDetailsModal()}
+
+      <Notification
+        message={messageNotification}
+        isVisible={showNotification}
+        onClose={() => setShowNotification(false)}
+      />
     </main>
   );
 };
