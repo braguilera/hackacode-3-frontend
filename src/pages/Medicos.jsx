@@ -207,11 +207,15 @@ const Medicos = () => {
   };
 
   const deleteEspecialidad = async (especialidadId) =>{
-    console.log(especialidadId)
     try {
       await deleteDatos(`/api/especialidades/${especialidadId.id}`, 'Error eliminando especialidad');
-      await fetchMedicos();
       await fetchEspecialidades();
+
+      {isEspecialidadesWithMedicos &&
+        isEspecialidadesWithMedicos.map(medico => (
+          deleteMedicoInEspecialidad(medico)
+        ))}
+
       setMessageNotification({
         type: 'success',
         text: 'Especialidad eliminada exitosamente'
@@ -227,6 +231,15 @@ const Medicos = () => {
     finally{
       setSelectedMedicoToDelete(null);
       setSelectedEspecialidadToDelete(null);
+    }
+  }
+
+  const deleteMedicoInEspecialidad = async (medico) => {
+    try {
+      await deleteDatos(`/api/medicos/${medico.id}`, 'Error eliminando servicio');
+      await fetchMedicos();
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -295,6 +308,7 @@ const Medicos = () => {
             onCancel={() => setSelectedEspecialidadToDelete(null)}
             itemId={selectedEspecialidadToDelete.id}
             isDelete={true}
+            medicos={isEspecialidadesWithMedicos}
           />
         </div>
       )}

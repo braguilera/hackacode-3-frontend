@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, Check, X, Edit2 } from 'lucide-react';
 
-const PopUpConfirmation = ({ isOpen, onConfirm, onCancel, itemId, isDelete = true, paquetes }) => {
+const PopUpConfirmation = ({ isOpen, onConfirm, onCancel, itemId, isDelete = true, paquetes, medicos }) => {
 
   const styles = {
     delete: {
@@ -62,6 +62,24 @@ const PopUpConfirmation = ({ isOpen, onConfirm, onCancel, itemId, isDelete = tru
               <p className="text-gray-600">
                 {currentStyle.message} #{itemId}?
               </p>
+
+              {medicos && 
+              <section className='w-full flex flex-col'>
+                {medicos.length!==0 &&
+                
+                <>
+                  <p className="text-gray-700">Se eliminaran los siguientes médicos</p>
+                  <article  className='grid grid-cols-3 gap-4 w-full p-4 items-center'>
+                    {medicos.map(medico => (
+                        <h2 key={medico.id} className='bg-gray-100 rounded-md p-2 h-full w-full  content-center'>
+                          {medico.nombre} {medico.apellido}
+                        </h2>
+                    ))}
+                  </article>
+                </>
+                }
+              </section>
+              }
 
               {paquetes && 
               <section className='w-full flex flex-col'>
