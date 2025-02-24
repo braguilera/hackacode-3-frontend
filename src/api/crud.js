@@ -40,8 +40,8 @@ export const postDatos = async (endpoint, data, errorMessage = 'Error al crear r
     try {
         const headers =
             endpoint.includes('/api/auth/log-in')
-            ? { 'Content-Type': 'application/json' }
-            : getAuthHeader();
+                ? { 'Content-Type': 'application/json' }
+                : getAuthHeader();
         const response = await fetch(`${API_CONFIG.BASE_URL}${endpoint}`, {
             method: 'POST',
             headers,
