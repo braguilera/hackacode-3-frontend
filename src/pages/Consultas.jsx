@@ -359,8 +359,11 @@ const Consultas = () => {
                 {/* Packages Section */}
                 {formData.servicioMedicoCodigo ? (
                   <aside className="w-full h-96 border overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 rounded-lg">
-                  {console.log(serviciosInPaquete.length)}
-                  {serviciosInPaquete && (
+                  {serviciosInPaquete.length === 0 ? 
+                    <aside className="w-full h-full bg-white rounded-lg  divide-y divide-gray-100 justify-center">
+                      <EmptyState type='serviciosInConsulta' />
+                    </aside>
+                    :
                     <div className="sticky top-0 bg-gradient-to-l from-blue-50 to-white p-4 border-b border-gray-100 z-10">
                       <div className="flex items-center gap-3">
                         <Sparkles className="w-5 h-5 text-blue-500" />
@@ -370,7 +373,7 @@ const Consultas = () => {
                         </div>
                       </div>
                     </div>
-                  )}
+                  }
                     {serviciosInPaquete.map((paquete, index) => {
                       const isSelected = selectedPaquete && selectedPaquete.codigo === paquete.codigo;
                       return (
