@@ -3,12 +3,16 @@ import { Navigate } from 'react-router-dom'
 import Contexto from '../contexto/Contexto';
 
 const RutaPublica = ({children}) => {
-  const {logeado}=useContext(Contexto);
+  const {logeado, rol} = useContext(Contexto);
 
-  return (!logeado)
-  ? children
-  : <Navigate to="/dashboard"/>
+  if (logeado) {
+    const rutaRedireccion = rol === 'ROLE_DIRECTOR' ? '/dashboard' : 
+                           rol === 'ROLE_ADMIN' ? '/consultas' : 
+                           '/pacientes';
+    return <Navigate to={rutaRedireccion} replace />;
+  }
+
+  return children;
 }
 
-
-export default RutaPublica
+export default RutaPublica;

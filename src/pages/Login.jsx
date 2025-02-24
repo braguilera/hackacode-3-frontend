@@ -4,13 +4,15 @@ import Contexto from '../contexto/Contexto';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, LogIn, Stethoscope, Users, ClipboardList, Activity } from 'lucide-react'; 
 import clinicaSoft from '../assets/iconos/clinicaSoftLogo.svg';
-import { getDatos, postDatos } from '../api/crud';
+import {postDatos } from '../api/crud';
 
 const Login = () => {
-  const { setLogeado, setToken } = useContext(Contexto);
+  const { setLogeado, setToken, token } = useContext(Contexto);
+
   const navegacion = useNavigate();
   const [usuario, setUsuario] = useState('');
   const [isExiting, setIsExiting] = useState(false);
+  const [rol, setRol] = useState('');
   const [userDates, setUserDates] = useState(
     {
     username: "",
@@ -60,10 +62,8 @@ const Login = () => {
   }, [slides.length]);
   
   const manejarLogeo = async () => {
-    console.log(userDates)
     try {
       const data = await postDatos('/api/auth/log-in', userDates, 'Error al logearse');
-      console.log(data)
       if (data.jwt) {
         setToken(data.jwt);
       }
@@ -84,6 +84,7 @@ const Login = () => {
     startInterval(); 
   };
   
+  console.log(rol)
 
   return (
     <section className='flex'>
