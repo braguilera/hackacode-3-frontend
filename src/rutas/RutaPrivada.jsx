@@ -13,7 +13,7 @@ const RutaPrivada = ({children}) => {
   const rutasPermitidas = {
     ROLE_RECEPCIONISTA: ['consultas', 'agenda', 'pacientes'],
     ROLE_ADMIN: ['consultas', 'pacientes', 'medicos', 'servicios', 'agenda'],
-    ROLE_DIRECTOR: ['dashboard', 'consultas', 'pacientes', 'medicos', 'servicios', 'agenda']
+    ROLE_DIRECTOR: ['dashboard', 'consultas', 'pacientes', 'medicos', 'servicios', 'agenda', 'registro']
   };
 
   const rutaActual = location.pathname.split('/')[1];

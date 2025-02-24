@@ -8,6 +8,7 @@ import Medicos from '../pages/Medicos'
 import Servicios from '../pages/Servicios'
 import AgendaMedica from '../pages/AgendaMedica'
 import Contexto from '../contexto/Contexto'
+import Registro from '../pages/Registro'
 
 const RutaSecundaria = () => {
   const { rol } = useContext(Contexto);
@@ -50,6 +51,8 @@ const RutaSecundaria = () => {
             "/pacientes"
           } replace />} 
         />
+
+        {rol === 'ROLE_DIRECTOR' && <Route path="/registro" element={<Registro />} />}
       </Routes>
     </main>
   )

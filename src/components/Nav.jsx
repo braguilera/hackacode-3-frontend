@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Home, Stethoscope, Users, User, ClipboardList, LogOut, CalendarDays } from 'lucide-react';
+import { Home, Stethoscope, Users, User, ClipboardList, LogOut, CalendarDays, UserPlus } from 'lucide-react';
 import Contexto from '../contexto/Contexto';
+import imgClinicaSoft from '../assets/iconos/clinicaSoftLogo.svg'
 
 const Nav = () => {
   const { rol, setLogeado, setToken } = useContext(Contexto);
@@ -17,8 +18,9 @@ const Nav = () => {
   return (
     <main className='bg-white flex flex-col justify-between py-6 w-64 text-lg box-border shadow-xl h-screen'>
       <section className='flex flex-col px-4 box-border'>
-        <header className='flex justify-center py-6 mb-4'>
-          <span className='text-2xl font-bold text-blue-500'>Logo</span>
+        <header className='flex flex-col justify-center items-center py-6 mb-4'>
+          <img src={imgClinicaSoft} alt='Logo de ClinicaSoft' className='w-10'/>
+          <span className='text-2xl font-bold text-blue-500'>ClinicaSoft</span>
         </header>
 
         {rol === 'ROLE_DIRECTOR' && (
@@ -82,6 +84,17 @@ const Nav = () => {
           }>
             <CalendarDays className="w-5 h-5 mr-2" />
             Agenda
+          </NavLink>
+        )}
+
+        {rol === 'ROLE_DIRECTOR' && (
+          <NavLink to="registro" className={({ isActive }) =>
+            isActive
+              ? "flex items-center text-blue-500 bg-blue-50 px-4 py-2 my-1 rounded-lg font-semibold transition-all duration-200"
+              : "flex items-center text-gray-600 px-4 py-2 my-1 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-all duration-200"
+          }>
+            <UserPlus className="w-5 h-5 mr-2" />
+            Registro
           </NavLink>
         )}
       </section>
