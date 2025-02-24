@@ -4,13 +4,18 @@ import Contexto from '../contexto/Contexto';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, LogIn, Stethoscope, Users, ClipboardList, Activity } from 'lucide-react'; 
 import clinicaSoft from '../assets/iconos/clinicaSoftLogo.svg';
+import { getDatos, postDatos } from '../api/crud';
 
 const Login = () => {
-  const { setLogeado } = useContext(Contexto);
+  const { setLogeado, setToken } = useContext(Contexto);
   const navegacion = useNavigate();
   const [usuario, setUsuario] = useState('');
-  const [contraseña, setContraseña] = useState('');
   const [isExiting, setIsExiting] = useState(false);
+  const [userDates, setUserDates] = useState(
+    {
+    username: "",
+    password: ""
+  });
   const [currentSlide, setCurrentSlide] = useState(0);
   const intervalRef = useRef(null); 
 
@@ -53,13 +58,23 @@ const Login = () => {
     startInterval();
     return () => stopInterval(); 
   }, [slides.length]);
-
-  const manejarLogeo = () => {
-    setIsExiting(true);
-    setTimeout(() => {
-      setLogeado(true);
-      navegacion('/dashboard');
-    }, 500); 
+  
+  const manejarLogeo = async () => {
+    try {
+      const data = await postDatos('/api/auth/log-in', userDates, 'Error al logearse');
+      // Si se recibe el token, se guarda en el localStorage y en el contexto
+      if (data.jwt) {
+        setToken(data.jwt);
+      }
+      setUsuario(data);
+      setIsExiting(true);
+      setTimeout(() => {
+          setLogeado(true);
+          navegacion('/dashboard');
+        }, 500); 
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
   const goToSlide = (index) => {
@@ -67,6 +82,7 @@ const Login = () => {
     setCurrentSlide(index);
     startInterval(); 
   };
+  
 
   return (
     <section className='flex'>
@@ -141,8 +157,8 @@ const Login = () => {
                     <input
                       type='text'
                       placeholder='Usuario'
-                      value={usuario}
-                      onChange={(e) => setUsuario(e.target.value)}
+                      value={userDates.username}
+                      onChange={(e) => setUserDates(prev => ({ ...prev, username:e.target.value}))}
                       className='w-full focus:outline-none'
                     />
                   </article>
@@ -151,8 +167,8 @@ const Login = () => {
                     <input
                       type='password'
                       placeholder='Contraseña'
-                      value={contraseña}
-                      onChange={(e) => setContraseña(e.target.value)}
+                      value={userDates.password}
+                      onChange={(e) => setUserDates(prev => ({ ...prev, password:e.target.value}))}
                       className='w-full focus:outline-none'
                     />
                   </article>
@@ -169,6 +185,7 @@ const Login = () => {
           </motion.main>
         )}
       </AnimatePresence>
+
     </section>
   );
 };

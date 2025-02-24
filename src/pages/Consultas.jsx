@@ -18,6 +18,8 @@ const Consultas = () => {
   const [messageNotification, setMessageNotification] = useState(null);
   const [serviciosInPaquete, setServiciosInPaquete] = useState([]);
   const [selectedPaquete, setSelectedPaquete] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [formData, setFormData] = useState({
     pacienteId: "",              
     medicoId: "",
@@ -38,29 +40,46 @@ const Consultas = () => {
   });
   const [step, setStep] = useState(0);
 
-  const getAvailableDates = () => {
+  const getAvailableDates = (year, month) => {
     const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth(); 
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth(); // 0-indexado
+    // Si el mes/año seleccionado es del pasado, devolver vacío
+    if (year < currentYear || (year === currentYear && month < currentMonth)) {
+      return [];
+    }
+    let startDay = 1;
+    if (year === currentYear && month === currentMonth) {
+      startDay = today.getDate();
+    }
     const lastDay = new Date(year, month + 1, 0).getDate();
     let dates = [];
-    for (let d = today.getDate(); d <= lastDay; d++) {
+    // Por defecto, se consideran lunes a viernes
+    let workingDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
+    // Si se selecciona un médico, se usa su disponibilidad
+    const doctor = medicos.find(m => m.id === Number(formData.medicoId));
+    if (doctor && doctor.disponibilidades && doctor.disponibilidades.length > 0) {
+      workingDays = doctor.disponibilidades.map(d => d.diaSemana.toUpperCase());
+    }
+    for (let d = startDay; d <= lastDay; d++) {
       const date = new Date(year, month, d);
-      const day = date.getDay(); 
-      if (day >= 1 && day <= 5) { 
+      // Obtenemos el día de la semana en mayúsculas (ej. "MONDAY")
+      const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
+      if (workingDays.includes(dayName)) {
         dates.push(date.toISOString().split('T')[0]);
       }
     }
     return dates;
   };
+
   
 
   const defaultTimeSlots = [
     "08:00:00", "08:30:00", "09:00:00", "09:30:00",
-    "10:00:00", "10:30:00", "11:00:00", "11:30:00"
+    "10:00:00", "10:30:00", "11:00:00", "18:30:00"
   ];
 
-  const availableDates = getAvailableDates();
+  const availableDates = getAvailableDates(selectedYear, selectedMonth - 1);
     
   const NavigationButtons = ({ onBack, onNext, step, isLastStep, isNextEnabled = true }) => (
     <div className="w-full flex justify-between gap-4 mt-6 absolute bottom-0">
@@ -428,92 +447,137 @@ const Consultas = () => {
               isEspecializada ? (
                 <section className="h-full relative w-full mx-auto">
                   <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
-                    <CalendarCheck className="w-7 h-7 text-blue-500" />
-                    <h2 className="text-2xl font-bold text-gray-800">Seleccionar Turno</h2>
+                    <Calendar className="w-7 h-7 text-blue-500" />
+                    <h2 className="text-2xl font-bold text-gray-800">Seleccione Fecha y Hora</h2>
                   </div>
-                  <div className="h-[90%] pt-20 gap-4 grid grid-cols-2">
-                    {Object.keys(groupedTurnos).map(fecha => (
-                      <motion.div
-                        key={fecha}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-white rounded-xl shadow-sm p-4 border border-gray-100"
+                  <div className="pt-20">
+                    {/* Select para elegir mes */}
+                    <div className="flex gap-4 mb-4">
+                      <label className="text-sm font-medium text-gray-700">Mes:</label>
+                      <select 
+                        value={selectedMonth}
+                        onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                        className="p-2 border rounded"
                       >
-                        <h4 className="font-medium text-gray-800 mb-4 flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                          <Calendar className="w-5 h-5 text-blue-500" />
-                          {fecha}
-                        </h4>
-                        <div className="flex flex-wrap gap-3">
-                          {groupedTurnos[fecha].map(turno => (
-                            <motion.button
-                              key={`${fecha}-${turno.hora}`}
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-sm
-                                ${formData.fecha === fecha && formData.hora === turno.hora
-                                  ? 'bg-blue-500 text-white ring-2 ring-blue-300'
-                                  : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
-                              onClick={() => setFormData(prev => ({ ...prev, fecha: fecha, hora: turno.hora }))}
-                            >
-
-                              {turno.hora.slice(0, 5)}
-                            </motion.button>
-                          ))}
+                        {Array.from({ length: 12 }, (_, i) => (
+                          <option key={i} value={i + 1}>
+                            {new Date(0, i).toLocaleString('default', { month: 'long' })}
+                          </option>
+                        ))}
+                      </select>
+                      {/* Opcional: select para año */}
+                      <div className="flex gap-2 items-center">
+                        <label className="text-sm font-medium text-gray-700">Año:</label>
+                        <select 
+                          value={selectedYear}
+                          onChange={(e) => setSelectedYear(Number(e.target.value))}
+                          className="p-2 border rounded"
+                        >
+                          {Array.from({ length: 5 }, (_, i) => {
+                            const year = new Date().getFullYear() - 2 + i;
+                            return (
+                              <option key={year} value={year}>
+                                {year}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+                    </div>
+                    <article className="h-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {availableDates.length > 0 ? (
+                        availableDates.map(date => (
+                          <div key={date} className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                            <h4 className="font-medium text-gray-800 mb-4 flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                              <Calendar className="w-5 h-5 text-blue-500" />
+                              {date}
+                            </h4>
+                            <div className="grid grid-cols-3 gap-3">
+                              {defaultTimeSlots.map(time => (
+                                <motion.button
+                                  key={`${date}-${time}`}
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                  className={`px-4 py-2 rounded-lg flex justify-center items-center transition-all shadow-sm
+                                    ${formData.fecha === date && formData.hora === time
+                                      ? 'bg-blue-500 text-white ring-2 ring-blue-300'
+                                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                                  onClick={() => setFormData(prev => ({ ...prev, fecha: date, hora: time }))}
+                                >
+                                  {time.slice(0, 5)}
+                                </motion.button>
+                              ))}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center p-6 text-gray-500">
+                          No hay fechas disponibles en este mes para el médico seleccionado.
                         </div>
-                      </motion.div>
-                    ))}
+                      )}
+                    </article>
                   </div>
                   <NavigationButtons
                     onNext={() => setStep(step + 1)}
                     onBack={() => setStep(step - 1)}
-                    step={step}
-                    isNextEnabled={!formData.fecha ? false : true }
+                    step={1}
+                    isNextEnabled={!!formData.fecha}
                     isLastStep={false}
                   />
                 </section>
               ) : (
-                <section className=" h-full relative w-full mx-auto">
+                <section className="h-full relative w-full mx-auto">
+                  {/* Rama para cuando no es especializada; puedes ajustar el contenido según necesites */}
                   <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
                     <Calendar className="w-7 h-7 text-blue-500" />
                     <h2 className="text-2xl font-bold text-gray-800">Seleccione Fecha y Hora</h2>
                   </div>
-                  <article className='h-3/4 pt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-                    {availableDates.map(date => (
-                      <div key={date} className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-                        <h4 className="font-medium text-gray-800 mb-4 flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                          <Calendar className="w-5 h-5 text-blue-500" />
-                          {date}
-                        </h4>
-                        <div className="grid grid-cols-3 gap-3">
-                          {defaultTimeSlots.map(time => (
-                            <motion.button
-                              key={`${date}-${time}`}
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              className={`px-4 py-2 rounded-lg flex justify-center items-center gap-0 transition-all shadow-sm
-                                ${formData.fecha === date && formData.hora === time
-                                  ? 'bg-blue-500 text-white ring-2 ring-blue-300'
-                                  : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
-                              onClick={() => setFormData(prev => ({ ...prev, fecha: date, hora: time }))}
-                            >
-                              {time.slice(0, 5)}
-                            </motion.button>
-                          ))}
+                  <div className="pt-20">
+                    <article className="h-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {availableDates.length > 0 ? (
+                        availableDates.map(date => (
+                          <div key={date} className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                            <h4 className="font-medium text-gray-800 mb-4 flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                              <Calendar className="w-5 h-5 text-blue-500" />
+                              {date}
+                            </h4>
+                            <div className="grid grid-cols-3 gap-3">
+                              {defaultTimeSlots.map(time => (
+                                <motion.button
+                                  key={`${date}-${time}`}
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.95 }}
+                                  className={`px-4 py-2 rounded-lg flex justify-center items-center transition-all shadow-sm
+                                    ${formData.fecha === date && formData.hora === time
+                                      ? 'bg-blue-500 text-white ring-2 ring-blue-300'
+                                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100'}`}
+                                  onClick={() => setFormData(prev => ({ ...prev, fecha: date, hora: time }))}
+                                >
+                                  {time.slice(0, 5)}
+                                </motion.button>
+                              ))}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center p-6 text-gray-500">
+                          No hay fechas disponibles en este mes para el médico seleccionado.
                         </div>
-                      </div>
-                    ))}
-                  </article>
+                      )}
+                    </article>
+                  </div>
                   <NavigationButtons
                     onNext={() => setStep(step + 1)}
                     onBack={() => setStep(step - 1)}
-                    step={step}
-                    isNextEnabled={!formData.fecha ? false : true }
+                    step={1}
+                    isNextEnabled={!!formData.fecha}
                     isLastStep={false}
                   />
                 </section>
               )
             )}
-    
+
+
             {step === 2 && (
                 <section className="w-full h-full relative mx-auto">
                   <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">

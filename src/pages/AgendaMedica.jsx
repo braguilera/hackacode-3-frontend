@@ -366,7 +366,7 @@ const AgendaMedica = () => {
         <div className="grid grid-cols-7 gap-4">
   {daysInMonth.map(day => {
     // Añadimos 1 día a la fecha del calendario
-    const adjustedDay = addDays(day, -1);
+    const adjustedDay = addDays(day, 0);
     const adjustedDayKey = format(adjustedDay, 'yyyy-MM-dd');
     
     const consultasDia = consultas.filter(c => 
@@ -376,7 +376,7 @@ const AgendaMedica = () => {
     return (
       <motion.button
         key={day.toString()}
-        onClick={() => handleDayClick(adjustedDay)} // Pasamos el día ajustado
+        onClick={() => handleDayClick(adjustedDay)}
         className={`
           h-28 p-3 rounded-lg border transition-all
           ${adjustedDayKey === format(new Date(), 'yyyy-MM-dd') ? 'border-blue-500 border-2' : 'border-gray-200'}
