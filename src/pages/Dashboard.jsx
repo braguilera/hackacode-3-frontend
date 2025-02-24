@@ -125,7 +125,7 @@ const Dashboard = () => {
     <motion.main
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="w-full p-6 bg-gray-50 min-h-screen space-y-8"
+      className="w-full p-6 bg-gray-50 h-full space-y-8"
     >
       <motion.header 
         initial={{ y: -20 }}
@@ -208,7 +208,7 @@ const Dashboard = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+          className="bg-white p-6 rounded-xl h-64 overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 shadow-sm border border-gray-100"
         >
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Package className="w-5 h-5 text-purple-600"/> Paquetes Activos
@@ -249,7 +249,7 @@ const Dashboard = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+          className="bg-white h-64 overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 p-6 rounded-xl shadow-sm border border-gray-100"
         >
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <HeartPulse className="w-5 h-5 text-red-600"/> Servicios Populares
@@ -276,7 +276,7 @@ const Dashboard = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+          className="bg-white h-64 overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 p-6 rounded-xl shadow-sm border border-gray-100"
         >
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-blue-600"/> Consultas de Hoy
