@@ -1,7 +1,7 @@
 import { API_CONFIG } from './config';
 
 const getAuthHeader = () => {
-    console.log(token)
+    const token = localStorage.getItem('token');
     return {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
