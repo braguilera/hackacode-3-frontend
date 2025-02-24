@@ -1,7 +1,7 @@
 import { API_CONFIG } from './config';
 
 const getAuthHeader = () => {
-    const token = localStorage.getItem('token');
+    console.log(token)
     return {
         'Content-Type': 'application/json',
         ...(token ? { 'Authorization': `Bearer ${token}` } : {})
@@ -38,9 +38,13 @@ export const getDatos = async (endpoint, errorMessage = 'Error al obtener datos'
   // POST
 export const postDatos = async (endpoint, data, errorMessage = 'Error al crear recurso') => {
     try {
+        const headers =
+            endpoint.includes('/api/auth/log-in')
+            ? { 'Content-Type': 'application/json' }
+            : getAuthHeader();
         const response = await fetch(`${API_CONFIG.BASE_URL}${endpoint}`, {
             method: 'POST',
-            headers: getAuthHeader(),
+            headers,
             body: JSON.stringify(data)
         });
         return handleResponse(response, errorMessage);
@@ -48,6 +52,7 @@ export const postDatos = async (endpoint, data, errorMessage = 'Error al crear r
         throw new Error(`${errorMessage}: ${error.message}`);
     }
 };
+
 
   // PUT
 export const putDatos = async (endpoint, data, errorMessage = 'Error al actualizar recurso') => {

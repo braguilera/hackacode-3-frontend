@@ -359,6 +359,7 @@ const Consultas = () => {
                 {/* Packages Section */}
                 {formData.servicioMedicoCodigo ? (
                   <aside className="w-full h-96 border overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 rounded-lg">
+                  {console.log(serviciosInPaquete.length)}
                   {serviciosInPaquete && (
                     <div className="sticky top-0 bg-gradient-to-l from-blue-50 to-white p-4 border-b border-gray-100 z-10">
                       <div className="flex items-center gap-3">

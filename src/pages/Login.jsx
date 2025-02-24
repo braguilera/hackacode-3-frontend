@@ -60,9 +60,10 @@ const Login = () => {
   }, [slides.length]);
   
   const manejarLogeo = async () => {
+    console.log(userDates)
     try {
       const data = await postDatos('/api/auth/log-in', userDates, 'Error al logearse');
-      // Si se recibe el token, se guarda en el localStorage y en el contexto
+      console.log(data)
       if (data.jwt) {
         setToken(data.jwt);
       }
