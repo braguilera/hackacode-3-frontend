@@ -42,7 +42,7 @@ const CardPaquete = ({ dataPaquete, onEdit, onDelete }) => {
             <article className="space-y-2 mb-3">
                 {dataPaquete.servicios.map((servicio, index) => (
                     <div key={index} className="flex justify-between items-center text-sm p-2 bg-gray-100 rounded-lg">
-                        <p className="text-gray-700">{servicio.nombre}</p>
+                        <p className="text-gray-700 w-52 truncate">{servicio.nombre}</p>
                         <p className="text-gray-700 font-semibold">${servicio.precio}</p>
                     </div>
                 ))}

@@ -20,8 +20,7 @@ const FormPersona = ({
     
   const [especialidades, setEspecialidades] = useState([])
   const [hasInitialized, setHasInitialized] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [error, setErrorEspecialidades] = useState(null);
+  const [edadError, setEdadError] = useState('');
   const [disponibilidades, setDisponibilidades] = useState(
     initialData?.disponibilidades || [getNuevaDisponibilidad()]
   );
@@ -40,7 +39,7 @@ const FormPersona = ({
     return tipo === 'medico' ? {
       ...base,
       especialidadId: '',
-      sueldo: 0,
+      sueldo: null,
       disponibilidades: [getNuevaDisponibilidad()]
     } : {
       ...base,
@@ -50,27 +49,64 @@ const FormPersona = ({
 
   function getNuevaDisponibilidad() {
     return {
-      cubreTurno: "Mañana", // Cambiar a español
-      horaInicio: "08:00:00", // Agregar segundos
-      horaFin: "12:00:00", // Agregar segundos
+      cubreTurno: "Mañana",
+      horaInicio: "08:00:00", 
+      horaFin: "12:00:00",
       diaSemana: "MONDAY"
     };
   }
 
+  const calcularEdad = (fechaNacimiento) => {
+    const hoy = new Date();
+    const fechaNac = new Date(fechaNacimiento);
+    
+    // Validar fecha mínima (1 de enero de 1900)
+    const fechaMinima = new Date('1900-01-01');
+    if (fechaNac < fechaMinima) return -1;
+    
+    // Validar que no sea fecha futura
+    if (fechaNac > hoy) return -1;
+  
+    let edad = hoy.getFullYear() - fechaNac.getFullYear();
+    const mes = hoy.getMonth() - fechaNac.getMonth();
+    
+    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNac.getDate())) {
+      edad--;
+    }
+    return edad;
+  };
+  
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     
-    // Manejar especialidadId como string
     if (name === 'especialidadId') {
       setFormData(prev => ({ ...prev, [name]: value }));
       return;
     }
-    
-    setFormData(prev => ({
-      ...prev,
+  
+    const newFormData = {
+      ...formData,
       [name]: type === 'checkbox' ? checked : value
-    }));
+    };
+  
+    setFormData(newFormData);
+  
+    if (tipo === 'medico' && name === 'fechaNac') {
+      const edad = calcularEdad(value);
+      
+      if (edad === -1) {
+        setEdadError('Fecha de nacimiento inválida');
+      } else if (edad < 18) {
+        setEdadError('El médico debe ser mayor de edad (18+ años)');
+      } else if (edad > 100) {
+        setEdadError('La edad máxima permitida es 100 años');
+      } else {
+        setEdadError('');
+      }
+    }
   };
+  
 
   const handleDisponibilidadChange = (index, field, value) => {
     const updated = [...disponibilidades];
@@ -93,7 +129,6 @@ const FormPersona = ({
         const data = await getDatos('/api/especialidades', 'Error cargando especialidades');
         setEspecialidades(data);
         
-        // Sincronizar especialidadId si hay datos iniciales
         if (initialData?.especialidadId && !hasInitialized) {
           setFormData(prev => ({
             ...prev,
@@ -111,7 +146,28 @@ const FormPersona = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+  
+    if (tipo === 'medico') {
+      if (!formData.fechaNac) {
+        setEdadError('La fecha de nacimiento es requerida');
+        return;
+      }
+      
+      const edad = calcularEdad(formData.fechaNac);
+      
+      if (edad === -1) {
+        setEdadError('Fecha de nacimiento inválida');
+        return;
+      }
+      
+      if (edad < 18 || edad > 100) {
+        setEdadError(edad < 18 
+          ? 'El médico debe ser mayor de edad (18+ años)' 
+          : 'La edad máxima permitida es 100 años');
+        return;
+      }
+    }
+  
     const dataToSend = {
       ...formData,
       sueldo: Number(formData.sueldo),
@@ -124,9 +180,8 @@ const FormPersona = ({
       }))
     };
   
-    // Eliminar campo sobrante
     delete dataToSend.especialidad;
-  
+    
     onSubmit(dataToSend);
   };
 
@@ -170,6 +225,7 @@ const FormPersona = ({
                   name="nombre"
                   value={formData.nombre}
                   onChange={handleChange}
+                  maxLength={20}
                   className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
                   required
                 />
@@ -181,6 +237,7 @@ const FormPersona = ({
                   name="apellido"
                   value={formData.apellido}
                   onChange={handleChange}
+                  maxLength={20}
                   className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
                   required
                 />
@@ -194,6 +251,7 @@ const FormPersona = ({
                 name="dni"
                 value={formData.dni}
                 onChange={handleChange}
+                maxLength={20}
                 className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
                 required
               />
@@ -207,6 +265,7 @@ const FormPersona = ({
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
+                  maxLength={50}
                   className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
                   required
                 />
@@ -218,6 +277,7 @@ const FormPersona = ({
                   name="telefono"
                   value={formData.telefono}
                   onChange={handleChange}
+                  maxLength={20}
                   className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
                   required
                 />
@@ -225,17 +285,25 @@ const FormPersona = ({
             </div>
   
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento</label>
-                <input
-                  type="date"
-                  name="fechaNac"
-                  value={formData.fechaNac}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
-                  required
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento</label>
+              <input
+                type="date"
+                name="fechaNac"
+                value={formData.fechaNac}
+                onChange={handleChange}
+                className={`w-full px-3 py-2 rounded-lg border ${
+                  edadError ? 'border-red-500' : 'border-gray-200'
+                } focus:ring-2 ${
+                  edadError ? 'focus:ring-red-100' : 'focus:ring-blue-100'
+                } transition-all duration-200`}
+                required
+                max={new Date().toISOString().split('T')[0]} // Evita fechas futuras
+              />
+              {edadError && (
+                <p className="mt-1 text-sm text-red-600">{edadError}</p>
+              )}
+            </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
                 <input
@@ -243,6 +311,7 @@ const FormPersona = ({
                   name="direccion"
                   value={formData.direccion}
                   onChange={handleChange}
+                  maxLength={50}
                   className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
                   required
                 />
@@ -259,8 +328,9 @@ const FormPersona = ({
                     name="sueldo"
                     value={formData.sueldo}
                     onChange={handleChange}
+                    maxLength={20}
                     className="w-full pl-7 pr-3 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
-                    min="0"
+                    placeholder='0'
                     required
                   />
                 </div>
@@ -348,11 +418,11 @@ const FormPersona = ({
                             <option value="SATURDAY">Sábado</option>
                             <option value="SUNDAY">Domingo</option>
                           </select>
-                                                  </div>
+                        </div>
                             
-                                                  <div>
-                                                    <label className="block text-xs text-gray-600 mb-1">Turno</label>
-                                                    <select
+                        <div>
+                          <label className="block text-xs text-gray-600 mb-1">Turno</label>
+                          <select
                             value={disp.cubreTurno}
                             onChange={(e) => handleDisponibilidadChange(index, 'cubreTurno', e.target.value)}
                             className="w-full px-2 py-1.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"

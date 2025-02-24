@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getDatos, postDatos } from '../api/crud';
 import Notification from '../components/Notification';
-import { Stethoscope, UserPlus, Calendar, Clock, ChevronRight, ChevronLeft, Check, User, Mail, Phone, MapPin, FileCheck, CalendarCheck, Package, DollarSign, CheckCircle, AlertCircle, FileText, Sparkles, IdCard } from 'lucide-react';
+import { Stethoscope, UserPlus, Calendar, Clock, ChevronRight, ChevronLeft, Check, User, Mail, Phone, MapPin, FileCheck, CalendarCheck, Package, DollarSign, CheckCircle, AlertCircle, FileText, Sparkles, IdCard, CheckCheck, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StepIndicator from '../components/StepIndicator';
 import EmptyState from '../components/EmptyState';
@@ -43,8 +43,7 @@ const Consultas = () => {
   const getAvailableDates = (year, month) => {
     const today = new Date();
     const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth(); // 0-indexado
-    // Si el mes/año seleccionado es del pasado, devolver vacío
+    const currentMonth = today.getMonth();
     if (year < currentYear || (year === currentYear && month < currentMonth)) {
       return [];
     }
@@ -54,16 +53,13 @@ const Consultas = () => {
     }
     const lastDay = new Date(year, month + 1, 0).getDate();
     let dates = [];
-    // Por defecto, se consideran lunes a viernes
     let workingDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
-    // Si se selecciona un médico, se usa su disponibilidad
     const doctor = medicos.find(m => m.id === Number(formData.medicoId));
     if (doctor && doctor.disponibilidades && doctor.disponibilidades.length > 0) {
       workingDays = doctor.disponibilidades.map(d => d.diaSemana.toUpperCase());
     }
     for (let d = startDay; d <= lastDay; d++) {
       const date = new Date(year, month, d);
-      // Obtenemos el día de la semana en mayúsculas (ej. "MONDAY")
       const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
       if (workingDays.includes(dayName)) {
         dates.push(date.toISOString().split('T')[0]);
@@ -73,7 +69,6 @@ const Consultas = () => {
   };
 
   
-
   const defaultTimeSlots = [
     "08:00:00", "08:30:00", "09:00:00", "09:30:00",
     "10:00:00", "10:30:00", "11:00:00", "18:30:00"
@@ -581,7 +576,6 @@ const Consultas = () => {
               )
             )}
 
-
             {step === 2 && (
                 <section className="w-full h-full relative mx-auto">
                   <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
@@ -843,14 +837,32 @@ const Consultas = () => {
                       </p>
                     </div>
 
-                    <div className="bg-gray-50 rounded-lg p-4 md:col-span-2">
+                    <div className="bg-gray-50 rounded-lg p-4">
                       <h3 className="text-sm font-medium text-gray-500 mb-2">Paciente</h3>
                       <p className="text-gray-900 flex items-center gap-2 text-lg">
                         <User className="w-5 h-5 text-blue-500" />
                         {paciente ? `${paciente.nombre} ${paciente.apellido}` : (newPacienteData.nombre ? `${newPacienteData.nombre} ${newPacienteData.apellido}` : "-")}
                       </p>
                     </div>
+                    
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h3 className="text-sm font-medium text-gray-500 mb-2">Obra social</h3>
+                      <p className="text-gray-900 flex items-center gap-2 text-lg">
+                        
+                        {paciente.tieneObraSocial ? <CheckCheck className="w-5 h-5 text-green-500" /> : <X className="w-5 h-5 text-red-500" />}
+                        {paciente.tieneObraSocial ? 'Tiene obra social' : 'No cuenta con obra social'}
+                      </p>
+                    </div>
                   </div>
+
+                  <footer>
+                    <h3 className='text-gray-900 flex items-center gap-2 text-2xl'>Precio del {selectedPaquete ? 'Paquete' : 'Servicio'}:</h3>
+                    <p className="text-gray-900 flex items-center gap-2 text-lg"> 
+                      {selectedPaquete 
+                      ? selectedPaquete.precio 
+                      : (servicios.find(s => s.codigo === Number(formData.servicioMedicoCodigo))?.precio || "-")} 
+                    </p>
+                  </footer>
                 </motion.div>
 
                 <NavigationButtons

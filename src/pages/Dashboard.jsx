@@ -225,7 +225,7 @@ const Dashboard = () => {
                       exit={{ opacity: 0, y: -10 }}
                       className="bg-white shadow-sm rounded-lg p-4 border border-gray-100"
                     >
-                      <h4 className="text-lg font-bold text-gray-800 mb-2">{paquete.nombre}</h4>
+                      <h4 className="text-lg font-bold text-gray-800 mb-2 w-80 truncate">{paquete.nombre}</h4>
                       <p className="text-gray-600 text-sm">Tipo: {paquete.tipoServicio}</p>
                       <p className="text-gray-600 text-sm mt-2">
                         Precio: <span className="font-bold text-blue-600">${paquete.precio}</span>
@@ -262,9 +262,9 @@ const Dashboard = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg w-full"
                 >
-                  <span className="text-gray-700">{servicio.nombre}</span>
+                  <span className="text-gray-700 w-80 truncate">{servicio.nombre}</span>
                   <span className="text-sm font-semibold text-gray-700">${servicio.precio}</span>
                 </motion.div>
               ))}

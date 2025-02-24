@@ -29,6 +29,7 @@ const EditableCardService = ({ servicioData, setServicioData, onCancel, onSubmit
               type="text"
               name="nombre"
               value={servicioData.nombre}
+              maxLength={50}
               onChange={handleChange}
               className="flex-1 text-lg w-full font-semibold text-gray-800 bg-transparent border-0 focus:ring-0 outline-none"
             />
@@ -48,6 +49,7 @@ const EditableCardService = ({ servicioData, setServicioData, onCancel, onSubmit
                 name="descripcion"
                 value={servicioData.descripcion}
                 onChange={handleChange}
+                maxLength={50}
                 className="w-full text-base text-gray-600 bg-transparent border-0 focus:ring-0 outline-none resize-none line-clamp-2"
                 rows={2}
               />
@@ -61,6 +63,7 @@ const EditableCardService = ({ servicioData, setServicioData, onCancel, onSubmit
                   name="precio"
                   value={servicioData.precio}
                   onChange={handleChange}
+                  maxLength={20}
                   className="w-24 text-xl font-semibold text-slate-600 bg-transparent border-0 focus:ring-0 outline-none"
                 />
               </div>

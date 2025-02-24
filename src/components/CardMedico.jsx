@@ -58,30 +58,30 @@ const CardMedico = ({ dataMedico, onEdit, onDelete }) => {
                 <span>{getInitials(dataMedico.nombre, dataMedico.apellido)}</span>
             </motion.div>
 
-            <div className="flex-1">
-                <h2 className="text-lg font-semibold text-gray-800">
-                    {dataMedico.nombre} {dataMedico.apellido}
-                </h2>
-                <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium mt-1 bg-slate-100 text-slate-600`}>
-                  {dataMedico.especialidad.nombre}
-                </div>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-lg font-semibold text-gray-800 truncate max-w-[160px]">
+                {dataMedico.nombre} {dataMedico.apellido}
+              </h2>
+              <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium mt-1 bg-slate-100 text-slate-600 truncate max-w-[160px]`}>
+                {dataMedico.especialidad.nombre}
+              </div>
             </div>
         </header>
 
-        <div className="grid grid-cols-2 divide-x border-t">
-                <div className="p-4 flex items-center gap-2">
+        <div className="grid grid-cols-2 divide-x border-t h-20">
+          <div className="p-4 flex items-center gap-2 h-full">
                     <User size={18} className="text-gray-400" />
                     <div>
                         <p className="text-sm text-gray-500">Pacientes</p>
-                        <p className="font-semibold text-gray-800">12</p>
+                        <p className="font-semibold text-gray-800 w-20 truncate">12</p>
                     </div>
                 </div>
                 
-                <div className="p-4 flex items-center gap-2">
+                <div className="p-4 flex items-center gap-2 h-full ">
                     <DollarSign size={18} className="text-gray-400" />
                     <div>
                         <p className="text-sm text-gray-500">Sueldo</p>
-                        <p className="font-semibold text-gray-800">
+                        <p className="font-semibold text-gray-800 w-20 truncate">
                         ${dataMedico.sueldo.toLocaleString()}
                         </p>
                     </div>

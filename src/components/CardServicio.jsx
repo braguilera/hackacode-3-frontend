@@ -54,11 +54,11 @@ const CardServicio = ({ dataServicio, onEdit, onDelete }) => {
 
             {/* Principal Container */}
             <article className="pt-4 px-4 pb-2 flex flex-col justify-between h-full">
-                <header className='w-full flex flex-col items-start gap-2'>
-                    <h2 className={`text-xl w-auto font-semibold text-gray-800 ${colors.bg} ${colors.text} px-3 py-1 rounded-full`}>
+                <header className='flex flex-col items-start gap-2 w-56'>
+                    <h2 className={`text-xl font-semibold w-full truncate text-gray-800 ${colors.bg} ${colors.text} px-3 py-1 rounded-full`}>
                         {dataServicio.nombre}
                     </h2>
-                    <p className="text-base text-gray-600 line-clamp-2">{dataServicio.descripcion}</p>
+                    <p className="text-base w-full text-gray-600 truncate">{dataServicio.descripcion}</p>
                 </header>
                 
                 <footer className="flex items-center justify-between mt-2">
