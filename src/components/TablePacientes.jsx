@@ -21,6 +21,7 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
   const [showEditForm, setShowEditForm] = useState(false);
   const [pacienteToEdit, setPacienteToEdit] = useState(null);
   const [selectedToDelete, setSelectedToDelete] = useState(null);
+  const [showEditConfirm, setShowEditConfirm] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [messageNotification, setMessageNotification] = useState(null);
 
@@ -102,17 +103,23 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
   return (
     <div className="p-4 w-full h-full bg-white rounded-3xl shadow-sm flex flex-col">
 
-{pacienteToEdit && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <PopUpConfirmation 
-            isOpen={true}
-            onConfirm={handleEditConfirm}
-            onCancel={() => setPacienteToEdit(null)}
-            itemId={pacienteToEdit.id}
-            isDelete={false}
-          />
-        </div>
-      )}
+    {showEditConfirm && pacienteToEdit && (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <PopUpConfirmation 
+          isOpen={true}
+          onConfirm={() => {
+            handleEditConfirm();
+            setShowEditConfirm(false);
+          }}
+          onCancel={() => {
+            setShowEditConfirm(false);
+            setPacienteToEdit(null);
+          }}
+          itemId={pacienteToEdit.id}
+          isDelete={false}
+        />
+      </div>
+    )}
 
       {selectedToDelete && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
@@ -234,23 +241,25 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
                         <td className="w-24 px-6 py-4">
                           <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <motion.button
-          onClick={(e) => {
-            e.stopPropagation();
-            setPacienteToEdit(paciente);
-            setShowEditForm(true);
-          }}
-        >
-          <Edit3 size={16} />
-        </motion.button>
+                            whileHover={{ scale: 1.1 }}
+                            className="p-1.5 rounded-full bg-white hover:bg-gray-50 text-gray-600 shadow-sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPacienteToEdit(paciente);
+                              setShowEditForm(true);
+                            }}
+                          >
+                            <Edit3 size={16} />
+                          </motion.button>
 
-        <motion.button
-          onClick={(e) => {
-            e.stopPropagation();
-            setSelectedToDelete(paciente);
-          }}
-        >
-          <Trash2 size={16} />
-        </motion.button>
+                          <motion.button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedToDelete(paciente);
+                            }}
+                          >
+                            <Trash2 size={16} />
+                          </motion.button>
                             <ChevronRight size={16} className="text-gray-400 ml-2" />
                           </div>
                         </td>
@@ -293,6 +302,7 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
             onSubmit={(formData) => {
               setPacienteToEdit(prev => ({ ...prev, formData }));
               setShowEditForm(false);
+              setShowEditConfirm(true);
             }}
             initialData={pacienteToEdit}
             isEditing={true}
