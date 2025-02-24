@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Lock, Briefcase, Mail, ArrowRight } from 'lucide-react';
+import { User, Lock, Briefcase, Mail, ArrowRight, EyeOff, Eye, UserPlus } from 'lucide-react';
 import { postDatos } from '../api/crud';
 
 const Registro = () => {
+    const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -62,7 +63,7 @@ const Registro = () => {
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
         <header className="text-center mb-8">
           <div className="mx-auto bg-blue-100 w-fit p-4 rounded-full mb-4">
-            <Briefcase className="w-8 h-8 text-blue-600" />
+            <UserPlus className="w-8 h-8 text-blue-600" />
           </div>
           <h1 className="text-2xl font-bold text-gray-800 mb-2">Crear cuenta nueva</h1>
           <p className="text-gray-600">Registra nuevos usuarios para el sistema</p>
@@ -93,13 +94,24 @@ const Registro = () => {
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
                 required
               />
+                <button
+                      type='button'
+                      onClick={() => setShowPassword(!showPassword)}
+                      className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-500 transition-colors'
+                    >
+                      {showPassword ? (
+                        <EyeOff className='w-5 h-5' />
+                      ) : (
+                        <Eye className='w-5 h-5' />
+                      )}
+                    </button>
             </div>
           </div>
 

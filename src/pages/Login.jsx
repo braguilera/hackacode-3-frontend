@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Contexto from '../contexto/Contexto';
 import { useNavigate } from 'react-router-dom';
-import { User, Lock, LogIn, Stethoscope, Users, ClipboardList, Activity } from 'lucide-react'; 
+import { User, Lock, LogIn, Stethoscope, Users, ClipboardList, Activity, EyeOff, Eye } from 'lucide-react'; 
 import clinicaSoft from '../assets/iconos/clinicaSoftLogo.svg';
 import {postDatos } from '../api/crud';
 
@@ -11,6 +11,7 @@ const Login = () => {
 
   const navegacion = useNavigate();
   const [usuario, setUsuario] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [rol, setRol] = useState('');
   const [userDates, setUserDates] = useState(
@@ -71,7 +72,7 @@ const Login = () => {
       setIsExiting(true);
       setTimeout(() => {
           setLogeado(true);
-          navegacion('/dashboard');
+          navegacion('/');
         }, 500); 
     } catch (error) {
       console.error(error.message);
@@ -164,15 +165,26 @@ const Login = () => {
                       className='w-full focus:outline-none'
                     />
                   </article>
-                  <article className='flex items-center border border-gray-200 rounded-lg p-3'>
+                  <article className='flex items-center border border-gray-200 rounded-lg p-3 relative'>
                     <Lock className='text-gray-400 mr-2' />
                     <input
-                      type='password'
+                      type={showPassword ? 'text' : 'password'}
                       placeholder='Contraseña'
                       value={userDates.password}
-                      onChange={(e) => setUserDates(prev => ({ ...prev, password:e.target.value}))}
-                      className='w-full focus:outline-none'
+                      onChange={(e) => setUserDates(prev => ({ ...prev, password: e.target.value }))}
+                      className='w-full focus:outline-none pr-8'
                     />
+                    <button
+                      type='button'
+                      onClick={() => setShowPassword(!showPassword)}
+                      className='absolute right-3 text-gray-400 hover:text-blue-500 transition-colors'
+                    >
+                      {showPassword ? (
+                        <EyeOff className='w-5 h-5' />
+                      ) : (
+                        <Eye className='w-5 h-5' />
+                      )}
+                    </button>
                   </article>
                   <button
                     onClick={manejarLogeo}
