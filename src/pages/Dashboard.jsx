@@ -108,12 +108,23 @@ const Dashboard = () => {
     return d.getMonth() + 1 === today.getMonth() + 1 && d.getFullYear() === today.getFullYear();
   });
 
+  const fetchPagos = async () =>{
+    console.log('pago:');
+    try {
+      const data = await getDatos('/api/pagos/servicio/45');
+      console.log('pago:',data);
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
   return (
     <motion.main
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="w-full p-6 bg-gray-50 h-full space-y-8"
     >
+      <button onClick={()=> fetchPagos}>xddd</button>
       <motion.header 
         initial={{ y: -20 }}
         animate={{ y: 0 }}
@@ -164,7 +175,7 @@ const Dashboard = () => {
           </div>
         </motion.header>
 
-        <motion.body
+        <motion.article
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
@@ -187,7 +198,7 @@ const Dashboard = () => {
               </motion.section>
             ))}
           </motion.article>
-        </motion.body>
+        </motion.article>
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -200,7 +211,7 @@ const Dashboard = () => {
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Package className="w-5 h-5 text-purple-600"/> Paquetes Activos
           </h3>
-          <body className="space-y-4">
+          <section className="space-y-4">
             {paquetes.filter(p => p.activo).length > 0 ? (
               <section className="grid grid-cols-1 gap-4">
                 <AnimatePresence>
@@ -229,7 +240,7 @@ const Dashboard = () => {
                 No hay paquetes disponibles
               </div>
             )}
-          </body>
+          </section>
         </motion.article>
 
         {/* Popular Services */}

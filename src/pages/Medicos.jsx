@@ -322,7 +322,7 @@ const Medicos = () => {
       )}
       
       {/* Main Content */}
-      <body className='flex gap-6 h-full'>
+      <article className='flex gap-6 h-full'>
         {/* Médicos Section */}
         <section className='flex-1 flex flex-col h-full  pl-6 '>
           <header className='flex items-center justify-between mb-6'>
@@ -607,7 +607,7 @@ const Medicos = () => {
             }
           </div>
         </section>
-      </body>
+      </article>
 
       {/* Modal Form */}
       {showForm && (

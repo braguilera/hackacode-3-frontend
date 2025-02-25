@@ -394,7 +394,7 @@ const FormPersona = ({ tipo = 'paciente', onClose, onSubmit, initialData, isEdit
                   </motion.button>
                 </header>
   
-                <body className="space-y-3 max-h-[280px] overflow-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 pr-2 pb-6">
+                <section className="space-y-3 max-h-[280px] overflow-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 pr-2 pb-6">
                   {disponibilidades.map((disp, index) => (
                     <motion.article
                       initial={{ opacity: 0, y: 10 }}
@@ -470,7 +470,7 @@ const FormPersona = ({ tipo = 'paciente', onClose, onSubmit, initialData, isEdit
 
                     </motion.article>
                   ))}
-                </body>
+                </section>
               </main>
             </section>
           )}

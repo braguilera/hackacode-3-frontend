@@ -32,7 +32,7 @@ const StepIndicator = ({ currentStep, totalSteps }) => {
             {index + 1}
           </motion.header>
           {index < totalSteps - 1 && (
-            <body className="w-16 h-0.5 bg-gray-200 relative">
+            <article className="w-16 h-0.5 bg-gray-200 relative">
               <motion.article
                 initial={
                   direction === 'forward' && index === currentStep - 1
@@ -51,7 +51,7 @@ const StepIndicator = ({ currentStep, totalSteps }) => {
                 transition={{ duration: 0.3 }}
                 className="h-full bg-blue-500 absolute top-0 left-0"
               />
-            </body>
+            </article>
           )}
         </article>
       ))}

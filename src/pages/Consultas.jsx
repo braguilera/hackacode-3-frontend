@@ -293,7 +293,7 @@ const Consultas = () => {
         <StepIndicator currentStep={step} totalSteps={4} />
   
         <AnimatePresence mode="wait">
-          <motion.body
+          <motion.article
             key={step}
             {...fadeInUp}
             className="bg-white rounded-xl shadow-lg p-6 w-4/5 space-y-6 h-4/5"
@@ -938,7 +938,7 @@ const Consultas = () => {
               </motion.section>
             )}
 
-          </motion.body>
+          </motion.article>
         </AnimatePresence>
       <Notification
         message={messageNotification}

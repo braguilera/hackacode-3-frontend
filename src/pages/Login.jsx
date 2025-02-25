@@ -85,7 +85,6 @@ const Login = () => {
     startInterval(); 
   };
   
-  console.log(rol)
 
   return (
     <section className='flex'>

@@ -60,7 +60,7 @@ const Registro = () => {
       animate={{ opacity: 1, y: 0 }}
       className="h-full w-full flex items-center justify-center p-4"
     >
-      <body className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+      <article className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
         <header className="text-center mb-8">
           <div className="mx-auto bg-blue-100 w-fit p-4 rounded-full mb-4">
             <UserPlus className="w-8 h-8 text-blue-600" />
@@ -163,7 +163,7 @@ const Registro = () => {
             )}
           </motion.button>
         </form>
-      </body>
+      </article>
     </motion.main>
   );
 };

@@ -185,7 +185,7 @@ const AgendaMedica = () => {
               <X size={20} />
             </button>
           </header>
-          <body className="p-6">
+          <section className="p-6">
             {consultasDetalladas.length === 0 ? (
               <p className="text-center py-8 text-gray-500">
                 No hay consultas programadas para este día
@@ -257,7 +257,7 @@ const AgendaMedica = () => {
                 </motion.div>
               ))
             )}
-          </body>
+          </section>
         </motion.article>
       </motion.main>
     )}
@@ -349,7 +349,7 @@ const AgendaMedica = () => {
           ))}
         </aside>
 
-        <body className="grid grid-cols-7 gap-4">
+        <article className="grid grid-cols-7 gap-4">
           {daysInMonth.map(day => {
             const adjustedDay = addDays(day, 0);
             const adjustedDayKey = format(adjustedDay, 'yyyy-MM-dd');
@@ -393,7 +393,7 @@ const AgendaMedica = () => {
               </motion.button>
             );
           })}
-        </body>
+        </article>
       </section>
       
       {/* Modal for Day Details */}

@@ -83,7 +83,6 @@ const Servicios = () => {
       const serviceInPackage = async () => {
         try {
           const data = await getDatos(`/api/servicios/paquetes?servicioIndividualId=${selecteServicioToDelete.codigo}`, 'Error cargando medicos');
-          console.log(selecteServicioToDelete)
           setPackageWithService(data);
         } catch (err) {
           setError(err.message);
@@ -274,7 +273,6 @@ const Servicios = () => {
       };
 
       const confirmSubmitPaqueteEdit = async () => {
-        console.log(selectedPaqueteToEdit);
         try {
           const payload = {
             nombre: selectedPaqueteToEdit.nombre,
@@ -327,7 +325,7 @@ const Servicios = () => {
     <main className='w-full h-full flex flex-col gap-6 p-6 '>
 
       {/* Main Content */}
-      <body className='flex gap-6 h-full'>
+      <article className='flex gap-6 h-full'>
 
 
       {selecteServicioToDelete && (
@@ -795,7 +793,7 @@ const Servicios = () => {
             
           </article>
         </section>
-      </body>
+      </article>
       <Notification
         message={messageNotification}
         isVisible={showNotification}

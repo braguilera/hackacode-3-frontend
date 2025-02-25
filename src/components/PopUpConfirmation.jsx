@@ -47,7 +47,7 @@ const PopUpConfirmation = ({ isOpen, onConfirm, onCancel, itemId, isDelete = tru
           className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl border border-gray-100"
           onClick={e => e.stopPropagation()}
         >
-          <body className="flex flex-col items-center text-center gap-4">
+          <article className="flex flex-col items-center text-center gap-4">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1, rotate: 360 }}
@@ -127,7 +127,7 @@ const PopUpConfirmation = ({ isOpen, onConfirm, onCancel, itemId, isDelete = tru
                 Cancelar
               </motion.button>
             </footer>
-          </body>
+          </article>
         </motion.section>
       </motion.main>
     </AnimatePresence>

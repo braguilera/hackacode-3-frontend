@@ -170,7 +170,7 @@ const DoctorDetails = ({ isOpen, onClose, doctor }) => {
                   </span>
                 </header>
                 
-                <body className="space-y-3">
+                <section className="space-y-3">
                   <header className="flex items-center gap-2 text-gray-600">
                     <CalendarDays className="h-4 w-4" />
                     <span>{new Date(consulta.fecha).toLocaleDateString()}</span>
@@ -195,7 +195,7 @@ const DoctorDetails = ({ isOpen, onClose, doctor }) => {
                     <DollarSign className="w-4 h-4" />
                     <span>{consulta.servicioMedico.precio}</span>
                   </footer>
-                </body>
+                </section>
               </main>
             ))}
           </article>

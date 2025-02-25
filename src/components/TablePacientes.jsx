@@ -156,7 +156,7 @@ const TablePacientes = ({ consultas, refreshKey }) => {
         </header>
 
         {/* Table Container */}
-        <body className="flex-1 flex flex-col">
+        <section className="flex-1 flex flex-col">
           <article className="rounded-xl border border-gray-100 flex-1 h-full">
             <main className="h-auto">
               <table className="w-full h-full table-fixed">
@@ -275,7 +275,7 @@ const TablePacientes = ({ consultas, refreshKey }) => {
               </table>
             </main>
           </article>
-        </body>
+        </section>
 
         {/* Pagination */}
         {(filteredPacientes.length > itemsPerPage && !loading) && (
