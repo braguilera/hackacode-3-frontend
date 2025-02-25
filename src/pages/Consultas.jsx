@@ -26,7 +26,9 @@ const Consultas = () => {
     servicioMedicoCodigo: "",
     fecha: "",
     hora: "",
-    estado: "pendiente"
+    estado: "pendiente",
+    metodoPago: "tarjeta",
+    esPagado: true
   });
   const [newPacienteData, setNewPacienteData] = useState({
     nombre: "",
@@ -261,6 +263,7 @@ const Consultas = () => {
       if (selectedPaquete) {
         consultaData.servicioMedicoCodigo = selectedPaquete.codigo;
       }
+      console.log(consultaData)
       await postDatos('/api/consultas', consultaData, 'Error creando consulta');
       setMessageNotification({
         type: 'success',

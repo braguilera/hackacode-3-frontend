@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User,Stethoscope,Calendar,DollarSign,Package,Activity,BriefcaseMedical,HeartPulse} from 'lucide-react';
+import { User, Stethoscope, Calendar, DollarSign, Package, Activity, HeartPulse } from 'lucide-react';
 import { getDatos } from '../api/crud';
-import { isSameDay } from 'date-fns';
+import { isSameDay, format } from 'date-fns';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
 
 const Dashboard = () => {
   const [medicos, setMedicos] = useState([]);
@@ -10,9 +20,14 @@ const Dashboard = () => {
   const [paquetes, setPaquetes] = useState([]);
   const [consultas, setConsultas] = useState([]);
   const [pacientes, setPacientes] = useState([]);
-  const [especialidades, setEspecialidades] = useState([]);
+  const [totalEarnings, setTotalEarnings] = useState(0);
+  const [monthlyEarnings, setMonthlyEarnings] = useState([]);
+  const [dailyEarnings, setDailyEarnings] = useState([]);
+  const [monthlyYear, setMonthlyYear] = useState(new Date().getFullYear());
+  const [monthlyMonth, setMonthlyMonth] = useState(new Date().getMonth() + 1);
+  const [dailyDate, setDailyDate] = useState(new Date());
 
-  // Fetchs
+  // Feneral Fetchs
   const fetchMedicos = async () => {
     try {
       const data = await getDatos('/api/medicos', 'Error cargando medicos');
@@ -58,27 +73,76 @@ const Dashboard = () => {
     }
   };
 
-  const fetchEspecialidades = async () => {
+  // Total Earnings
+  const fetchTotalEarnings = async () => {
     try {
-      const data = await getDatos('/api/especialidades', 'Error cargando especialidades');
-      setEspecialidades(data);
+      const data = await getDatos('/api/pagos/ganancias', 'Error obteniendo ganancias totales');
+      console.log(data)
+      setTotalEarnings(data);
     } catch (err) {
       console.error(err.message);
     }
   };
 
-  
+  // Monthly Earnings
+  const fetchMonthlyEarnings = async () => {
+    const allServices = [...servicios, ...paquetes];
+    const requests = allServices.map(async (service) => {
+      const url = `/api/pagos/servicio/${service.codigo}?anio=${monthlyYear}&mes=${monthlyMonth}`;
+      try {
+        const pagos = await getDatos(url, `Error al cargar pagos para ${service.nombre}`);
+        const total = pagos.reduce((sum, pago) => sum + (pago.monto || 0), 0);
+        return { name: service.nombre, earnings: total };
+      } catch (err) {
+        return { name: service.nombre, earnings: 0 };
+      }
+    });
+    const results = await Promise.all(requests);
+    setMonthlyEarnings(results);
+  };
+
+  // Daily Earnings
+  const fetchDailyEarnings = async () => {
+    const allServices = [...servicios, ...paquetes];
+    const formattedDate = format(dailyDate, 'yyyy-MM-dd');
+    const requests = allServices.map(async (service) => {
+      const url = `/api/pagos/servicio/${service.codigo}?fecha=${formattedDate}`;
+      try {
+        const pagos = await getDatos(url, `Error al cargar pagos para ${service.nombre}`);
+        const total = pagos.reduce((sum, pago) => sum + (pago.monto || 0), 0);
+        return { name: service.nombre, earnings: total };
+      } catch (err) {
+        return { name: service.nombre, earnings: 0 };
+      }
+    });
+    const results = await Promise.all(requests);
+    setDailyEarnings(results);
+  };
+
   useEffect(() => {
     fetchMedicos();
     fetchServicios();
     fetchPaquetes();
     fetchConsultas();
     fetchPacientes();
-    fetchEspecialidades();
+    fetchTotalEarnings();
   }, []);
 
-  /* Component for stat's cards */
 
+  useEffect(() => {
+    if (servicios.length || paquetes.length) {
+      fetchMonthlyEarnings();
+    }
+  }, [monthlyYear, monthlyMonth, servicios, paquetes]);
+
+
+  useEffect(() => {
+    if (servicios.length || paquetes.length) {
+      fetchDailyEarnings();
+    }
+  }, [dailyDate, servicios, paquetes]);
+
+  // Stadistics cards
   const StatCard = ({ title, value, icon: Icon, color }) => (
     <motion.main
       initial={{ opacity: 0, y: 20 }}
@@ -98,25 +162,6 @@ const Dashboard = () => {
     </motion.main>
   );
 
-  const gananciasTotales = consultas.reduce((acc, consulta) => {
-    return acc + (consulta.servicioMedico?.precio || 0);
-  }, 0);
-
-  const today = new Date();
-  const consultasMes = consultas.filter(consulta => {
-    const d = new Date(consulta.fecha);
-    return d.getMonth() + 1 === today.getMonth() + 1 && d.getFullYear() === today.getFullYear();
-  });
-
-  const fetchPagos = async () =>{
-    console.log('pago:');
-    try {
-      const data = await getDatos('/api/pagos/servicio/45');
-      console.log('pago:',data);
-    } catch (err) {
-      console.error(err.message);
-    }
-  }
 
   return (
     <motion.main
@@ -124,7 +169,6 @@ const Dashboard = () => {
       animate={{ opacity: 1 }}
       className="w-full p-6 bg-gray-50 h-full space-y-8"
     >
-      <button onClick={()=> fetchPagos}>xddd</button>
       <motion.header 
         initial={{ y: -20 }}
         animate={{ y: 0 }}
@@ -137,7 +181,7 @@ const Dashboard = () => {
       <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <StatCard
           title="Ganancias Totales"
-          value={`$${gananciasTotales.toFixed(2)}`}
+          value={`$${totalEarnings}`}
           icon={DollarSign}
           color="bg-blue-100 text-blue-600"
         />
@@ -155,54 +199,115 @@ const Dashboard = () => {
         />
         <StatCard
           title="Consultas este Mes"
-          value={consultasMes.length}
+          value={consultas.filter(consulta => {
+            const d = new Date(consulta.fecha);
+            const today = new Date();
+            return d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
+          }).length}
           icon={Calendar}
           color="bg-orange-100 text-orange-600"
         />
       </section>
 
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <motion.header
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100"
-        >
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-blue-600"/> Ganancias Mensuales
-          </h3>
-          <div className="h-64 flex items-center justify-center text-gray-400">
-            Gráfico pendiente
-          </div>
-        </motion.header>
-
+      {/* Graphs: earnings Monthly and Daily */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Monthly */}
         <motion.article
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
         >
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <BriefcaseMedical className="w-5 h-5 text-green-600"/> Especialidades
-          </h3>
-          <motion.article layout className="space-y-4">
-            {especialidades.map(especialidad => (
-              <motion.section
-                key={especialidad.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+          <header className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <Activity className="w-5 h-5 text-blue-600"/> Ganancias Mensuales
+            </h3>
+          </header>
+          <div className="flex items-center gap-4 mb-4">
+            <div>
+              <label className="text-sm text-gray-600">Mes:</label>
+              <select
+                value={monthlyMonth}
+                onChange={(e) => setMonthlyMonth(Number(e.target.value))}
+                className="ml-2 border border-gray-300 rounded p-1"
               >
-                <span>{especialidad.nombre}</span>
-                <span className="text-sm text-gray-500">
-                  {medicos.filter(m => m.especialidad?.id === especialidad.id).length} médicos
-                </span>
-              </motion.section>
-            ))}
-          </motion.article>
+                {Array.from({ length: 12 }, (_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="text-sm text-gray-600">Año:</label>
+              <input
+                type="number"
+                value={monthlyYear}
+                onChange={(e) => setMonthlyYear(Number(e.target.value))}
+                className="ml-2 border border-gray-300 rounded p-1 w-20"
+              />
+            </div>
+          </div>
+          <div className="w-full h-56">
+            {monthlyEarnings.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={monthlyEarnings}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="earnings" fill="#8884d8" name="Ganancias" />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-center text-gray-500">No hay datos para mostrar</p>
+            )}
+          </div>
+        </motion.article>
+
+        {/* Daily */}
+        <motion.article
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+        >
+          <header className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-blue-600"/> Ganancias Diarias
+            </h3>
+          </header>
+          <div className="flex items-center gap-4 mb-4">
+            <div>
+              <label className="text-sm text-gray-600">Fecha:</label>
+              <input
+                type="date"
+                value={format(dailyDate, 'yyyy-MM-dd')}
+                onChange={(e) => setDailyDate(new Date(e.target.value))}
+                className="ml-2 border border-gray-300 rounded p-1"
+              />
+            </div>
+          </div>
+          <div className="w-full h-64">
+            {dailyEarnings.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={dailyEarnings}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="earnings" fill="#82ca9d" name="Ganancias" />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-center text-gray-500">No hay datos para mostrar</p>
+            )}
+          </div>
         </motion.article>
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Actives Packages */}
+        {/* Active Packages */}
         <motion.article
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -270,7 +375,7 @@ const Dashboard = () => {
           </motion.section>
         </motion.article>
 
-        {/* Today Consults */}
+        {/* Today's Consults */}
         <motion.article
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

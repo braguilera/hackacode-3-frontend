@@ -6,7 +6,6 @@ import { ChevronLeft, ChevronRight, X, Clock, User, Stethoscope,Trash2} from 'lu
 import { deleteDatos, getDatos, putDatos } from '../api/crud';
 import Notification from '../components/Notification';
 
-
 const AgendaMedica = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
