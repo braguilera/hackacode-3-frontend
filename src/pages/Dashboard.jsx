@@ -77,7 +77,6 @@ const Dashboard = () => {
   const fetchTotalEarnings = async () => {
     try {
       const data = await getDatos('/api/pagos/ganancias', 'Error obteniendo ganancias totales');
-      console.log(data)
       setTotalEarnings(data);
     } catch (err) {
       console.error(err.message);
@@ -88,11 +87,10 @@ const Dashboard = () => {
   const fetchMonthlyEarnings = async () => {
     const allServices = [...servicios, ...paquetes];
     const requests = allServices.map(async (service) => {
-      const url = `/api/pagos/servicio/${service.codigo}?anio=${monthlyYear}&mes=${monthlyMonth}`;
+      const url = `/api/pagos/ganancias/servicio/${service.codigo}?mes=${monthlyMonth}&anio=${monthlyYear}`;
       try {
         const pagos = await getDatos(url, `Error al cargar pagos para ${service.nombre}`);
-        const total = pagos.reduce((sum, pago) => sum + (pago.monto || 0), 0);
-        return { name: service.nombre, earnings: total };
+        return { name: service.nombre, earnings: pagos };
       } catch (err) {
         return { name: service.nombre, earnings: 0 };
       }
@@ -106,11 +104,11 @@ const Dashboard = () => {
     const allServices = [...servicios, ...paquetes];
     const formattedDate = format(dailyDate, 'yyyy-MM-dd');
     const requests = allServices.map(async (service) => {
-      const url = `/api/pagos/servicio/${service.codigo}?fecha=${formattedDate}`;
+      const url = `/api/pagos/ganancias/servicio/${service.codigo}?fecha=${formattedDate}`;
       try {
         const pagos = await getDatos(url, `Error al cargar pagos para ${service.nombre}`);
-        const total = pagos.reduce((sum, pago) => sum + (pago.monto || 0), 0);
-        return { name: service.nombre, earnings: total };
+        console.log('pagos:',pagos)
+        return { name: service.nombre, earnings: pagos };
       } catch (err) {
         return { name: service.nombre, earnings: 0 };
       }
@@ -162,12 +160,11 @@ const Dashboard = () => {
     </motion.main>
   );
 
-
   return (
     <motion.main
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="w-full p-6 bg-gray-50 h-full space-y-8"
+      className="w-full p-4 bg-gray-50 h-full space-y-4"
     >
       <motion.header 
         initial={{ y: -20 }}
