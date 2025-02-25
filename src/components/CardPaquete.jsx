@@ -49,10 +49,10 @@ const CardPaquete = ({ dataPaquete, onEdit, onDelete }) => {
             </article>
 
             <footer className="pt-2 border-t border-gray-200">
-                <div className="flex justify-between items-center mt-2">
+                <article className="flex justify-between items-center mt-2">
                     <p className="text-sm text-gray-500">Total:</p>
                     <p className="text-lg font-bold text-indigo-600 shadow-sm">${dataPaquete.precio}</p>
-                </div>
+                </article>
             </footer>
         </motion.main>
     );

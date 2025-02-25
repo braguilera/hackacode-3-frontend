@@ -1,15 +1,15 @@
 import React from 'react';
-import { Mail, Phone, Calendar, MapPin, Award, Check, X, Package, FileText, ClipboardList, CalendarDays, Clock, CalendarX, IdCard } from 'lucide-react';
+import { Mail, Phone, Calendar, MapPin, Check, X, Package, FileText, CalendarDays, Clock, CalendarX, IdCard } from 'lucide-react';
 import SlideOverModal from './SlideOverModal';
 
 const DetailRow = ({ icon: Icon, label, value }) => (
-    <div className="flex items-center gap-3 py-3">
+    <article className="flex items-center gap-3 py-3">
         <Icon className="w-5 h-5 text-gray-400" />
-        <div>
+        <body>
             <p className="text-sm text-gray-500">{label}</p>
             <p className="text-gray-900">{value}</p>
-        </div>
-    </div>
+        </body>
+    </article>
 );
 
 const PacienteDetails = ({ isOpen, onClose, paciente, consultas, colors }) => {
@@ -24,24 +24,24 @@ const PacienteDetails = ({ isOpen, onClose, paciente, consultas, colors }) => {
         title="Detalles del Paciente"
     >
       {/* Avatar and name */}
-        <div className="flex items-center gap-4 mb-6">
-            <div className={`w-16 h-16 rounded-full flex items-center justify-center text-xl font-semibold}`}>
+        <header className="flex items-center gap-4 mb-6">
+            <section className={`w-16 h-16 rounded-full flex items-center justify-center text-xl font-semibold}`}>
                 <span className='text-black'>
                     {`${paciente.nombre.charAt(0)}${paciente.apellido.charAt(0)}`.toUpperCase()}
                 </span>
-            </div>
-            <div>
+            </section>
+            <section>
                 <h2 className="text-xl font-semibold text-gray-900">
                     {paciente.nombre} {paciente.apellido}
                 </h2>
-                <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium mt-1 ${paciente.tieneObraSocial ? 'bg-green-200 text-green-900' : 'bg-red-200 text-red-900'}`}>
+                <aside className={`inline-block px-3 py-1 rounded-full text-sm font-medium mt-1 ${paciente.tieneObraSocial ? 'bg-green-200 text-green-900' : 'bg-red-200 text-red-900'}`}>
                     {paciente.tieneObraSocial ? 'Con Obra Social' : 'Sin Obra Social'}
-                </div>
-            </div>
-        </div>
+                </aside>
+            </section>
+        </header>
 
         {/* Personal Information */}
-        <div className="space-y-1 border-t border-b py-4">
+        <section className="space-y-1 border-t border-b py-4">
             <DetailRow 
             icon={Mail} 
             label="Email" 
@@ -72,40 +72,40 @@ const PacienteDetails = ({ isOpen, onClose, paciente, consultas, colors }) => {
             label="Obra Social" 
             value={paciente.tieneObraSocial ? 'Sí' : 'No'} 
             />
-        </div>
+        </section>
 
         {/* Pacient's Medical Consultations */}
-        <div>
-            <div className="flex items-center justify-between py-4 rounded-lg">
-                <div className="flex gap-3 items-center justify-center">
+        <section>
+            <header className="flex items-center justify-between py-4 rounded-lg">
+                <aside className="flex gap-3 items-center justify-center">
                     <h3 className="text-lg font-medium text-gray-900">Consultas</h3>
-                </div>
-            </div>
+                </aside>
+            </header>
 
             {consultas.filter(consulta => consulta.pacienteId === paciente.id).length > 0 ? (
-                <div className="space-y-4">
+                <main className="space-y-4">
                 {consultas.filter(consulta => consulta.pacienteId === paciente.id).map((consulta, index) => (
-                    <div 
+                    <section 
                     key={index} 
                     className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm"
                     >
-                    <div className="flex justify-between items-start mb-3">
-                        <div className="flex items-center gap-2 text-gray-600">
-                        <CalendarDays className="h-4 w-4" />
-                        <span>{new Date(consulta.fecha).toLocaleDateString()}</span>
-                        <Clock className="h-4 w-4 ml-2" />
-                        <span>{consulta.hora.slice(0, 5)}</span>
-                        </div>
+                    <article className="flex justify-between items-start mb-3">
+                        <header className="flex items-center gap-2 text-gray-600">
+                            <CalendarDays className="h-4 w-4" />
+                            <span>{new Date(consulta.fecha).toLocaleDateString()}</span>
+                            <Clock className="h-4 w-4 ml-2" />
+                            <span>{consulta.hora.slice(0, 5)}</span>
+                        </header>
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                         consulta.estado === 'finalizado' ? 'bg-green-50 text-green-700' :
                         consulta.estado === 'pendiente' ? 'bg-yellow-50 text-yellow-700' :
                         'bg-gray-50 text-gray-700'
                         }`}>
-                        {consulta.estado}
+                            {consulta.estado}
                         </span>
-                    </div>
+                    </article>
 
-                    <div className="space-y-3">
+                    <article className="space-y-3">
                         <div className="flex items-center gap-2">
                         {consulta.servicioMedico.tipoServicio === "PAQUETE" ? (
                             <>
@@ -125,17 +125,17 @@ const PacienteDetails = ({ isOpen, onClose, paciente, consultas, colors }) => {
                         </div>
 
                         <p className="text-gray-700">{consulta.servicioMedico.nombre}</p>
-                    </div>
-                    </div>
+                    </article>
+                    </section>
                 ))}
-                </div>
+                </main>
             ) : (
                 <div className="text-center py-8 bg-white rounded-xl border border-gray-100">
                 <CalendarX className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                 <p className="text-gray-600">El paciente no tiene consultas registradas.</p>
                 </div>
             )}
-            </div>
+        </section>
     </SlideOverModal>
 );
 };

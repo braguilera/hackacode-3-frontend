@@ -3,13 +3,13 @@ import { motion } from 'framer-motion';
 
 const LoadingIndicator = ({ width, height }) => {
   return (
-    <div 
+    <main 
       className={`relative overflow-hidden bg-blue-200 rounded-lg ${width || 'w-full'} ${height || 'h-full'}`}
       style={{
         minHeight: '10px'
       }}
     >
-      <motion.div
+      <motion.article
         className="absolute inset-0"
         style={{
           background: `
@@ -32,7 +32,7 @@ const LoadingIndicator = ({ width, height }) => {
           repeat: Infinity,
         }}
       />
-    </div>
+    </main>
   );
 };
 

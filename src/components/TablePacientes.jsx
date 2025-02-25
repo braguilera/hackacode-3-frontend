@@ -10,10 +10,9 @@ import PopUpConfirmation from './PopUpConfirmation';
 import FormPersona from './FormPersona';
 import Notification from './Notification';
 
-const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
+const TablePacientes = ({ consultas, refreshKey }) => {
   const [pacientes, setPacientes] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [filterDNI, setFilterDNI] = useState('');
   const [selectedPaciente, setSelectedPaciente] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,18 +24,25 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
   const [showNotification, setShowNotification] = useState(false);
   const [messageNotification, setMessageNotification] = useState(null);
 
+  /* Obtain Pacients */
+
   const fetchPacientes = async () => {
+    setLoading(true)
     try {
       const data = await getDatos('/api/pacientes');
       setPacientes(data);
     } catch (err) {
       console.error(err.message);
+    }finally{
+      setLoading(false)
     }
   };
 
   useEffect(() => {
     fetchPacientes();
   }, [refreshKey]);
+
+  /* Handle data */
 
   const handleEditConfirm = async () => {
     try {
@@ -83,16 +89,14 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
   };
 
 
-  // Filtrar pacientes: por DNI y búsqueda global
+  // Filter per DNI
   const safePacientes = Array.isArray(pacientes) ? pacientes : [];
   const filteredPacientes = safePacientes.filter(paciente => {
     const matchDNI = paciente.dni?.startsWith(filterDNI);
-    const matchGlobal = Object.values(paciente)
-      .some(value => value?.toString().toLowerCase().includes(searchTerm.toLowerCase()));
-    return matchDNI && matchGlobal;
+    return matchDNI;
   });
 
-  // Paginación
+  // Pagination
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredPacientes.slice(indexOfFirstItem, indexOfLastItem);
@@ -101,25 +105,25 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
   const closeModal = () => setSelectedPaciente(null);
 
   return (
-    <div className="p-4 w-full h-full bg-white rounded-3xl shadow-sm flex flex-col">
+    <main className="p-4 w-full h-full bg-white rounded-3xl shadow-sm flex flex-col">
 
-    {showEditConfirm && pacienteToEdit && (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-        <PopUpConfirmation 
-          isOpen={true}
-          onConfirm={() => {
-            handleEditConfirm();
-            setShowEditConfirm(false);
-          }}
-          onCancel={() => {
-            setShowEditConfirm(false);
-            setPacienteToEdit(null);
-          }}
-          itemId={pacienteToEdit.id}
-          isDelete={false}
-        />
-      </div>
-    )}
+      {showEditConfirm && pacienteToEdit && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <PopUpConfirmation 
+            isOpen={true}
+            onConfirm={() => {
+              handleEditConfirm();
+              setShowEditConfirm(false);
+            }}
+            onCancel={() => {
+              setShowEditConfirm(false);
+              setPacienteToEdit(null);
+            }}
+            itemId={pacienteToEdit.id}
+            isDelete={false}
+          />
+        </div>
+      )}
 
       {selectedToDelete && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
@@ -138,9 +142,9 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col h-full"
       >
-        {/* Header interno de la tabla (buscador por DNI) */}
+        {/* Header with filter */}
         <header className="flex w-full justify-between items-center mb-6">
-          <div className="relative w-1/3">
+          <article className="relative w-1/3">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
             <input
               className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -148,13 +152,13 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
               value={filterDNI}
               onChange={(e) => setFilterDNI(e.target.value)}
             />
-          </div>
+          </article>
         </header>
 
-        {/* Contenedor de la tabla */}
-        <div className="flex-1 flex flex-col">
-          <div className="rounded-xl border border-gray-100 flex-1 h-full">
-            <div className="h-auto">
+        {/* Table Container */}
+        <body className="flex-1 flex flex-col">
+          <article className="rounded-xl border border-gray-100 flex-1 h-full">
+            <main className="h-auto">
               <table className="w-full h-full table-fixed">
                 <thead className="sticky top-0 bg-gray-50">
                   <tr>
@@ -180,14 +184,14 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
                         <td className="w-64 px-6 py-4 text-gray-600 truncate"><LoadingIndicator width={"w-64"} /></td>
                         <td className="w-32 px-6 py-4"><LoadingIndicator width={"w-32"} /></td>
                         <td className="w-24 px-6 py-4">
-                          <div className="flex items-center justify-end gap-2 opacity-0">
+                          <aside className="flex items-center justify-end gap-2 opacity-0">
                             <motion.button className="p-2 rounded-full hover:bg-white text-gray-600">
                               <Edit3 size={16} />
                             </motion.button>
                             <motion.button className="p-2 rounded-full hover:bg-white text-gray-600">
                               <Trash2 size={16} />
                             </motion.button>
-                          </div>
+                          </aside>
                         </td>
                       </motion.tr>
                     ))
@@ -239,43 +243,44 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
                           )}
                         </td>
                         <td className="w-24 px-6 py-4">
-                          <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            className="p-1.5 rounded-full bg-white hover:bg-gray-50 text-gray-600 shadow-sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setPacienteToEdit(paciente);
-                              setShowEditForm(true);
-                            }}
-                          >
-                            <Edit3 size={16} />
-                          </motion.button>
+                          {/* Edit and Delete Butttons */}
+                          <aside className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              className="p-1.5 rounded-full bg-white hover:bg-gray-50 text-gray-600 shadow-sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setPacienteToEdit(paciente);
+                                setShowEditForm(true);
+                              }}
+                            >
+                              <Edit3 size={16} />
+                            </motion.button>
 
-                          <motion.button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedToDelete(paciente);
-                            }}
-                          >
-                            <Trash2 size={16} />
-                          </motion.button>
+                            <motion.button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedToDelete(paciente);
+                              }}
+                            >
+                              <Trash2 size={16} />
+                            </motion.button>
                             <ChevronRight size={16} className="text-gray-400 ml-2" />
-                          </div>
+                          </aside>
                         </td>
                       </motion.tr>
                     ))
                   )}
                 </tbody>
               </table>
-            </div>
-          </div>
-        </div>
+            </main>
+          </article>
+        </body>
 
         {/* Pagination */}
         {(filteredPacientes.length > itemsPerPage && !loading) && (
-          <div className="pt-6 pb-2">
-            <div className="flex justify-center gap-2">
+          <footer className="pt-6 pb-2">
+            <article className="flex justify-center gap-2">
               {Array.from({ length: Math.ceil(filteredPacientes.length / itemsPerPage) }, (_, i) => (
                 <motion.button
                   key={i + 1}
@@ -289,13 +294,13 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
                   {i + 1}
                 </motion.button>
               ))}
-            </div>
-          </div>
+            </article>
+          </footer>
         )}
       </motion.div>
 
       {showEditForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <aside className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <FormPersona
             tipo="paciente"
             onClose={() => setShowEditForm(false)}
@@ -307,10 +312,10 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
             initialData={pacienteToEdit}
             isEditing={true}
           />
-        </div>
+        </aside>
       )}
 
-      {/* Modal de detalles (opcional) */}
+      {/* Modal */}
       {selectedPaciente && (
         <PacienteDetails
           isOpen={!!selectedPaciente}
@@ -325,7 +330,7 @@ const TablePacientes = ({ consultas, onEdit, searchTerm, refreshKey }) => {
         isVisible={showNotification}
         onClose={() => setShowNotification(false)}
       />
-    </div>
+    </main>
   );
 };
 

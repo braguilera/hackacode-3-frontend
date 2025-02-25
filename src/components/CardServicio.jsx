@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trash2, Edit3, DollarSign } from 'lucide-react';
+import { Trash2, Edit3 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const categoryColors = {
@@ -22,10 +22,6 @@ const CardServicio = ({ dataServicio, onEdit, onDelete }) => {
     const category = categoryColors.getCategory(dataServicio.nombre);
     const colors = categoryColors[category];
     
-    const cleanTitle = dataServicio.nombre
-        .replace('Consulta ', '')
-        .replace('Especializada ', '');
-
     return (
         <motion.main
             initial={{ opacity: 0, y: 20 }}

@@ -1,23 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  User,
-  Stethoscope,
-  Calendar,
-  DollarSign,
-  Package,
-  Activity,
-  BriefcaseMedical,
-  HeartPulse,
-  CheckCircle,
-  Clock,
-  UserPlus
-} from 'lucide-react';
+import { User,Stethoscope,Calendar,DollarSign,Package,Activity,BriefcaseMedical,HeartPulse} from 'lucide-react';
 import { getDatos } from '../api/crud';
 import { isSameDay } from 'date-fns';
-
-
-
 
 const Dashboard = () => {
   const [medicos, setMedicos] = useState([]);
@@ -92,23 +77,25 @@ const Dashboard = () => {
     fetchEspecialidades();
   }, []);
 
+  /* Component for stat's cards */
+
   const StatCard = ({ title, value, icon: Icon, color }) => (
-    <motion.div
+    <motion.main
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
       className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
     >
-      <div className="flex items-center justify-between">
-        <div>
+      <article className="flex items-center justify-between">
+        <header>
           <p className="text-sm text-gray-500 mb-1">{title}</p>
           <p className="text-2xl font-bold text-gray-800">{value}</p>
-        </div>
+        </header>
         <div className={`p-3 ${color} rounded-lg`}>
           <Icon className="w-6 h-6" />
         </div>
-      </div>
-    </motion.div>
+      </article>
+    </motion.main>
   );
 
   const gananciasTotales = consultas.reduce((acc, consulta) => {
@@ -164,7 +151,7 @@ const Dashboard = () => {
       </section>
 
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <motion.div
+        <motion.header
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-100"
@@ -175,9 +162,9 @@ const Dashboard = () => {
           <div className="h-64 flex items-center justify-center text-gray-400">
             Gráfico pendiente
           </div>
-        </motion.div>
+        </motion.header>
 
-        <motion.div
+        <motion.body
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
@@ -185,9 +172,9 @@ const Dashboard = () => {
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <BriefcaseMedical className="w-5 h-5 text-green-600"/> Especialidades
           </h3>
-          <motion.div layout className="space-y-4">
+          <motion.article layout className="space-y-4">
             {especialidades.map(especialidad => (
-              <motion.div
+              <motion.section
                 key={especialidad.id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -197,15 +184,15 @@ const Dashboard = () => {
                 <span className="text-sm text-gray-500">
                   {medicos.filter(m => m.especialidad?.id === especialidad.id).length} médicos
                 </span>
-              </motion.div>
+              </motion.section>
             ))}
-          </motion.div>
-        </motion.div>
+          </motion.article>
+        </motion.body>
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Paquetes Activos */}
-        <motion.div
+        {/* Actives Packages */}
+        <motion.article
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white p-6 rounded-xl h-64 overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 shadow-sm border border-gray-100"
@@ -213,9 +200,9 @@ const Dashboard = () => {
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Package className="w-5 h-5 text-purple-600"/> Paquetes Activos
           </h3>
-          <div className="space-y-4">
+          <body className="space-y-4">
             {paquetes.filter(p => p.activo).length > 0 ? (
-              <div className="grid grid-cols-1 gap-4">
+              <section className="grid grid-cols-1 gap-4">
                 <AnimatePresence>
                   {paquetes.filter(p => p.activo).map(paquete => (
                     <motion.div
@@ -236,17 +223,17 @@ const Dashboard = () => {
                     </motion.div>
                   ))}
                 </AnimatePresence>
-              </div>
+              </section>
             ) : (
               <div className="text-gray-500 text-center p-6">
                 No hay paquetes disponibles
               </div>
             )}
-          </div>
-        </motion.div>
+          </body>
+        </motion.article>
 
-        {/* Servicios Populares */}
-        <motion.div
+        {/* Popular Services */}
+        <motion.article
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white h-64 overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 p-6 rounded-xl shadow-sm border border-gray-100"
@@ -254,7 +241,7 @@ const Dashboard = () => {
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <HeartPulse className="w-5 h-5 text-red-600"/> Servicios Populares
           </h3>
-          <motion.div layout className="space-y-4">
+          <motion.section layout className="space-y-4">
             <AnimatePresence>
               {servicios.filter(s => s.activo).map(servicio => (
                 <motion.div
@@ -269,11 +256,11 @@ const Dashboard = () => {
                 </motion.div>
               ))}
             </AnimatePresence>
-          </motion.div>
-        </motion.div>
+          </motion.section>
+        </motion.article>
 
-        {/* Consultas de Hoy */}
-        <motion.div
+        {/* Today Consults */}
+        <motion.article
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white h-64 overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 p-6 rounded-xl shadow-sm border border-gray-100"
@@ -281,7 +268,7 @@ const Dashboard = () => {
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Calendar className="w-5 h-5 text-blue-600"/> Consultas de Hoy
           </h3>
-          <div className="space-y-4">
+          <section className="space-y-4">
             <AnimatePresence>
               {consultas.filter(consulta => isSameDay(new Date(consulta.fecha), new Date())).length > 0 ? (
                 consultas
@@ -316,8 +303,8 @@ const Dashboard = () => {
                 <p className="text-gray-500 text-center p-6">No hay consultas para hoy</p>
               )}
             </AnimatePresence>
-          </div>
-        </motion.div>
+          </section>
+        </motion.article>
       </section>
     </motion.main>
   );

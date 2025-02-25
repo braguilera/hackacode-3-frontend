@@ -15,10 +15,10 @@ const StepIndicator = ({ currentStep, totalSteps }) => {
   }, [currentStep]);
 
   return (
-    <div className="flex justify-center mb-8">
+    <main className="flex justify-center mb-8">
       {[...Array(totalSteps)].map((_, index) => (
-        <div key={index} className="flex items-center">
-          <motion.div
+        <article key={index} className="flex items-center">
+          <motion.header
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             className={`w-8 h-8 rounded-full flex items-center justify-center ${
@@ -30,10 +30,10 @@ const StepIndicator = ({ currentStep, totalSteps }) => {
             }`}
           >
             {index + 1}
-          </motion.div>
+          </motion.header>
           {index < totalSteps - 1 && (
-            <div className="w-16 h-0.5 bg-gray-200 relative">
-              <motion.div
+            <body className="w-16 h-0.5 bg-gray-200 relative">
+              <motion.article
                 initial={
                   direction === 'forward' && index === currentStep - 1
                     ? { width: '0%' }
@@ -51,11 +51,11 @@ const StepIndicator = ({ currentStep, totalSteps }) => {
                 transition={{ duration: 0.3 }}
                 className="h-full bg-blue-500 absolute top-0 left-0"
               />
-            </div>
+            </body>
           )}
-        </div>
+        </article>
       ))}
-    </div>
+    </main>
   );
 };
 

@@ -16,14 +16,14 @@ const Notification = ({ message, isVisible = false, onClose }) => {
   return (
     <AnimatePresence>
       {isVisible && message && (
-        <motion.div
+        <motion.main
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 50 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
           className="fixed bottom-4 right-4 z-50"
         >
-          <div className={`
+          <article className={`
             flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg
             ${message.type === 'error' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}
           `}>
@@ -41,8 +41,8 @@ const Notification = ({ message, isVisible = false, onClose }) => {
             >
               <X className="w-4 h-4" />
             </button>
-          </div>
-        </motion.div>
+          </article>
+        </motion.main>
       )}
     </AnimatePresence>
   );

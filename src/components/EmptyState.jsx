@@ -2,6 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { SearchX } from 'lucide-react';
 
+
+{/* Predefines messages */}
 const EmptyState = ({ type = 'pacientes' }) => {
   const messages = {
     pacientes: 'pacientes registrados',
@@ -14,13 +16,13 @@ const EmptyState = ({ type = 'pacientes' }) => {
   };
 
   return (
-    <motion.div
+    <motion.main
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       className="w-full h-full min-h-[200px]  p-6 flex flex-col items-center justify-center text-center gap-4"
     >
-      <motion.div
+      <motion.header
         initial={{ scale: 0 }}
         animate={{ scale: 1, rotate: 360 }}
         transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
@@ -28,9 +30,9 @@ const EmptyState = ({ type = 'pacientes' }) => {
       >
           <SearchX className="w-8 h-8 text-gray-500" />
     
-      </motion.div>
+      </motion.header>
 
-      <div className="space-y-2">
+      <section className="space-y-2">
         <motion.h3
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -50,8 +52,8 @@ const EmptyState = ({ type = 'pacientes' }) => {
             Puedes añadir nuevos {type} utilizando el botón de agregar
         </motion.p>
           }
-      </div>
-    </motion.div>
+      </section>
+    </motion.main>
   );
 };
 

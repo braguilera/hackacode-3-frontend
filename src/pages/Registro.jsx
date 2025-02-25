@@ -55,12 +55,12 @@ const Registro = () => {
   };
 
   return (
-    <motion.div 
+    <motion.main 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="h-full w-full flex items-center justify-center p-4"
     >
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+      <body className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
         <header className="text-center mb-8">
           <div className="mx-auto bg-blue-100 w-fit p-4 rounded-full mb-4">
             <UserPlus className="w-8 h-8 text-blue-600" />
@@ -70,11 +70,11 @@ const Registro = () => {
         </header>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
+          <section>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Nombre de usuario
             </label>
-            <div className="relative">
+            <footer className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
@@ -84,14 +84,14 @@ const Registro = () => {
                 className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
                 required
               />
-            </div>
-          </div>
+            </footer>
+          </section>
 
-          <div>
+          <section>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Contraseña
             </label>
-            <div className="relative">
+            <footer className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -112,14 +112,14 @@ const Registro = () => {
                         <Eye className='w-5 h-5' />
                       )}
                     </button>
-            </div>
-          </div>
+            </footer>
+          </section>
 
-          <div>
+          <section>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Rol del usuario
             </label>
-            <div className="relative">
+            <footer className="relative">
               <select
                 name="role"
                 value={formData.roleRequest.roleListName[0]}
@@ -133,17 +133,17 @@ const Registro = () => {
                 ))}
               </select>
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            </div>
-          </div>
+            </footer>
+          </section>
 
           {mensaje && (
-            <div className={`p-3 rounded-lg text-sm ${
+            <aside className={`p-3 rounded-lg text-sm ${
               mensaje.tipo === 'exito' 
                 ? 'bg-green-100 text-green-700' 
                 : 'bg-red-100 text-red-700'
             }`}>
               {mensaje.texto}
-            </div>
+            </aside>
           )}
 
           <motion.button
@@ -163,8 +163,8 @@ const Registro = () => {
             )}
           </motion.button>
         </form>
-      </div>
-    </motion.div>
+      </body>
+    </motion.main>
   );
 };
 

@@ -32,14 +32,14 @@ const PopUpConfirmation = ({ isOpen, onConfirm, onCancel, itemId, isDelete = tru
 
   return (
     <AnimatePresence>
-      <motion.div
+      <motion.main
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50"
         onClick={onCancel}
       >
-        <motion.div
+        <motion.section
           initial={{ scale: 0.9, y: 20 }}
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.9, y: 20 }}
@@ -47,7 +47,7 @@ const PopUpConfirmation = ({ isOpen, onConfirm, onCancel, itemId, isDelete = tru
           className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl border border-gray-100"
           onClick={e => e.stopPropagation()}
         >
-          <div className="flex flex-col items-center text-center gap-4">
+          <body className="flex flex-col items-center text-center gap-4">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1, rotate: 360 }}
@@ -57,7 +57,7 @@ const PopUpConfirmation = ({ isOpen, onConfirm, onCancel, itemId, isDelete = tru
               <Icon className={`w-8 h-8 ${currentStyle.iconColor}`} />
             </motion.div>
             
-            <div className="space-y-2">
+            <article className="space-y-2">
               <h2 className="text-xl font-semibold text-gray-800">{currentStyle.title}</h2>
               <p className="text-gray-600">
                 {currentStyle.message} #{itemId}?
@@ -103,7 +103,7 @@ const PopUpConfirmation = ({ isOpen, onConfirm, onCancel, itemId, isDelete = tru
                   'Esta acción no se puede deshacer.'
                 )}
               </p>
-            </div>
+            </article>
 
 
             <footer className="flex gap-3 w-full mt-2">
@@ -127,9 +127,9 @@ const PopUpConfirmation = ({ isOpen, onConfirm, onCancel, itemId, isDelete = tru
                 Cancelar
               </motion.button>
             </footer>
-          </div>
-        </motion.div>
-      </motion.div>
+          </body>
+        </motion.section>
+      </motion.main>
     </AnimatePresence>
   );
 };

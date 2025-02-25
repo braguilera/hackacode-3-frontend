@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, GraduationCap, Plus, X, ArrowRight, Stethoscope, Award, Calendar, HeartPulse, Wrench, Star, User, DollarSign, Edit2, Trash, Trash2, Edit3 } from 'lucide-react';
+import { Users, Plus, X, ArrowRight, Star, User, DollarSign, Trash2, Edit3 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CardMedico from '../components/CardMedico';
 import FormPersona from '../components/FormPersona';
@@ -13,8 +13,6 @@ const Medicos = () => {
   const [medicos, setMedicos] = useState([]);
   const [especialidades, setEspecialidades] = useState([]);
   const [loadingMedico, setLoadingMedico] = useState(false);
-  const [loadingEspecialidad, setLoadingEspecialidad] = useState(false);
-  const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [showEspecialidadForm, setShowEspecialidadForm] = useState(false);
   const [medicoToEdit, setMedicoToEdit] = useState(null);
@@ -39,7 +37,7 @@ const Medicos = () => {
       const data = await getDatos('/api/medicos', 'Error cargando medicos');
       setMedicos(data);
     } catch (err) {
-      setError(err.message);
+      console.log(err.message);
     }finally {
       setLoadingMedico(false);
     }
@@ -50,9 +48,7 @@ const Medicos = () => {
       const data = await getDatos('/api/especialidades', 'Error cargando especialidades');
       setEspecialidades(data);
     } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoadingEspecialidad(false);
+      console.log(err.message);
     }
   };
 
@@ -151,7 +147,7 @@ const Medicos = () => {
       : especialidadData.nombre.trim();
   
     if (!nombre) {
-      setError('El nombre de la especialidad es requerido');
+      console.log('El nombre de la especialidad es requerido');
       return;
     }
   
@@ -248,7 +244,7 @@ const Medicos = () => {
       const data = await getDatos(`/api/medicos?especialidadId=${especialidadId}`, 'Error cargando especialidades');
       return data.length;
     } catch (err) {
-      setError(err.message);
+      console.log(err.message);
       return 0;
     }
   };
@@ -263,7 +259,7 @@ const Medicos = () => {
       const data = await getDatos(`/api/medicos?especialidadId=${selectedEspecialidadToDelete.id}`);
       setIsEspecialidadesWithMedicos(data);
     } catch (err) {
-      setError(err.message);
+      console.log(err.message);
     }
   }
 
@@ -277,7 +273,7 @@ const Medicos = () => {
 
 
       {selectedMedicoToDelete && (
-        <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <section className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <PopUpConfirmation 
             isOpen={!!selectedMedicoToDelete}
             onConfirm={() => handleDeleteMedic(selectedMedicoToDelete.id)}
@@ -285,11 +281,11 @@ const Medicos = () => {
             itemId={selectedMedicoToDelete.id}
             isDelete={true}
           />
-        </div>
+        </section>
       )}
 
       {selectedMedicoToEdit && (
-        <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <section className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <PopUpConfirmation 
             isOpen={!!selectedMedicoToEdit}
             onConfirm={() => { handleSubmitMedico(selectedMedicoToEdit.formData); setSelectedMedicoToEdit(null); }}
@@ -297,11 +293,11 @@ const Medicos = () => {
             itemId={selectedMedicoToEdit.id}
             isDelete={false}
           />
-        </div>
+        </section>
       )}
 
       {selectedEspecialidadToDelete && (
-        <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <section className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <PopUpConfirmation 
             isOpen={!!selectedEspecialidadToDelete}
             onConfirm={() => deleteEspecialidad(selectedEspecialidadToDelete)}
@@ -310,11 +306,11 @@ const Medicos = () => {
             isDelete={true}
             medicos={isEspecialidadesWithMedicos}
           />
-        </div>
+        </section>
       )}
 
       {selectedEspecialidadToEdit && (
-      <div className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+      <section className="w-full fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
         <PopUpConfirmation 
           isOpen={!!selectedEspecialidadToEdit}
           onConfirm={submitEspecialidad}
@@ -322,11 +318,11 @@ const Medicos = () => {
           itemId={selectedEspecialidadToEdit.id}
           isDelete={false}
         />
-      </div>
-)}
+      </section>
+      )}
       
       {/* Main Content */}
-      <div className='flex gap-6 h-full'>
+      <body className='flex gap-6 h-full'>
         {/* Médicos Section */}
         <section className='flex-1 flex flex-col h-full  pl-6 '>
           <header className='flex items-center justify-between mb-6'>
@@ -422,7 +418,7 @@ const Medicos = () => {
           </div>
         </section>
 
-        {/* Especialidades Section */}
+        {/* specialities Section */}
         <section className='w-96 min-w-96 flex flex-col h-full pl-6 border-l border-gray-200'>
           <header className='mb-6'>
             <h2 className='text-2xl font-bold text-gray-800'>
@@ -433,7 +429,7 @@ const Medicos = () => {
           </header>
 
           <div className='flex flex-col gap-4 h-full overflow-y-auto pr-2'>
-            {/* Add Especialidad Button/Form */}
+            {/* Add specialitie */}
             <AnimatePresence mode="wait">
               {showEspecialidadForm ? (
                 <motion.form
@@ -611,7 +607,7 @@ const Medicos = () => {
             }
           </div>
         </section>
-      </div>
+      </body>
 
       {/* Modal Form */}
       {showForm && (

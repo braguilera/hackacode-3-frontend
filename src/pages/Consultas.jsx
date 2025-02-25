@@ -68,16 +68,17 @@ const Consultas = () => {
     return dates;
   };
 
-  
+  /* Default for no specialitation */
   const defaultTimeSlots = [
     "08:00:00", "08:30:00", "09:00:00", "09:30:00",
-    "10:00:00", "10:30:00", "11:00:00", "18:30:00"
+    "10:00:00", "10:30:00", "11:00:00", "11:30:00"
   ];
 
   const availableDates = getAvailableDates(selectedYear, selectedMonth - 1);
     
+  /* Buttons to go to next step */
   const NavigationButtons = ({ onBack, onNext, step, isLastStep, isNextEnabled = true }) => (
-    <div className="w-full flex justify-between gap-4 mt-6 absolute bottom-0">
+    <aside className="w-full flex justify-between gap-4 mt-6 absolute bottom-0">
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
@@ -110,7 +111,7 @@ const Consultas = () => {
           </>
         )}
       </motion.button>
-    </div>
+    </aside>
   );
   
   const fetchMedicos = async () => {
@@ -292,28 +293,28 @@ const Consultas = () => {
         <StepIndicator currentStep={step} totalSteps={4} />
   
         <AnimatePresence mode="wait">
-          <motion.div
+          <motion.body
             key={step}
             {...fadeInUp}
             className="bg-white rounded-xl shadow-lg p-6 w-4/5 space-y-6 h-4/5"
           >
+          {/* First Step - Select Service or Package and Medic */}
             {step === 0 && (
               <section className="flex pt-32 h-full relative w-full gap-10">
                 <main className="flex flex-col w-2/3">
-                  {/* Header */}
-                  <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
+                  <header className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
                     <Stethoscope className="w-8 h-8 text-blue-600" />
                     <h2 className="text-2xl font-bold text-gray-800">Seleccionar Servicio</h2>
-                  </div>
+                  </header>
 
                   {/* Service Selection */}
-                  <div className="w-full space-y-4 mb-6">
-                    <div className="flex items-center gap-2 mb-2">
+                  <section className="w-full space-y-4 mb-6 ">
+                    <header className="flex items-center gap-2 mb-2">
                       <FileText className="w-5 h-5 text-blue-500" />
                       <label className="text-lg font-medium text-gray-700">Servicio Médico</label>
-                    </div>
+                    </header>
                     <select
-                      className="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full truncate p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                       value={formData.servicioMedicoCodigo}
                       onChange={(e) => setFormData(prev => ({ ...prev, servicioMedicoCodigo: e.target.value }))}
                     >
@@ -324,18 +325,18 @@ const Consultas = () => {
                         </option>
                       ))}
                     </select>
-                  </div>
+                  </section>
 
-                  {/* Doctor Selection */}
-                  <motion.div
+                  {/* Medic Selection */}
+                  <motion.section
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     className="w-full space-y-4"
                   >
-                    <div className="flex items-center gap-2 mb-2">
+                    <header className="flex items-center gap-2 mb-2">
                       <User className="w-5 h-5 text-blue-500" />
                       <label className="text-lg font-medium text-gray-700">Médico Especialista</label>
-                    </div>
+                    </header>
                     <select
                       className="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                       value={formData.medicoId}
@@ -348,7 +349,7 @@ const Consultas = () => {
                         </option>
                       ))}
                     </select>
-                  </motion.div>
+                  </motion.section>
                 </main>
 
                 {/* Packages Section */}
@@ -359,15 +360,15 @@ const Consultas = () => {
                       <EmptyState type='serviciosInConsulta' />
                     </aside>
                     :
-                    <div className="sticky top-0 bg-gradient-to-l from-blue-50 to-white p-4 border-b border-gray-100 z-10">
-                      <div className="flex items-center gap-3">
+                    <header className="sticky top-0 bg-gradient-to-l from-blue-50 to-white p-4 border-b border-gray-100 z-10">
+                      <article className="flex items-center gap-3">
                         <Sparkles className="w-5 h-5 text-blue-500" />
                         <div>
                           <h4 className="text-lg font-semibold text-gray-800">Paquetes Recomendados</h4>
                           <p className="text-sm text-gray-600">Descubre paquetes que incluyen este servicio y mucho más</p>
                         </div>
-                      </div>
-                    </div>
+                      </article>
+                    </header>
                   }
                     {serviciosInPaquete.map((paquete, index) => {
                       const isSelected = selectedPaquete && selectedPaquete.codigo === paquete.codigo;
@@ -386,10 +387,10 @@ const Consultas = () => {
                           }}
                         >
                           <header className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-3">
+                            <article className="flex items-center gap-3">
                               <Package className='w-6 h-6 text-blue-500'/>
-                              <h4 className="text-xl font-bold text-gray-800">{paquete.nombre}</h4>
-                            </div>
+                              <h4 className="text-xl font-bold text-gray-800 w-56 truncate">{paquete.nombre}</h4>
+                            </article>
                             {isSelected && (
                               <span className="px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">
                                 Seleccionado
@@ -398,29 +399,29 @@ const Consultas = () => {
                           </header>
                           <main className="space-y-3">
                             {paquete.servicios.map((servicio, sIndex) => (
-                              <div 
+                              <article 
                                 key={sIndex} 
                                 className={`flex items-center justify-between p-3 rounded-md ${isSelected ? 'bg-white' : 'bg-gray-50'}`}
                               >
-                                <div className="flex items-center gap-2">
+                                <header className="flex items-center gap-2">
                                   <AlertCircle className={`w-4 h-4 ${isSelected ? 'text-blue-500' : 'text-gray-400'}`} />
-                                  <h4 className="text-gray-700">{servicio.nombre}</h4>
-                                </div>
+                                  <h4 className="text-gray-700 w-56 truncate">{servicio.nombre}</h4>
+                                </header>
                                 <p className="font-medium text-gray-900">
                                   <DollarSign className="w-4 h-4 inline-block mr-1" />
                                   {servicio.precio}
                                 </p>
-                              </div>
+                              </article>
                             ))}
                           </main>
                           <footer className="mt-6 pt-4 border-t border-gray-100">
-                            <div className="flex justify-end items-center gap-2">
+                            <article className="flex justify-end items-center gap-2">
                               <span className="text-gray-600">Precio Total:</span>
                               <span className={`text-2xl font-bold ${isSelected ? 'text-blue-600' : 'text-gray-700'}`}>
                                 <DollarSign className="w-6 h-6 inline-block mr-1" />
                                 {paquete.precio}
                               </span>
-                            </div>
+                            </article>
                           </footer>
                         </article>
                       );
@@ -442,16 +443,17 @@ const Consultas = () => {
               </section>
             )}
             
+          {/* Second Step - Select Date and hour */}
             {step === 1 && (
               isEspecializada ? (
                 <section className="h-full relative w-full mx-auto">
-                  <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
+                  <header className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
                     <Calendar className="w-7 h-7 text-blue-500" />
                     <h2 className="text-2xl font-bold text-gray-800">Seleccione Fecha y Hora</h2>
-                  </div>
-                  <div className="pt-20">
-                    {/* Select para elegir mes */}
-                    <div className="flex gap-4 mb-4">
+                  </header>
+                  <main className="pt-20">
+                    {/* Select mounth */}
+                    <aside className="flex gap-4 mb-4">
                       <label className="text-sm font-medium text-gray-700">Mes:</label>
                       <select 
                         value={selectedMonth}
@@ -464,8 +466,8 @@ const Consultas = () => {
                           </option>
                         ))}
                       </select>
-                      {/* Opcional: select para año */}
-                      <div className="flex gap-2 items-center">
+                      {/* Select Age */}
+                      <article className="flex gap-2 items-center">
                         <label className="text-sm font-medium text-gray-700">Año:</label>
                         <select 
                           value={selectedYear}
@@ -481,17 +483,17 @@ const Consultas = () => {
                             );
                           })}
                         </select>
-                      </div>
-                    </div>
+                      </article>
+                    </aside>
                     <article className="h-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                       {availableDates.length > 0 ? (
                         availableDates.map(date => (
-                          <div key={date} className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                          <main key={date} className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
                             <h4 className="font-medium text-gray-800 mb-4 flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
                               <Calendar className="w-5 h-5 text-blue-500" />
                               {date}
                             </h4>
-                            <div className="grid grid-cols-3 gap-3">
+                            <article className="grid grid-cols-3 gap-3">
                               {defaultTimeSlots.map(time => (
                                 <motion.button
                                   key={`${date}-${time}`}
@@ -506,16 +508,16 @@ const Consultas = () => {
                                   {time.slice(0, 5)}
                                 </motion.button>
                               ))}
-                            </div>
-                          </div>
+                            </article>
+                          </main>
                         ))
                       ) : (
-                        <div className="text-center p-6 text-gray-500">
+                        <article className="text-center p-6 text-gray-500">
                           No hay fechas disponibles en este mes para el médico seleccionado.
-                        </div>
+                        </article>
                       )}
                     </article>
-                  </div>
+                  </main>
                   <NavigationButtons
                     onNext={() => setStep(step + 1)}
                     onBack={() => setStep(step - 1)}
@@ -526,21 +528,21 @@ const Consultas = () => {
                 </section>
               ) : (
                 <section className="h-full relative w-full mx-auto">
-                  {/* Rama para cuando no es especializada; puedes ajustar el contenido según necesites */}
-                  <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
+                  {/* Seccion Service is nos specialized */}
+                  <header className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
                     <Calendar className="w-7 h-7 text-blue-500" />
                     <h2 className="text-2xl font-bold text-gray-800">Seleccione Fecha y Hora</h2>
-                  </div>
-                  <div className="pt-20">
+                  </header>
+                  <main className="pt-20">
                     <article className="h-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                       {availableDates.length > 0 ? (
                         availableDates.map(date => (
-                          <div key={date} className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+                          <section key={date} className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
                             <h4 className="font-medium text-gray-800 mb-4 flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
                               <Calendar className="w-5 h-5 text-blue-500" />
                               {date}
                             </h4>
-                            <div className="grid grid-cols-3 gap-3">
+                            <article className="grid grid-cols-3 gap-3">
                               {defaultTimeSlots.map(time => (
                                 <motion.button
                                   key={`${date}-${time}`}
@@ -555,16 +557,16 @@ const Consultas = () => {
                                   {time.slice(0, 5)}
                                 </motion.button>
                               ))}
-                            </div>
-                          </div>
+                            </article>
+                          </section>
                         ))
                       ) : (
-                        <div className="text-center p-6 text-gray-500">
+                        <section className="text-center p-6 text-gray-500">
                           No hay fechas disponibles en este mes para el médico seleccionado.
-                        </div>
+                        </section>
                       )}
                     </article>
-                  </div>
+                  </main>
                   <NavigationButtons
                     onNext={() => setStep(step + 1)}
                     onBack={() => setStep(step - 1)}
@@ -576,14 +578,15 @@ const Consultas = () => {
               )
             )}
 
+          {/* Third Step - Pacient Data */}
             {step === 2 && (
                 <section className="w-full h-full relative mx-auto">
-                  <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
+                  <header className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
                     <UserPlus className="w-7 h-7 text-blue-500" />
                     <h2 className="text-2xl font-bold text-gray-800">Datos del Paciente</h2>
-                  </div>
+                  </header>
 
-                  <div className=" pt-20 relative">
+                  <aside className=" pt-20 relative">
                     <input 
                       type="text"
                       placeholder="Documento del paciente"
@@ -601,23 +604,24 @@ const Consultas = () => {
                     />
 
                     <User className="w-5 h-5 text-blue-500 absolute left-4 top-24" />
-                  </div>
+                  </aside>
 
+                  {/* Form When the Pacient Doesn't exist */}
                   <AnimatePresence>
                     {pacienteNotExist && (
-                      <motion.div
+                      <motion.main
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
                         className="border border-gray-200 rounded-xl p-4 space-y-3 bg-white shadow-sm mt-4"
                       >
-                        <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg text-blue-700">
+                        <header className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-lg text-blue-700">
                           <UserPlus className="w-5 h-5 text-blue-500" />
                           <p className="text-sm font-medium">Complete los datos para crear el paciente</p>
-                        </div>
+                        </header>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="relative">
+                        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <article className="relative">
                             <input
                               type="text"
                               placeholder="Nombre"
@@ -627,9 +631,9 @@ const Consultas = () => {
                               required
                             />
                             <User className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-                          </div>
+                          </article>
 
-                          <div className="relative">
+                          <article className="relative">
                             <input
                               type="text"
                               placeholder="Apellido"
@@ -639,12 +643,12 @@ const Consultas = () => {
                               required
                             />
                             <User className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-                          </div>
-                        </div>
+                          </article>
+                        </section>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                          <div className="relative">
+                          <article className="relative">
                             <input
                               type="date"
                               className="w-full p-4 pl-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm transition-all hover:border-gray-300"
@@ -653,9 +657,9 @@ const Consultas = () => {
                               required
                             />
                             <Calendar className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-                          </div>
+                          </article>
 
-                          <div className="relative">
+                          <article className="relative">
                             <input
                               type="email"
                               placeholder="Email"
@@ -665,11 +669,11 @@ const Consultas = () => {
                               required
                             />
                             <Mail className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-                          </div>
-                        </div>
+                          </article>
+                        </section>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="relative">
+                        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <article className="relative">
                             <input
                               type="tel"
                               placeholder="Teléfono"
@@ -679,9 +683,9 @@ const Consultas = () => {
                               required
                             />
                             <Phone className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-                          </div>
+                          </article>
 
-                          <div className="relative">
+                          <article className="relative">
                             <input
                               type="text"
                               placeholder="Dirección"
@@ -691,13 +695,13 @@ const Consultas = () => {
                               required
                             />
                             <MapPin className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-                          </div>
+                          </article>
 
-                        </div>
+                        </section>
 
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="relative">
+                        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <article className="relative">
                             <input
                               type="text"
                               placeholder="DNI"
@@ -707,9 +711,9 @@ const Consultas = () => {
                               required
                             />
                             <IdCard className="w-5 h-5 text-blue-500 absolute left-4 top-4" />
-                          </div>
+                          </article>
 
-                          <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl relative">
+                          <article className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl relative">
                             <input
                               type="checkbox"
                               id="obraSocial"
@@ -720,8 +724,8 @@ const Consultas = () => {
                             <label htmlFor="obraSocial" className="text-sm font-medium text-gray-700">
                               Tiene obra social
                             </label>
-                          </div>
-                        </div>
+                          </article>
+                        </section>
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
@@ -731,7 +735,7 @@ const Consultas = () => {
                           <UserPlus className="w-5 h-5" />
                           Crear Paciente
                         </motion.button>
-                      </motion.div>
+                      </motion.main>
                     )}
 
                     {paciente && (
@@ -740,9 +744,9 @@ const Consultas = () => {
                         animate={{ opacity: 1 }}
                         className="p-6 bg-green-50 border border-green-200 rounded-xl flex items-center gap-3 shadow-sm mt-6"
                       >
-                        <div className="bg-green-100 p-2 rounded-full">
+                        <header className="bg-green-100 p-2 rounded-full">
                           <Check className="w-6 h-6 text-green-600" />
-                        </div>
+                        </header>
                         <aside className='flex flex-col gap-4'>
 
                           <p className="text-green-800 font-medium">
@@ -769,48 +773,49 @@ const Consultas = () => {
                 </section>
             )}
 
+          {/* Fourth Step - Data Preview And confirm consult */}
             {step === 3 && (
               <section className="h-full relative pt-20 w-full mx-auto">
-                <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
+                <header className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg w-full absolute top-0">
                   <FileCheck className="w-7 h-7 text-blue-500" />
                   <h2 className="text-2xl font-bold text-gray-800">Confirmar Consulta</h2>
-                </div>
+                </header>
 
-                <motion.div
+                <motion.main
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="space-y-6 bg-white p-6 rounded-xl shadow-sm border border-gray-100"
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h3 className="text-sm font-medium text-gray-500 mb-2">
-                      {selectedPaquete 
-                          ? 'Paquete'
-                          : 'Servicio'
-                      }
-                    </h3>
-                    <p className="text-gray-900 flex items-center gap-2 text-lg">
-                      {selectedPaquete 
-                          ? <Package className="w-5 h-5 text-blue-500" />
-                          : <FileText className="w-5 h-5 text-blue-500" />
-                      }
-                      
-                      {selectedPaquete 
-                        ? selectedPaquete.nombre 
-                        : (servicios.find(s => s.codigo === Number(formData.servicioMedicoCodigo))?.nombre || "-")
-                      }
-                    </p>
-                  </div>
+                  <article className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <section className="bg-gray-50 rounded-lg p-4">
+                      <h3 className="text-sm font-medium text-gray-500 mb-2 ">
+                        {selectedPaquete 
+                            ? 'Paquete'
+                            : 'Servicio'
+                        }
+                      </h3>
+                      <p className="text-gray-900 flex items-center gap-2 text-lg w-full truncate">
+                        {selectedPaquete 
+                            ? <Package className="w-5 h-5 text-blue-500" />
+                            : <FileText className="w-5 h-5 text-blue-500" />
+                        }
+                        
+                        {selectedPaquete 
+                          ? selectedPaquete.nombre 
+                          : (servicios.find(s => s.codigo === Number(formData.servicioMedicoCodigo))?.nombre || "-")
+                        }
+                      </p>
+                    </section>
 
                     
-                    <div className="bg-gray-50 rounded-lg p-4">
+                    <section className="bg-gray-50 rounded-lg p-4">
                       {isEspecializada 
                       ? 
                         <h3 className="text-sm font-medium text-gray-500 mb-2">Médico Asistente</h3>
                       :
                         <h3 className="text-sm font-medium text-gray-500 mb-2">Médico Referente</h3>
                       }
-                      <p className="text-gray-900 flex items-center gap-2 text-lg">
+                      <p className="text-gray-900 flex items-center gap-2 text-lg w-full truncate">
                         <User className="w-5 h-5 text-blue-500" />
                         {(() => {
                           const medico = medicos.find(m => m.id === Number(formData.medicoId));
@@ -818,52 +823,51 @@ const Consultas = () => {
                         })()}
                       </p>
 
-                    </div>
+                    </section>
                     
 
-                    <div className="bg-gray-50 rounded-lg p-4">
+                    <section className="bg-gray-50 rounded-lg p-4">
                       <h3 className="text-sm font-medium text-gray-500 mb-2">Fecha</h3>
-                      <p className="text-gray-900 flex items-center gap-2 text-lg">
+                      <p className="text-gray-900 flex items-center gap-2 text-lg w-full truncate">
                         <Calendar className="w-5 h-5 text-blue-500" />
                         {formData.fecha || "-"}
                       </p>
-                    </div>
+                    </section>
 
-                    <div className="bg-gray-50 rounded-lg p-4">
+                    <section className="bg-gray-50 rounded-lg p-4">
                       <h3 className="text-sm font-medium text-gray-500 mb-2">Hora</h3>
-                      <p className="text-gray-900 flex items-center gap-2 text-lg">
+                      <p className="text-gray-900 flex items-center gap-2 text-lg w-full truncate">
                         <Clock className="w-5 h-5 text-blue-500" />
                         {formData.hora ? formData.hora.slice(0, 5) : "-"}
                       </p>
-                    </div>
+                    </section>
 
-                    <div className="bg-gray-50 rounded-lg p-4">
+                    <section className="bg-gray-50 rounded-lg p-4">
                       <h3 className="text-sm font-medium text-gray-500 mb-2">Paciente</h3>
-                      <p className="text-gray-900 flex items-center gap-2 text-lg">
+                      <p className="text-gray-900 flex items-center gap-2 text-lg w-full truncate">
                         <User className="w-5 h-5 text-blue-500" />
                         {paciente ? `${paciente.nombre} ${paciente.apellido}` : (newPacienteData.nombre ? `${newPacienteData.nombre} ${newPacienteData.apellido}` : "-")}
                       </p>
-                    </div>
+                    </section>
                     
-                    <div className="bg-gray-50 rounded-lg p-4">
+                    <section className="bg-gray-50 rounded-lg p-4">
                       <h3 className="text-sm font-medium text-gray-500 mb-2">Obra social</h3>
-                      <p className="text-gray-900 flex items-center gap-2 text-lg">
+                      <p className="text-gray-900 flex items-center gap-2 text-lg ">
                         
                         {paciente.tieneObraSocial ? <CheckCheck className="w-5 h-5 text-green-500" /> : <X className="w-5 h-5 text-red-500" />}
                         {paciente.tieneObraSocial ? 'Tiene obra social' : 'No cuenta con obra social'}
                       </p>
-                    </div>
-                  </div>
-
-                  <footer>
-                    <h3 className='text-gray-900 flex items-center gap-2 text-2xl'>Precio del {selectedPaquete ? 'Paquete' : 'Servicio'}:</h3>
-                    <p className="text-gray-900 flex items-center gap-2 text-lg"> 
-                      {selectedPaquete 
+                    </section>
+                  </article>
+                  <footer className="mt-8 p-5 bg-blue-100 rounded-xl">
+                    <h3 className="text-blue-500 flex items-center gap-2 text-xl font-medium">Precio del {selectedPaquete ? 'Paquete' : 'Servicio'}</h3>
+                    <p className="text-blue-700 flex items-center gap-2 text-2xl font-bold mt-1"> 
+                      ${selectedPaquete 
                       ? selectedPaquete.precio 
                       : (servicios.find(s => s.codigo === Number(formData.servicioMedicoCodigo))?.precio || "-")} 
                     </p>
                   </footer>
-                </motion.div>
+                </motion.main>
 
                 <NavigationButtons
                   onNext={() => {
@@ -883,32 +887,33 @@ const Consultas = () => {
               </section>
             )}
 
+          {/* Fifth Step - Confirmation Container */}
             {step === 4 && (
               <motion.section
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="max-w-3xl mx-auto h-full relative p-6 flex flex-col items-center justify-center space-y-8"
               >
-                <div className="w-full bg-white rounded-xl p-8 space-y-8">
-                  <motion.div
+                <main className="w-full bg-white rounded-xl p-8 space-y-8">
+                  <motion.header
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     className="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center ring-8 ring-green-50"
                   >
                     <Check className="w-10 h-10 text-green-600" />
-                  </motion.div>
+                  </motion.header>
                   
-                  <div className="space-y-4 text-center">
+                  <article className="space-y-4 text-center">
                     <h2 className="text-2xl font-bold text-gray-800">
                       ¡Consulta Creada Exitosamente!
                     </h2>
                     
-                    <div className="bg-green-50 rounded-lg p-4 border border-green-100">
+                    <aside className="bg-green-50 rounded-lg p-4 border border-green-100">
                       <p className="text-green-800">
                         La consulta ha sido programada correctamente.
                       </p>
-                    </div>
-                  </div>
+                    </aside>
+                  </article>
 
                   <motion.button
                     whileHover={{ scale: 1.02 }}
@@ -929,11 +934,11 @@ const Consultas = () => {
                     <ChevronLeft className="w-5 h-5" />
                     Nueva Consulta
                   </motion.button>
-                </div>
+                </main>
               </motion.section>
             )}
 
-          </motion.div>
+          </motion.body>
         </AnimatePresence>
       <Notification
         message={messageNotification}

@@ -1,15 +1,13 @@
 // Pacientes.jsx
 import React, { useEffect, useState } from 'react';
-import { Users, Plus, Search } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import TablePacientes from '../components/TablePacientes';
 import FormPersona from '../components/FormPersona';
-import { getDatos, postDatos, putDatos } from '../api/crud';
+import { getDatos, postDatos } from '../api/crud';
 import Notification from '../components/Notification';
 
 const Pacientes = () => {
   const [showForm, setShowForm] = useState(false);
-  const [pacienteToEdit, setPacienteToEdit] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
   const [refreshKey, setRefreshKey] = useState(0);
   const [showNotification, setShowNotification] = useState(false);
   const [messageNotification, setMessageNotification] = useState(null);
@@ -40,7 +38,6 @@ const Pacientes = () => {
   }, []);
 
   const handleAddPaciente = () => {
-    setPacienteToEdit(null);
     setShowForm(true);
   };
 
@@ -66,10 +63,9 @@ const Pacientes = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col p-6 ">
-      {/* Header Section */}
-      <div className="border-gray-200 px-6 ">
-        <div className="flex items-center justify-between relative">
+    <main className="w-full h-full flex flex-col p-6 ">
+      <header className="border-gray-200 px-6 ">
+        <article className="flex items-center justify-between relative">
           <header className='flex flex-col justify-between mb-6'>
             <div className='flex gap-2'>
 
@@ -86,29 +82,28 @@ const Pacientes = () => {
               <span>Agregar Paciente</span>
             </button>
           </header>
-        </div>
-      </div>
+        </article>
+      </header>
 
       {/* Tabla de Pacientes, se le pasa el refreshKey */}
-      <div className="p-6 h-full overflow-hidden">
+      <article className="p-6 h-full overflow-hidden">
         <TablePacientes 
           refreshKey={refreshKey}
-          searchTerm={searchTerm}
           onRefresh={() => setRefreshKey(prev => prev + 1)}
           consultas={consultas}
         />
-      </div>
+      </article>
 
       {/* Modal Form */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <article className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <FormPersona
             tipo="paciente"
             onClose={() => setShowForm(false)}
             onSubmit={handleSubmitPaciente}
             
           />
-        </div>
+        </article>
       )}
 
       <Notification
@@ -116,7 +111,7 @@ const Pacientes = () => {
         isVisible={showNotification}
         onClose={() => setShowNotification(false)}
       />
-    </div>
+    </main>
   );
 };
 

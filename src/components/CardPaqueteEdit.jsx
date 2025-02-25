@@ -7,7 +7,7 @@ const CardPaqueteEdit = ({ paquete, serviciosDisponibles, onCancel, onSave }) =>
   const [nombre, setNombre] = useState(paquete.nombre);
   const [serviciosSeleccionados, setServiciosSeleccionados] = useState(paquete.servicios);
   
-  // Filtrar servicios disponibles (excluyendo los ya seleccionados)
+
   const serviciosDisponiblesActuales = serviciosDisponibles.filter(
     s => !serviciosSeleccionados.some(sel => sel.codigo === s.codigo)
   );
@@ -60,18 +60,18 @@ const CardPaqueteEdit = ({ paquete, serviciosDisponibles, onCancel, onSave }) =>
       </header>
 
       <form onSubmit={handleSubmit} className="flex flex-col">
-        <div className="p-4 grid grid-rows-[auto_1fr] gap-4" style={{ height: '460px' }}>
+        <section className="p-4 grid grid-rows-[auto_1fr] gap-4" style={{ height: '460px' }}>
           
           {/* Servicios Seleccionados */}
           <article className="h-[180px]">
             <h2 className="text-sm font-semibold text-gray-800 mb-2">Servicios Seleccionados</h2>
-            <div className="h-[150px] overflow-y-auto pr-2 space-y-1.5">
+            <main className="h-[150px] overflow-y-auto pr-2 space-y-1.5">
               <AnimatePresence>
                 {serviciosSeleccionados.length === 0 ? (
                   <p className="text-sm text-gray-400 italic p-2">No hay servicios seleccionados</p>
                 ) : (
                   serviciosSeleccionados.map((servicio) => (
-                    <motion.div
+                    <motion.article
                       key={servicio.codigo}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -89,18 +89,18 @@ const CardPaqueteEdit = ({ paquete, serviciosDisponibles, onCancel, onSave }) =>
                           <X size={14} />
                         </button>
                       </div>
-                    </motion.div>
+                    </motion.article>
                   ))
                 )}
               </AnimatePresence>
-            </div>
+            </main>
           </article>
 
           {/* Servicios Disponibles */}
           <article className="h-[180px]">
             <h2 className="text-sm font-semibold text-gray-800 mb-2">Servicios Disponibles</h2>
-            <div className="h-[150px] overflow-y-auto pr-2">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
+            <main className="h-[150px] overflow-y-auto pr-2">
+              <article className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
                 <AnimatePresence>
                   {serviciosDisponiblesActuales.map((servicio) => (
                     <motion.button
@@ -120,10 +120,10 @@ const CardPaqueteEdit = ({ paquete, serviciosDisponibles, onCancel, onSave }) =>
                     </motion.button>
                   ))}
                 </AnimatePresence>
-              </div>
-            </div>
+              </article>
+            </main>
           </article>
-        </div>
+        </section>
 
         {/* Footer con botones */}
         <footer className="p-4 border-t border-gray-100 flex justify-end gap-3">

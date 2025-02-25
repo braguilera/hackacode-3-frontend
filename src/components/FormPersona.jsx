@@ -3,29 +3,28 @@ import { X, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { getDatos } from '../api/crud';
 
-const FormPersona = ({ 
-    tipo = 'paciente', 
-    onClose, 
-    onSubmit, 
-    initialData, 
-    isEditing = false 
-  }) => {
-    const [formData, setFormData] = useState(() => {
-      const initial = initialData || getInitialData(tipo);
-      return {
-        ...initial,
-        especialidadId: initialData?.especialidadId ? String(initialData.especialidadId) : ''
-      };
-    });
-    
+const FormPersona = ({ tipo = 'paciente', onClose, onSubmit, initialData, isEditing = false }) => {
+
   const [especialidades, setEspecialidades] = useState([])
   const [hasInitialized, setHasInitialized] = useState(false);
   const [edadError, setEdadError] = useState('');
+
+  /* Initial Data */
+
+  const getNuevaDisponibilidad = () => {
+    return {
+      cubreTurno: "Mañana",
+      horaInicio: "08:00:00", 
+      horaFin: "12:00:00",
+      diaSemana: "MONDAY"
+    };
+  }
+
   const [disponibilidades, setDisponibilidades] = useState(
     initialData?.disponibilidades || [getNuevaDisponibilidad()]
   );
-
-  function getInitialData(tipo) {
+  
+  const getInitialData = (tipo) => {
     const base = {
       nombre: '',
       apellido: '',
@@ -35,7 +34,6 @@ const FormPersona = ({
       telefono: '',
       direccion: ''
     };
-  
     return tipo === 'medico' ? {
       ...base,
       especialidadId: '',
@@ -47,24 +45,23 @@ const FormPersona = ({
     };
   }
 
-  function getNuevaDisponibilidad() {
-    return {
-      cubreTurno: "Mañana",
-      horaInicio: "08:00:00", 
-      horaFin: "12:00:00",
-      diaSemana: "MONDAY"
-    };
-  }
+  const [formData, setFormData] = useState(() => {
+    const initial = initialData || getInitialData(tipo);
+      return {
+        ...initial,
+        especialidadId: initialData?.especialidadId ? String(initialData.especialidadId) : ''
+      };
+  });
+
+  /* Age Validation */
 
   const calcularEdad = (fechaNacimiento) => {
     const hoy = new Date();
     const fechaNac = new Date(fechaNacimiento);
     
-    // Validar fecha mínima (1 de enero de 1900)
     const fechaMinima = new Date('1900-01-01');
     if (fechaNac < fechaMinima) return -1;
     
-    // Validar que no sea fecha futura
     if (fechaNac > hoy) return -1;
   
     let edad = hoy.getFullYear() - fechaNac.getFullYear();
@@ -76,6 +73,7 @@ const FormPersona = ({
     return edad;
   };
   
+  /* handle data */
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -204,20 +202,20 @@ const FormPersona = ({
       </motion.button>
   
       {/* Title */}
-      <div className="mb-6">
+      <header className="mb-6">
         <h2 className="text-xl font-bold text-gray-800">
           {isEditing ? 'Editar' : 'Crear nuevo'} {tipo}
         </h2>
         <p className="text-sm text-gray-500 mt-0.5">
           Complete los campos para {isEditing ? 'actualizar' : 'registrar'} {tipo === 'paciente' ? 'al paciente' : 'al médico'}
         </p>
-      </div>
+      </header>
   
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className={`grid ${tipo==="medico" ? "grid-cols-2" : "grid-cols-1"} gap-6`}>
-          {/* Columna izquierda - Datos personales */}
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+        <main className={`grid ${tipo==="medico" ? "grid-cols-2" : "grid-cols-1"} gap-6`}>
+          {/*  Left Column - Personal Data (Pacient and Medic) */}
+          <section className="space-y-4">
+            <article className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
                 <input
@@ -242,9 +240,9 @@ const FormPersona = ({
                   required
                 />
               </div>
-            </div>
+            </article>
   
-            <div>
+            <article>
               <label className="block text-sm font-medium text-gray-700 mb-1">DNI</label>
               <input
                 type="text"
@@ -255,9 +253,9 @@ const FormPersona = ({
                 className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
                 required
               />
-            </div>
+            </article>
   
-            <div className="grid grid-cols-2 gap-4">
+            <article className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
@@ -282,44 +280,61 @@ const FormPersona = ({
                   required
                 />
               </div>
-            </div>
+            </article>
   
-            <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento</label>
-              <input
-                type="date"
-                name="fechaNac"
-                value={formData.fechaNac}
-                onChange={handleChange}
-                className={`w-full px-3 py-2 rounded-lg border ${
-                  edadError ? 'border-red-500' : 'border-gray-200'
-                } focus:ring-2 ${
-                  edadError ? 'focus:ring-red-100' : 'focus:ring-blue-100'
-                } transition-all duration-200`}
-                required
-                max={new Date().toISOString().split('T')[0]} // Evita fechas futuras
-              />
-              {edadError && (
-                <p className="mt-1 text-sm text-red-600">{edadError}</p>
-              )}
-            </div>
+            <article className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento</label>
                 <input
-                  type="text"
-                  name="direccion"
-                  value={formData.direccion}
+                  type="date"
+                  name="fechaNac"
+                  value={formData.fechaNac}
                   onChange={handleChange}
-                  maxLength={50}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                  className={`w-full px-3 py-2 rounded-lg border ${
+                    edadError ? 'border-red-500' : 'border-gray-200'
+                  } focus:ring-2 ${
+                    edadError ? 'focus:ring-red-100' : 'focus:ring-blue-100'
+                  } transition-all duration-200`}
                   required
+                  max={new Date().toISOString().split('T')[0]}
                 />
-              </div>
-            </div>
+                {edadError && (
+                  <p className="mt-1 text-sm text-red-600">{edadError}</p>
+                )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+                  <input
+                    type="text"
+                    name="direccion"
+                    value={formData.direccion}
+                    onChange={handleChange}
+                    maxLength={50}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
+                    required
+                  />
+                </div>
+            </article>
+
+            {/* Data only Pacient */}
+            {tipo === 'paciente' && (
+              <article className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
+                <input
+                  type="checkbox"
+                  name="tieneObraSocial"
+                  checked={formData.tieneObraSocial}
+                  onChange={handleChange}
+                  className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300"
+                />
+                <label className="text-sm font-medium text-gray-700">
+                  Tiene Obra Social
+                </label>
+              </article>
+            )}
   
+            {/* Data only Medic */}
             {tipo === 'medico' && (
-              <div>
+              <article>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Sueldo</label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
@@ -334,30 +349,16 @@ const FormPersona = ({
                     required
                   />
                 </div>
-              </div>
+              </article>
             )}
-  
-            {tipo === 'paciente' && (
-              <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
-                <input
-                  type="checkbox"
-                  name="tieneObraSocial"
-                  checked={formData.tieneObraSocial}
-                  onChange={handleChange}
-                  className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300"
-                />
-                <label className="text-sm font-medium text-gray-700">
-                  Tiene Obra Social
-                </label>
-              </div>
-            )}
-          </div>
-  
-          {/* Columna derecha - Especialidades y Disponibilidades */}
+
+          </section>
+
+          {/* Rigth Column - Specialities and availability (Data only Medic)*/}
           {tipo === 'medico' && (
-            <div className="space-y-4">
+            <section className="space-y-4">
               {/* Especialidades */}
-              <div className="bg-gray-50 p-4 rounded-xl">
+              <header className="bg-gray-50 p-4 rounded-xl">
                 <h3 className="text-sm font-semibold text-gray-800 mb-3">Especialidad</h3>
                 <select
                   name="especialidadId"
@@ -376,11 +377,11 @@ const FormPersona = ({
                     </option>
                   ))}
                 </select>
-              </div>
+              </header>
                 
               {/* Disponibilidades */}
-              <div className="bg-gray-50 p-4 rounded-xl h-80 overflow-hidden">
-                <div className="flex justify-between items-center mb-3">
+              <main className="bg-gray-50 p-4 rounded-xl h-80 overflow-hidden">
+                <header className="flex justify-between items-center mb-3">
                   <h3 className="text-sm font-semibold text-gray-800">Disponibilidades</h3>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
@@ -391,19 +392,19 @@ const FormPersona = ({
                   >
                     <Plus size={14} /> Agregar
                   </motion.button>
-                </div>
+                </header>
   
-                <div className="space-y-3 max-h-[280px] overflow-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 pr-2 pb-6">
+                <body className="space-y-3 max-h-[280px] overflow-auto scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-gray-50 pr-2 pb-6">
                   {disponibilidades.map((disp, index) => (
-                    <motion.div
+                    <motion.article
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       key={index}
                       className="bg-white p-3 rounded-lg relative group shadow-sm border border-gray-100"
                     >
-                      <div className="space-y-3">
-                        <div>
+                      <section className="space-y-3">
+                        <header>
                           <label className="block text-xs text-gray-600 mb-1">Día</label>
                           <select
                             value={disp.diaSemana}
@@ -418,7 +419,7 @@ const FormPersona = ({
                             <option value="SATURDAY">Sábado</option>
                             <option value="SUNDAY">Domingo</option>
                           </select>
-                        </div>
+                        </header>
                             
                         <div>
                           <label className="block text-xs text-gray-600 mb-1">Turno</label>
@@ -432,8 +433,8 @@ const FormPersona = ({
                           </select>
                         </div>
   
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
+                        <footer className="grid grid-cols-2 gap-3">
+                          <article>
                             <label className="block text-xs text-gray-600 mb-1">Inicio</label>
                             <input
                               type="time"
@@ -441,9 +442,9 @@ const FormPersona = ({
                               onChange={(e) => handleDisponibilidadChange(index, 'horaInicio', e.target.value)}
                               className="w-full px-2 py-1.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                             />
-                          </div>
+                          </article>
   
-                          <div>
+                          <article>
                             <label className="block text-xs text-gray-600 mb-1">Fin</label>
                             <input
                               type="time"
@@ -451,9 +452,9 @@ const FormPersona = ({
                               onChange={(e) => handleDisponibilidadChange(index, 'horaFin', e.target.value)}
                               className="w-full px-2 py-1.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                             />
-                          </div>
-                        </div>
-                      </div>
+                          </article>
+                        </footer>
+                      </section>
                       
                       {(disponibilidades.length > 1) &&
                         <motion.button
@@ -467,16 +468,16 @@ const FormPersona = ({
                       </motion.button>
                       }
 
-                    </motion.div>
+                    </motion.article>
                   ))}
-                </div>
-              </div>
-            </div>
+                </body>
+              </main>
+            </section>
           )}
-        </div>
+        </main>
   
         {/* Action Buttons */}
-        <div className="flex justify-end gap-3 pt-2">
+        <aside className="flex justify-end gap-3 pt-2">
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -494,7 +495,7 @@ const FormPersona = ({
           >
             {initialData ? 'Actualizar' : 'Crear'}
           </motion.button>
-        </div>
+        </aside>
       </form>
     </motion.div>
   );

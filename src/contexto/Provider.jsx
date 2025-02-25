@@ -11,7 +11,7 @@ const Provider = ({ children }) => {
         return savedDarkMode ? JSON.parse(savedDarkMode) : false;
     });
 
-    // Efecto para decodificar el token y manejar el rol
+    // Decode Token and Set Rol
     useEffect(() => {
         if (token) {
             try {
@@ -32,12 +32,12 @@ const Provider = ({ children }) => {
         }
     }, [token]);
 
-    // Efecto para dark mode
+    // Dark Mode
     useEffect(() => {
         localStorage.setItem('darkMode', JSON.stringify(darkMode));
     }, [darkMode]);
 
-    // Efecto principal para manejar el token
+    // Manage Token
     useEffect(() => {
         if (token) {
             localStorage.setItem("token", token);
