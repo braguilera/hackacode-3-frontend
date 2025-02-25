@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Stethoscope, Calendar, DollarSign, Package, Activity, HeartPulse } from 'lucide-react';
 import { getDatos } from '../api/crud';
-import { isSameDay, format } from 'date-fns';
+import { isSameDay, format, parse } from 'date-fns';
 import {
   BarChart,
   Bar,
@@ -103,6 +103,7 @@ const Dashboard = () => {
   const fetchDailyEarnings = async () => {
     const allServices = [...servicios, ...paquetes];
     const formattedDate = format(dailyDate, 'yyyy-MM-dd');
+    console.log(dailyDate)
     const requests = allServices.map(async (service) => {
       const url = `/api/pagos/ganancias/servicio/${service.codigo}?fecha=${formattedDate}`;
       try {
@@ -164,7 +165,7 @@ const Dashboard = () => {
     <motion.main
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="w-full p-4 bg-gray-50 h-full space-y-4"
+      className="w-full p-4 h-full space-y-4"
     >
       <motion.header 
         initial={{ y: -20 }}
@@ -279,7 +280,7 @@ const Dashboard = () => {
               <input
                 type="date"
                 value={format(dailyDate, 'yyyy-MM-dd')}
-                onChange={(e) => setDailyDate(new Date(e.target.value))}
+                onChange={(e) => setDailyDate(parse(e.target.value, 'yyyy-MM-dd', new Date()))}
                 className="ml-2 border border-gray-300 rounded p-1"
               />
             </div>
