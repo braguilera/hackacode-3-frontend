@@ -5,15 +5,16 @@ import { useNavigate } from 'react-router-dom';
 import { User, Lock, LogIn, Stethoscope, Users, ClipboardList, Activity, EyeOff, Eye } from 'lucide-react'; 
 import clinicaSoft from '../assets/iconos/clinicaSoftLogo.svg';
 import {postDatos } from '../api/crud';
+import Notification from '../components/Notification';
 
 const Login = () => {
   const { setLogeado, setToken, token } = useContext(Contexto);
 
   const navegacion = useNavigate();
-  const [usuario, setUsuario] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
-  const [rol, setRol] = useState('');
+  const [showNotification, setShowNotification] = useState(false);
+  const [messageNotification, setMessageNotification] = useState(null);
   const [userDates, setUserDates] = useState(
     {
     username: "",
@@ -68,14 +69,17 @@ const Login = () => {
       if (data.jwt) {
         setToken(data.jwt);
       }
-      setUsuario(data);
       setIsExiting(true);
       setTimeout(() => {
           setLogeado(true);
           navegacion('/');
         }, 500); 
     } catch (error) {
-      console.error(error.message);
+      setMessageNotification({
+        type: 'error',
+        text: 'Error al iniciar sesión, intente otra vez'
+      });
+      setShowNotification(true)
     }
   };
 
@@ -198,6 +202,12 @@ const Login = () => {
           </motion.main>
         )}
       </AnimatePresence>
+
+      <Notification
+        message={messageNotification}
+        isVisible={showNotification}
+        onClose={() => setShowNotification(false)}
+      />
 
     </section>
   );
