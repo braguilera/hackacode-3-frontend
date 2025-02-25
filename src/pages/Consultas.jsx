@@ -19,6 +19,7 @@ const Consultas = () => {
   const [serviciosInPaquete, setServiciosInPaquete] = useState([]);
   const [selectedPaquete, setSelectedPaquete] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [defaultTimeSlots, setDefaultTimeSlots] = useState([])
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [formData, setFormData] = useState({
     pacienteId: "",              
@@ -71,10 +72,29 @@ const Consultas = () => {
   };
 
   /* Default for no specialitation */
-  const defaultTimeSlots = [
-    "08:00:00", "08:30:00", "09:00:00", "09:30:00",
-    "10:00:00", "10:30:00", "11:00:00", "11:30:00"
-  ];
+
+  const setTurnos = async () => {
+
+    try {
+      const data = await getDatos(`/api/medicos/${formData.medicoId}`, 'Error cargando medicos');
+      
+      if (data.disponibilidades[0].cubreTurno === "Mañana"){
+        setDefaultTimeSlots([
+          "08:00:00", "08:30:00", "09:00:00", "09:30:00",
+          "10:00:00", "10:30:00", "11:00:00", "11:30:00"
+        ])
+      } else {
+        setDefaultTimeSlots([
+          "12:00:00", "12:30:00", "13:00:00", "13:30:00",
+          "14:00:00", "14:30:00", "15:00:00", "15:30:00"
+        ])
+      }
+
+    } catch (err) {
+      console.log(err.message);
+    }
+    
+  }
 
   const availableDates = getAvailableDates(selectedYear, selectedMonth - 1);
     
@@ -212,6 +232,7 @@ const Consultas = () => {
 
   useEffect(() => {
     fetchTurnosMedicos();
+    setTurnos()
   }, [formData.medicoId]);
 
   useEffect(() => {
