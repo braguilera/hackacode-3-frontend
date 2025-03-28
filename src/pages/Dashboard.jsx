@@ -143,10 +143,7 @@ const Dashboard = () => {
 
   // Stadistics cards
   const StatCard = ({ title, value, icon: Icon, color }) => (
-    <motion.main
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2 }}
+    <main
       className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
     >
       <article className="flex items-center justify-between">
@@ -158,7 +155,7 @@ const Dashboard = () => {
           <Icon className="w-6 h-6" />
         </div>
       </article>
-    </motion.main>
+    </main>
   );
 
   return (

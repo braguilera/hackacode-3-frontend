@@ -7,8 +7,8 @@ const RutaPublica = ({children}) => {
 
   if (logeado) {
     const rutaRedireccion = rol === 'ROLE_DIRECTOR' ? '/dashboard' : 
-                           rol === 'ROLE_ADMIN' ? '/consultas' : 
-                           '/pacientes';
+                            rol === 'ROLE_ADMIN' ? '/consultas' : 
+                            '/pacientes';
     return <Navigate to={rutaRedireccion} replace />;
   }
 

@@ -71,7 +71,7 @@ const Consultas = () => {
     return dates;
   };
 
-  /* Default for no specialitation */
+  /* Default for specialitation */
 
   const setTurnos = async () => {
 
@@ -884,13 +884,36 @@ const Consultas = () => {
                     </section>
                   </article>
                   <footer className="mt-8 p-5 bg-blue-100 rounded-xl">
-                    <h3 className="text-blue-500 flex items-center gap-2 text-xl font-medium">Precio del {selectedPaquete ? 'Paquete' : 'Servicio'}</h3>
-                    <p className="text-blue-700 flex items-center gap-2 text-2xl font-bold mt-1"> 
-                      ${selectedPaquete 
-                      ? selectedPaquete.precio 
-                      : (servicios.find(s => s.codigo === Number(formData.servicioMedicoCodigo))?.precio || "-")} 
-                    </p>
+                    <h3 className="text-blue-500 flex items-center gap-2 text-xl font-medium">
+                      Precio del {selectedPaquete ? "Paquete" : "Servicio"}
+                    </h3>
+                    {paciente.tieneObraSocial ? (
+                      <>
+                        <p className="text-blue-700 flex items-center gap-2 text-2xl font-bold mt-1 line-through">
+                          $
+                          {selectedPaquete
+                            ? selectedPaquete.precio
+                            : servicios.find((s) => s.codigo === Number(formData.servicioMedicoCodigo))?.precio || "-"}
+                        </p>
+                        <p className="text-green-600 flex items-center gap-2 text-2xl font-bold mt-1">
+                          $
+                          {selectedPaquete
+                            ? (selectedPaquete.precio * 0.8).toFixed(2)
+                            : ((servicios.find((s) => s.codigo === Number(formData.servicioMedicoCodigo))?.precio || 0) * 0.8).toFixed(2)}
+                          <span className="text-sm font-normal">(20% de descuento aplicado)</span>
+                        </p>
+                      </>
+                    ) : (
+                      <p className="text-blue-700 flex items-center gap-2 text-2xl font-bold mt-1">
+                        $
+                        {selectedPaquete
+                          ? selectedPaquete.precio
+                          : servicios.find((s) => s.codigo === Number(formData.servicioMedicoCodigo))?.precio || "-"}
+                      </p>
+                    )}
                   </footer>
+
+
                 </motion.main>
 
                 <NavigationButtons
